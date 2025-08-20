@@ -65,8 +65,8 @@ public class Camera: NSObject {
     // 현재 사용 가능한 카메라
     var availableCaptureDevices: [AVCaptureDevice] {
         captureDevices
-            .filter{ $0.isConnected }
-            .filter{ !$0.isSuspended }
+            .filter { $0.isConnected }
+            .filter { !$0.isSuspended }
     }
     
     // 현재 사용 중인 카메라
@@ -130,7 +130,7 @@ public class Camera: NSObject {
     var dropFrame: Int = 0
     // MARK: - 메소드
     
-    public override init() {
+    override public init() {
         super.init()
         initialize()
     }
@@ -309,7 +309,7 @@ public class Camera: NSObject {
     
     // 카메라 전면 <-> 후면 전환
     public func switchCaptureDevice() async {
-        return await withCheckedContinuation { continuation in
+        await withCheckedContinuation { continuation in
             
             self.completeSwitchDevice = continuation
             
@@ -333,10 +333,6 @@ public class Camera: NSObject {
         return orientation
     }
     
-    @objc func updateForDeviceOrientation() {
-        //TODO: Figure out if we need this for anything.
-    }
-    
     //  기기 방향에 따른 비디오 회전 각도
     private func videoRotationAngleFor(_ deviceOrientation: UIDeviceOrientation) -> CGFloat {
         switch deviceOrientation {
@@ -350,7 +346,7 @@ public class Camera: NSObject {
     
     // 사진 촬영
     public func takePhoto() async -> Image {
-        return await withCheckedContinuation{ continuation in
+        await withCheckedContinuation { continuation in
             guard let photoOutput = self.photoOutput else { return }
             
             self.resultImageContinuation = continuation
@@ -408,7 +404,7 @@ extension Camera: AVCaptureVideoDataOutputSampleBufferDelegate {
         
         if dropFrame < CameraSetting.dropFrame {
             dropFrame += 1
-        } else  {
+        } else {
             addToPreviewStream?(CIImage(cvPixelBuffer: pixelBuffer))
             
             if dropFrame == CameraSetting.dropFrame {
@@ -430,11 +426,12 @@ fileprivate extension UIScreen {
         } else if point.x != 0 && point.y != 0 {
             return .portraitUpsideDown
         } else if point.x == 0 && point.y != 0 {
-            return .landscapeRight //.landscapeLeft
+            return .landscapeRight // .landscapeLeft
         } else if point.x != 0 && point.y == 0 {
-            return .landscapeLeft //.landscapeRight
+            return .landscapeLeft // .landscapeRight
         } else {
             return .unknown
+            
         }
     }
 }

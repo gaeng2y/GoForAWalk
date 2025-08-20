@@ -109,7 +109,10 @@ public struct CaptureImageFeature {
                 }
                 
             case .cancelButtonTapped:
+                print("🔴 DEBUG: cancelButtonTapped action received")
+                print("🔴 DEBUG: About to call cameraClient.stop()")
                 cameraClient.stop()
+                print("🔴 DEBUG: cameraClient.stop() completed")
                 state.disableDismissAnimation = false
                 return .run { _ in await self.dismiss() }
                 
@@ -118,15 +121,14 @@ public struct CaptureImageFeature {
                 return .none
                 
                 // MARK: - Delegate
-                
             case .delegate:
                 return .none
                 
             case let .cameraResult(.presented(.delegate(.savePhotos(image)))):
-                return .run { send in
-                    await send(.delegate(.savePhoto(image)))
-                    await self.dismiss()
-                }
+                return .send(.delegate(.savePhoto(image)))
+                
+            case .cameraResult(.presented(.delegate(.dismiss))):
+                return .run { _ in await self.dismiss() }
                 
             case .cameraResult:
                 return .none

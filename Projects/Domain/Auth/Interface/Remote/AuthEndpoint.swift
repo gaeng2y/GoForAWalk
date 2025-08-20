@@ -14,7 +14,7 @@ public struct AuthEndpoint {
         _ requestDTO: SignInRequestDTO
     ) -> EndPoint<SignInResponseDTO> {
         return EndPoint(
-            path: "auth/login/oauth2/\(provider.rawValue)",
+            path: "oauth2/\(provider.rawValue)",
             httpMethod: .post,
             bodyParameters: requestDTO
         )

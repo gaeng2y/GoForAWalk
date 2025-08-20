@@ -10,11 +10,20 @@
 import Foundation
 
 public struct CreateFootstepRequestDTO: Encodable {
-    public let image: Data
+    public let data: Data
     public let content: String
+    public let fileName: String // 예: "image.jpg"
+    public let mimeType: String
     
-    public init(image: Data, content: String) {
-        self.image = image
+    public init(
+        data: Data,
+        content: String,
+        fileName: String = "image.jpg",
+        mimeType: String = "image/jpeg"
+    ) {
+        self.data = data
         self.content = content
+        self.fileName = fileName
+        self.mimeType = mimeType
     }
 }

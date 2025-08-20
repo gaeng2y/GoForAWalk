@@ -16,6 +16,7 @@ let project = Project.module(
                 .domain(target: .CameraService),
                 .domain(target: .FeedService, type: .interface),
                 .domain(target: .FeedService),
+                .userInterface(target: .DesignSystem)
             ]
         ),
         .testing(

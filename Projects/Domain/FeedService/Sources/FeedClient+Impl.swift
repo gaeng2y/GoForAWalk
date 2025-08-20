@@ -24,7 +24,7 @@ extension FeedClient: DependencyKey {
         },
         createFootstep: { body in
             let endpoint = FeedEndpoint.createFootstep(with: body)
-            return try await NetworkProviderImpl.shared.request(endpoint).toDomain()
+            _ = try await NetworkProviderImpl.shared.request(endpoint)
         }
     )
 }

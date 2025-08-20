@@ -23,31 +23,34 @@ public struct CaptureImageView: View {
     
     public var body: some View {
         WithViewStore(self.store, observe: { $0 }) { viewStore in
-            GeometryReader { geometry in
-                VStack {
-                    NavigationBar(
-                        title: "",
-                        leadingItems: [
-                            .systemImage(
-                                "chevron.left",
-                                color: .white,
-                                action: { viewStore.send(.cancelButtonTapped) }
-                            )
-                        ]
-                    )
-                    
-                    viewFinderView(viewStore: viewStore)
-                    
-                    buttonsView(viewStore: viewStore)
-                }
-                .background(Color.black)
+            VStack {
+                NavigationBar(
+                    title: "",
+                    trailingItems: [
+                        .systemImage(
+                            "xmark",
+                            color: .white,
+                            action: { viewStore.send(.cancelButtonTapped) }
+                        )
+                    ]
+                )
+                
+                Spacer()
+                    .frame(height: 50)
+                
+                viewFinderView(viewStore: viewStore)
+                
+                buttonsView(viewStore: viewStore)
             }
+            .background(Color.black)
             .onAppear {
                 viewStore.send(.viewWillAppear)
             }
-            .fullScreenCover(store: self.store.scope(
-                state: \.$cameraResult,
-                action: \.cameraResult)
+            .fullScreenCover(
+                store: self.store.scope(
+                    state: \.$cameraResult,
+                    action: \.cameraResult
+                )
             ) { postFootstepFeature in
                 NavigationStack {
                     PostFootstepView(store: postFootstepFeature)

@@ -14,17 +14,18 @@ import RecordFeature
 import SwiftUI
 
 public struct MainTabView: View {
-    private let store: StoreOf<MainTabFeature>
+    @Bindable var store: StoreOf<MainTabFeature>
     
     public init(store: StoreOf<MainTabFeature>) {
         self.store = store
     }
     
     public var body: some View {
-        TabView {
+        TabView(selection: $store.currentTab.sending(\.selectTab)) {
             Tab(
                 MainTab.home.title,
-                systemImage: MainTab.home.imageName
+                systemImage: MainTab.home.imageName,
+                value: MainTab.home
             ) {
                 NavigationStack {
                     FeedListView(
@@ -36,7 +37,7 @@ public struct MainTabView: View {
                 }
             }
             
-            Tab(MainTab.record.title, systemImage: MainTab.record.imageName) {
+            Tab(MainTab.record.title, systemImage: MainTab.record.imageName, value: MainTab.record) {
                 Text("등록")
                     .onAppear {
                         store.send(.presentCaptureImage)
@@ -45,7 +46,8 @@ public struct MainTabView: View {
             
             Tab(
                 MainTab.profile.title,
-                systemImage: MainTab.profile.imageName
+                systemImage: MainTab.profile.imageName,
+                value: MainTab.profile
             ) {
                 ProfileView(
                     store: store.scope(

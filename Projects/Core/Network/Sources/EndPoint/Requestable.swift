@@ -33,9 +33,9 @@ extension Requestable {
             throw NetworkError.urlRequestError(.queryEncodingError)
         }
         
-        var queryItemList : [URLQueryItem] = []
+        var queryItemList: [URLQueryItem] = []
         
-        queryDictionary.forEach { (key, value) in
+        queryDictionary.forEach { key, value in
             let queryItem = URLQueryItem(name: key, value: "\(value)")
             queryItemList.append(queryItem)
         }
@@ -50,6 +50,10 @@ extension Requestable {
     private func getBodyParameters() throws -> Data? {
         guard let bodyParameters else {
             return nil
+        }
+        
+        if let dataBody = bodyParameters as? Data {
+            return dataBody
         }
         
         let data = try JSONEncoder().encode(bodyParameters)
@@ -91,6 +95,37 @@ extension Requestable {
         }
         
         urlRequest.setValue("application/json", forHTTPHeaderField: "Content-Type")
+        urlRequest.httpMethod = httpMethod.rawValue
+        
+        return urlRequest
+    }
+    
+    public func makeMultiPartURLRequest(isBypass: Bool) throws -> URLRequest {
+        guard var urlComponent = try makeURLComponents(isBypass: isBypass) else {
+            throw NetworkError.urlRequestError(.urlComponentError)
+        }
+        
+        if let queryItems = try getQueryParameters() {
+            urlComponent.queryItems = queryItems
+        }
+        
+        guard let url = urlComponent.url else {
+            throw NetworkError.invalidURL
+        }
+        
+        var urlRequest = URLRequest(url: url)
+        
+        if let httpBody = try getBodyParameters() {
+            urlRequest.httpBody = httpBody
+        }
+        
+        if let headers {
+            headers.forEach { key, value in
+                urlRequest.setValue(value, forHTTPHeaderField: key)
+            }
+        }
+        
+        // multipart 요청에서는 Content-Type을 덮어쓰지 않음 (헤더에서 이미 설정됨)
         urlRequest.httpMethod = httpMethod.rawValue
         
         return urlRequest

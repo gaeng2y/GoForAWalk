@@ -27,14 +27,17 @@ public struct FeedEndpoint {
         )
     }
     
-    public static func createFootstep(with body: CreateFootstepRequestDTO) -> EndPoint<FootstepsResponseDTO> {
+    public static func createFootstep(with body: CreateFootstepRequestDTO) -> EndPoint<CreateFootstepResponseDTO> {
         let boundary = "Boundary-\(UUID().uuidString)"
         let headers = [
-            "Content-Type": "multipart/form-data; boundary=\(boundary)",
-            "Authorization": "Bearer \(LocalAuthStoreImpl().loadToken().accessToken)"
+            "Authorization": "Bearer \(LocalAuthStoreImpl().loadToken().accessToken)",
+            "Content-Type": "multipart/form-data; boundary=\(boundary)"
         ]
         
-        let httpBody = createBody(with: body, boundary: boundary)
+        let httpBody = createMultipartBody(
+            with: body,
+            boundary: boundary
+        )
         
         return EndPoint(
             path: "footsteps",
@@ -44,22 +47,38 @@ public struct FeedEndpoint {
         )
     }
     
-    private static func createBody(with body: CreateFootstepRequestDTO, boundary: String) -> Data {
-        var httpBody = Data()
+    private static func createMultipartBody(
+        with requestDTO: CreateFootstepRequestDTO,
+        boundary: String
+    ) -> Data {
+        var body = Data()
         
-        httpBody.append(Data("--\(boundary)\r\n".utf8))
-        httpBody.append(Data("Content-Disposition: form-data; name=\"data\"; filename=\"image.jpg\"\r\n".utf8))
-        httpBody.append(Data("Content-Type: image/jpeg\r\n\r\n".utf8))
-        httpBody.append(body.image)
-        httpBody.append(Data("\r\n".utf8))
+        func appendString(_ string: String) {
+            if let data = string.data(using: .utf8) {
+                body.append(data)
+            }
+        }
         
-        httpBody.append(Data("--\(boundary)\r\n".utf8))
-        httpBody.append(Data("Content-Disposition: form-data; name=\"content\"\r\n\r\n".utf8))
-        httpBody.append(Data(body.content.utf8))
-        httpBody.append(Data("\r\n".utf8))
+        // --- Part 1: 이미지 데이터 (data) ---
+        // cURL의 --form 'data=@"/path/to/image.jpg"' 부분
+        appendString("--\(boundary)\r\n")
+        // Content-Disposition 헤더에 name과 함께 filename을 명시해야 합니다.
+        appendString("Content-Disposition: form-data; name=\"data\"; filename=\"\(requestDTO.fileName)\"\r\n")
+        // 해당 파트의 Content-Type을 명시해줍니다.
+        appendString("Content-Type: \(requestDTO.mimeType)\r\n\r\n")
+        body.append(requestDTO.data)
+        appendString("\r\n")
         
-        httpBody.append(Data("--\(boundary)--\r\n".utf8))
+        // --- Part 2: 텍스트 데이터 (content) ---
+        // cURL의 --form 'content="123"' 부분
+        appendString("--\(boundary)\r\n")
+        appendString("Content-Disposition: form-data; name=\"content\"\r\n\r\n")
+        appendString(requestDTO.content)
+        appendString("\r\n")
         
-        return httpBody
+        // --- Body 종료 ---
+        appendString("--\(boundary)--\r\n")
+        
+        return body
     }
 }

@@ -7,6 +7,8 @@
 //
 
 import ComposableArchitecture
+import FeedService
+import FeedServiceInterface
 import SwiftUI
 
 @Reducer
@@ -25,20 +27,22 @@ public struct PostFootstepFeature {
         
         public enum Delegate: Equatable {
             case savePhotos(Image)
+            case dismiss
         }
     }
     
-    @Dependency(\.dismiss) var dismiss
+    @Dependency(\.feedClient) var feedClient
     
     public func reduce(into state: inout State, action: Action) -> Effect<Action> {
         switch action {
         case .cancelButtonTapped:
-            return .run { _ in await self.dismiss() }
+            return .run { send in
+                await send(.delegate(.dismiss))
+            }
             
         case .saveButtonTapped:
             return .run { [resultImage = state.resultImage ] send in
                 await send(.delegate(.savePhotos(resultImage)))
-                await self.dismiss()
             }
             
         case let .todaysMessageChanged(message):
@@ -48,7 +52,20 @@ public struct PostFootstepFeature {
             return .none
             
         case .delegate:
-            return .none
+            return .run { [state] send in
+                let imageData = await ImageRenderer(content: state.resultImage).uiImage?.jpegData(compressionQuality: 0.4)
+                guard let imageData else {
+                    return
+                }
+                let dto = CreateFootstepRequestDTO(data: imageData, content: state.todaysMessage)
+                do {
+                    try await feedClient.createFootstep(dto)
+                    await send(.delegate(.dismiss))
+                } catch {
+                    print(error.localizedDescription)
+                }
+            }
+            .cancellable(id: "createFootstep")
         }
     }
 }

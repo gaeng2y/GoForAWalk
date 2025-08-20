@@ -3,3 +3,27 @@ OTHER_SWIFT_FLAGS[config=STAGE][sdk=*] = $(inherited) -DSTAGE
 OTHER_SWIFT_FLAGS[config=PROD][sdk=*] = $(inherited) -DPROD
 
 ENABLE_BITCODE = NO
+
+// Debug Information Format - LLDB 디버깅을 위한 설정
+DEBUG_INFORMATION_FORMAT[config=DEV][sdk=*] = dwarf-with-dsym
+DEBUG_INFORMATION_FORMAT[config=STAGE][sdk=*] = dwarf-with-dsym
+
+// Optimization Level - Debug 설정에서 최적화 끄기
+SWIFT_OPTIMIZATION_LEVEL[config=DEV][sdk=*] = -Onone
+SWIFT_OPTIMIZATION_LEVEL[config=STAGE][sdk=*] = -Onone
+GCC_OPTIMIZATION_LEVEL[config=DEV][sdk=*] = 0
+GCC_OPTIMIZATION_LEVEL[config=STAGE][sdk=*] = 0
+
+// Swift Compilation Mode - 모든 파일을 개별적으로 컴파일
+SWIFT_COMPILATION_MODE[config=DEV][sdk=*] = singlefile
+SWIFT_COMPILATION_MODE[config=STAGE][sdk=*] = singlefile
+
+// 추가 디버그 설정
+SWIFT_ACTIVE_COMPILATION_CONDITIONS[config=DEV][sdk=*] = $(inherited) DEBUG
+SWIFT_ACTIVE_COMPILATION_CONDITIONS[config=STAGE][sdk=*] = $(inherited) DEBUG
+GCC_PREPROCESSOR_DEFINITIONS[config=DEV][sdk=*] = $(inherited) DEBUG=1
+GCC_PREPROCESSOR_DEFINITIONS[config=STAGE][sdk=*] = $(inherited) DEBUG=1
+
+// LLDB가 타입 정보를 더 잘 찾을 수 있도록
+GENERATE_INFOPLIST_FILE = YES
+ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES

@@ -52,13 +52,8 @@ public struct MainTabFeature {
                 state.currentTab = tab
                 return .none
                 
-            case .feed(let feedAction):
-                return .none
-                
-            case .profile(let profileAction):
-                return .none
-                
             case .presentCaptureImage:
+                state.currentTab = .home
                 state.disableDismissAnimation = false
                 state.usingCamera = CaptureImageFeature.State()
                 return .none
@@ -68,7 +63,7 @@ public struct MainTabFeature {
                 state.image = image
                 return .none
                 
-            case .usingCamera:
+            default:
                 return .none
             }
         }
