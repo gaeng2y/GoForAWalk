@@ -57,6 +57,7 @@ public struct MainTabView: View {
                 )
             }
         }
+        .tint(DesignSystemAsset.Colors.accentColor.swiftUIColor)
         .fullScreenCover(store: self.store.scope(
             state: \.$usingCamera,
             action: \.usingCamera)
