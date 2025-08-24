@@ -20,7 +20,6 @@ public struct FeedListView: View {
     public var body: some View {
         ScrollView {
             VStack {
-                NavigationBar(title: "홈")
                 
                 if store.footsteps.isEmpty {
                     Text("아직 발자취가 없어요.\n첫 발자취를 남겨볼까요?")
@@ -38,7 +37,7 @@ public struct FeedListView: View {
                 }
             }
         }
-        .toolbar(.hidden)
+        .navigationTitle("홈")
         .onAppear {
             store.send(.onAppear)
         }

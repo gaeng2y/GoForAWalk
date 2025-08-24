@@ -19,33 +19,24 @@ public struct SettingsView: View {
     }
     
     public var body: some View {
-        ScrollView {
-            NavigationBar(
-                title: "설정",
-                leadingItems: [
-                    .systemImage(
-                        "arrow.backward",
-                        color: .black
-                    ) {
-                        
-                    }
-                ]
-            )
-            
+        NavigationView {
             List {
                 ForEach(
                     SettingsMenu.allCases,
                     id: \.self
                 ) { menu in
-                    Text(menu.title)
-                        .onTapGesture {
-                            store.send(.settingsMenuTapped(menu))
-                        }
+                    Label(
+                        menu.title,
+                        systemImage: menu.imageName
+                    )
+                    .onTapGesture {
+                        store.send(.settingsMenuTapped(menu))
+                    }
                 }
             }
         }
+        .navigationTitle("설정")
         .alert($store.scope(state: \.alert, action: \.alert))
-        .toolbar(.hidden)
     }
 }
 

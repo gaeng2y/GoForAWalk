@@ -21,15 +21,6 @@ public struct ProfileView: View {
     public var body: some View {
         NavigationStackStore(store.scope(state: \.path, action: \.path)) {
             VStack {
-                NavigationBar(
-                    title: "프로필",
-                    trailingItems: [
-                        .systemImage("gear", color: .black) {
-                            store.send(.navigateToSettings)
-                        }
-                    ]
-                )
-                
                 HStack {
                     Text(store.profile.nickname)
                         .font(.system(size: 16))
@@ -69,13 +60,22 @@ public struct ProfileView: View {
                 
                 Spacer()
             }
+            .navigationTitle("프로필")
+            .toolbar {
+                ToolbarItem {
+                    Image(systemName: "gear")
+                        .foregroundStyle(Color.black)
+                        .onTapGesture {
+                            store.send(.navigateToSettings)
+                        }
+                }
+            }
         } destination: { store in
             switch store.case {
             case .settings(let settingsStore):
                 SettingsView(store: settingsStore)
             }
         }
-        .toolbar(.hidden)
         .onAppear {
             store.send(.onAppear)
         }

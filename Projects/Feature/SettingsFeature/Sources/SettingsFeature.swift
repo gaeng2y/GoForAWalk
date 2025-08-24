@@ -23,6 +23,7 @@ public struct SettingsFeature {
     }
     
     public enum Action {
+        case backButtonTapped
         case settingsMenuTapped(SettingsMenu)
         case showDeleteAlert
         case alert(PresentationAction<Alert>)
@@ -35,14 +36,23 @@ public struct SettingsFeature {
     }
     
     @Dependency(\.profileClient) var profileClient
+    @Dependency(\.dismiss) var dismiss
     
     public init() {}
     
     public var body: some ReducerOf<Self> {
         Reduce { state, action in
             switch action {
+            case .backButtonTapped:
+                return .run { send in
+                    await dismiss()
+                }
+                
             case .settingsMenuTapped(let menu):
-                return .none
+                switch menu {
+                case .withdrawAccount:
+                    return .send(.showDeleteAlert)
+                }
                 
             case .showDeleteAlert:
                 state.alert = AlertState(
@@ -57,7 +67,8 @@ public struct SettingsFeature {
                         }
                     }, message: {
                         TextState("회원 탈퇴 시 걷기 인증 기록이 모두 사라지고, 되돌릴 수 없어요. 탈퇴를 진행할까요?")
-                    })
+                    }
+                )
                 return .none
                 
             case .alert(.presented(.confirmDeleteAccount)):

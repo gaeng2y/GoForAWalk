@@ -13,8 +13,13 @@ public enum SettingsMenu: CaseIterable {
     
     public var title: String {
         switch self {
-        case .withdrawAccount:
-            return "회원탈퇴"
+        case .withdrawAccount: "회원탈퇴"
+        }
+    }
+    
+    public var imageName: String{
+        switch self {
+        case .withdrawAccount: "person.crop.circle.fill.badge.minus"
         }
     }
     
