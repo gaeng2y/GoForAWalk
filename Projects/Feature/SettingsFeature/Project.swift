@@ -10,6 +10,8 @@ let project = Project.module(
             module: .feature(.SettingsFeature),
             dependencies: [
                 .feature(target: .SettingsFeature, type: .interface),
+                .domain(target: .Auth, type: .interface),
+                .domain(target: .Auth),
                 .domain(target: .UserService, type: .interface),
                 .domain(target: .UserService),
                 .userInterface(target: .DesignSystem)

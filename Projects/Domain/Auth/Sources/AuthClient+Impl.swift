@@ -23,6 +23,9 @@ extension AuthClient: DependencyKey {
         },
         loadToken: {
             LocalAuthStoreImpl().loadToken()
+        },
+        deleteAllTokens: {
+            LocalAuthStoreImpl().deleteAllTokens()
         }
     )
 }
@@ -31,13 +34,15 @@ extension AuthClient: TestDependencyKey {
     public static var previewValue = Self(
         signIn: unimplemented("\(Self.self).signIn"),
         saveToken: unimplemented("\(Self.self).saveToken"),
-        loadToken: unimplemented("\(Self.self).loadToken")
+        loadToken: unimplemented("\(Self.self).loadToken"),
+        deleteAllTokens: unimplemented("\(Self.self).deleteAllTokens")
     )
     
     public static let testValue = Self(
         signIn: unimplemented("\(Self.self).signIn"),
         saveToken: unimplemented("\(Self.self).saveToken"),
-        loadToken: unimplemented("\(Self.self).loadToken")
+        loadToken: unimplemented("\(Self.self).loadToken"),
+        deleteAllTokens: unimplemented("\(Self.self).deleteAllTokens")
     )
 }
 

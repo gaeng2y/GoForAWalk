@@ -1,5 +1,6 @@
 import Foundation
 import NetworkInterface
+import KeyChainStore
 
 public final class NetworkProviderImpl: NetworkProvider {
     public static let shared = NetworkProviderImpl()
@@ -68,6 +69,7 @@ public final class NetworkProviderImpl: NetworkProvider {
                 throw NetworkError.failedDecoding
             }
         case 401:
+            KeyChainStore.shared.deleteAll()
             throw NetworkError.failedAuthorization
         case 400...499:
             throw NetworkError.badRequest

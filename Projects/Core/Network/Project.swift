@@ -13,6 +13,7 @@ let project = Project.module(
             module: .core(.Network),
             dependencies: [
                 .core(target: .Network, type: .interface),
+                .core(target: .KeyChainStore),
                 .shared(target: .Util)
             ]
         ),

@@ -51,8 +51,11 @@ public struct SignInFeature {
             case .checkAuthorization:
                 if KeyChainStore.shared.validateToken() {
                     return .send(.isAlreadyAuthorized)
+                } else {
+                    return .run { send in
+                        await authClient.deleteAllTokens()
+                    }
                 }
-                return .none
                 
             case .kakaoSignInButtonTapped:
                 state.isLoading = true

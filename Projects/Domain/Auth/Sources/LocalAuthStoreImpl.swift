@@ -24,4 +24,8 @@ public final class LocalAuthStoreImpl: LocalAuthStore {
         KeyChainStore.shared.save(property: .accessToken, value: token.accessToken)
         KeyChainStore.shared.save(property: .userIdentifier, value: token.userId)
     }
+    
+    public func deleteAllTokens() {
+        KeyChainStore.shared.deleteAll()
+    }
 }

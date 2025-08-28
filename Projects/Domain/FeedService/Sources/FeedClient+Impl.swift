@@ -15,8 +15,10 @@ extension FeedClient: DependencyKey {
     public static let liveValue = FeedClient(
         fetchFootsteps: {
             let apiEndpoint = FeedEndpoint.fetchFootsteps()
-            let response = try await NetworkProviderImpl.shared.request(apiEndpoint)
-            return response.footsteps.map { $0.toDomain() }
+            do {
+                let response = try await NetworkProviderImpl.shared.request(apiEndpoint)
+                return response.footsteps.map { $0.toDomain() }
+            }
         },
         deleteFootstep: { id in
             let endpoint = FeedEndpoint.deleteFoorstep(with: id)

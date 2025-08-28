@@ -12,14 +12,17 @@ public struct AuthClient {
     public var signIn: @Sendable (LoginType, String) async throws -> (Token, User)
     public var saveToken: (Token) -> Void
     public var loadToken: @Sendable () -> Token
+    public var deleteAllTokens: @Sendable () async -> Void
     
     public init(
         signIn: @escaping @Sendable (LoginType, String) async throws -> (Token, User),
         saveToken: @escaping (Token) -> Void,
-        loadToken: @escaping @Sendable () -> Token
+        loadToken: @escaping @Sendable () -> Token,
+        deleteAllTokens: @escaping @Sendable () async -> Void
     ) {
         self.signIn = signIn
         self.saveToken = saveToken
         self.loadToken = loadToken
+        self.deleteAllTokens = deleteAllTokens
     }
 }

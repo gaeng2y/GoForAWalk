@@ -6,6 +6,8 @@
 //  Copyright © 2025 com.gaeng2y. All rights reserved.
 //
 
+import Auth
+import AuthInterface
 import ComposableArchitecture
 import SettingsFeatureInterface
 import UserServiceInterface
@@ -35,6 +37,7 @@ public struct SettingsFeature {
         }
     }
     
+    @Dependency(\.authClient) var authClient
     @Dependency(\.profileClient) var profileClient
     @Dependency(\.dismiss) var dismiss
     
@@ -75,6 +78,7 @@ public struct SettingsFeature {
                 state.isLoading = true
                 return .run { send in
                     try await profileClient.withdrawUser()
+                    try await authClient.deleteAllTokens()
                     await send(.withdrawUserSuccess)
                 }
                 

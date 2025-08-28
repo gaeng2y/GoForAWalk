@@ -11,4 +11,5 @@ import Foundation
 public protocol LocalAuthStore {
     func loadToken() -> Token
     func saveToken(token: Token)
+    func deleteAllTokens()
 }
