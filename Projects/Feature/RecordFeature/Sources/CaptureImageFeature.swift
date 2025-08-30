@@ -14,8 +14,9 @@ import SwiftUI
 
 @Reducer
 public struct CaptureImageFeature {
+    @ObservableState
     public struct State: Equatable {
-        @PresentationState var cameraResult: PostFootstepFeature.State?
+        @Presents var cameraResult: PostFootstepFeature.State?
         var viewFinderImage: Image?
         var disableDismissAnimation: Bool = true
         
@@ -39,7 +40,7 @@ public struct CaptureImageFeature {
         
         case shutterTapped
         case switchButtonTapped
-        case cancelButtonTapped
+        case dismissButtonTapped
         
         case flipDegreeUpdate
         
@@ -108,12 +109,8 @@ public struct CaptureImageFeature {
                     await send(.flipImageRemove)
                 }
                 
-            case .cancelButtonTapped:
-                print("🔴 DEBUG: cancelButtonTapped action received")
-                print("🔴 DEBUG: About to call cameraClient.stop()")
+            case .dismissButtonTapped:
                 cameraClient.stop()
-                print("🔴 DEBUG: cameraClient.stop() completed")
-                state.disableDismissAnimation = false
                 return .run { _ in await self.dismiss() }
                 
             case .flipDegreeUpdate:

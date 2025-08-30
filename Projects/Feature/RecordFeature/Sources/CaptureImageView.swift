@@ -24,19 +24,24 @@ public struct CaptureImageView: View {
     public var body: some View {
         WithViewStore(self.store, observe: { $0 }) { viewStore in
             VStack {
-                NavigationBar(
-                    title: "",
-                    trailingItems: [
-                        .systemImage(
-                            "xmark",
-                            color: .white,
-                            action: { viewStore.send(.cancelButtonTapped) }
-                        )
-                    ]
-                )
-                
-                Spacer()
-                    .frame(height: 50)
+                HStack {
+                    Spacer()
+                    
+                    Button(
+                        action: {
+                            store.send(.dismissButtonTapped)
+                        },
+                        label: {
+                            Image(systemName: "xmark")
+                                .font(.title)
+                                .tint(.white)
+                        }
+                    )
+                    
+                }
+                .padding(.top, 30)
+                .padding(.trailing, 30)
+                .padding(.bottom, 50)
                 
                 viewFinderView(viewStore: viewStore)
                 
