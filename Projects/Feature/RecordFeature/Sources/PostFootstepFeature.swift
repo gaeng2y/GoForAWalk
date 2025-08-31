@@ -13,16 +13,17 @@ import SwiftUI
 
 @Reducer
 public struct PostFootstepFeature {
+    @ObservableState
     public struct State: Equatable {
         var resultImage: Image
         var todaysMessage: String = ""
         let maxCharacterCount = 50
     }
     
-    public enum Action: Equatable {
+    public enum Action: BindableAction, Equatable {
+        case binding(BindingAction<State>)
         case cancelButtonTapped
         case saveButtonTapped
-        case todaysMessageChanged(String)
         case delegate(Delegate)
         
         public enum Delegate: Equatable {
@@ -33,39 +34,46 @@ public struct PostFootstepFeature {
     
     @Dependency(\.feedClient) var feedClient
     
-    public func reduce(into state: inout State, action: Action) -> Effect<Action> {
-        switch action {
-        case .cancelButtonTapped:
-            return .run { send in
-                await send(.delegate(.dismiss))
-            }
-            
-        case .saveButtonTapped:
-            return .run { [resultImage = state.resultImage ] send in
-                await send(.delegate(.savePhotos(resultImage)))
-            }
-            
-        case let .todaysMessageChanged(message):
-            if message.count <= state.maxCharacterCount {
-                state.todaysMessage = message
-            }
-            return .none
-            
-        case .delegate:
-            return .run { [state] send in
-                let imageData = await ImageRenderer(content: state.resultImage).uiImage?.jpegData(compressionQuality: 0.4)
-                guard let imageData else {
-                    return
+    public var body: some Reducer<State, Action> {
+        BindingReducer()
+        
+        Reduce { state, action in
+            switch action {
+            case .binding(\.todaysMessage):
+                if state.todaysMessage.count > state.maxCharacterCount {
+                    state.todaysMessage = String(state.todaysMessage.prefix(state.maxCharacterCount))
                 }
-                let dto = CreateFootstepRequestDTO(data: imageData, content: state.todaysMessage)
-                do {
-                    try await feedClient.createFootstep(dto)
+                return .none
+                
+            case .binding:
+                return .none
+                
+            case .cancelButtonTapped:
+                return .run { send in
                     await send(.delegate(.dismiss))
-                } catch {
-                    print(error.localizedDescription)
                 }
+                
+            case .saveButtonTapped:
+                return .run { [resultImage = state.resultImage ] send in
+                    await send(.delegate(.savePhotos(resultImage)))
+                }
+                
+            case .delegate:
+                return .run { [state] send in
+                    let imageData = await ImageRenderer(content: state.resultImage).uiImage?.jpegData(compressionQuality: 0.4)
+                    guard let imageData else {
+                        return
+                    }
+                    let dto = CreateFootstepRequestDTO(data: imageData, content: state.todaysMessage)
+                    do {
+                        try await feedClient.createFootstep(dto)
+                        await send(.delegate(.dismiss))
+                    } catch {
+                        print(error.localizedDescription)
+                    }
+                }
+                .cancellable(id: "createFootstep")
             }
-            .cancellable(id: "createFootstep")
         }
     }
 }

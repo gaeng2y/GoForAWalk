@@ -22,61 +22,59 @@ public struct CaptureImageView: View {
     }
     
     public var body: some View {
-        WithViewStore(self.store, observe: { $0 }) { viewStore in
-            VStack {
-                HStack {
-                    Spacer()
-                    
-                    Button(
-                        action: {
-                            store.send(.dismissButtonTapped)
-                        },
-                        label: {
-                            Image(systemName: "xmark")
-                                .font(.title)
-                                .tint(.white)
-                        }
-                    )
-                    
-                }
-                .padding(.top, 30)
-                .padding(.trailing, 30)
-                .padding(.bottom, 50)
+        VStack {
+            HStack {
+                Spacer()
                 
-                viewFinderView(viewStore: viewStore)
-                
-                buttonsView(viewStore: viewStore)
-            }
-            .background(Color.black)
-            .onAppear {
-                viewStore.send(.viewWillAppear)
-            }
-            .fullScreenCover(
-                store: self.store.scope(
-                    state: \.$cameraResult,
-                    action: \.cameraResult
+                Button(
+                    action: {
+                        store.send(.dismissButtonTapped)
+                    },
+                    label: {
+                        Image(systemName: "xmark")
+                            .font(.title)
+                            .tint(.white)
+                    }
                 )
-            ) { postFootstepFeature in
-                NavigationStack {
-                    PostFootstepView(store: postFootstepFeature)
-                }
+                
             }
-            .transaction { transaction in
-                transaction.disablesAnimations = viewStore.disableDismissAnimation
+            .padding(.top, 30)
+            .padding(.trailing, 30)
+            .padding(.bottom, 50)
+            
+            viewFinder
+            
+            buttonsView
+        }
+        .background(Color.black)
+        .onAppear {
+            store.send(.viewWillAppear)
+        }
+        .fullScreenCover(
+            store: self.store.scope(
+                state: \.$cameraResult,
+                action: \.cameraResult
+            )
+        ) { postFootstepFeature in
+            NavigationStack {
+                PostFootstepView(store: postFootstepFeature)
             }
+        }
+        .transaction { transaction in
+            transaction.disablesAnimations = store.disableDismissAnimation
         }
     }
     
-    private func viewFinderView(viewStore: CameraFeatureViewStore) -> some View {
+    private var viewFinder: some View {
         GeometryReader { geometry in
             ZStack {
-                if let image = viewStore.state.viewFinderImage {
+                if let image = store.state.viewFinderImage {
                     image
                         .resizable()
                         .scaledToFit()
                 }
                 
-                if let flipImage = viewStore.state.flipImage {
+                if let flipImage = store.state.flipImage {
                     flipImage
                         .resizable()
                         .scaledToFit()
@@ -85,16 +83,16 @@ public struct CaptureImageView: View {
             }
             .frame(width: geometry.size.width, height: geometry.size.width * CameraSetting.ratio)
             .background(Color.clear)
-            .rotation3DEffect(.degrees(viewStore.state.flipDegree), axis: (x: 0, y: 1, z: 0))
+            .rotation3DEffect(.degrees(store.state.flipDegree), axis: (x: 0, y: 1, z: 0))
         }
     }
     
-    private func buttonsView(viewStore: CameraFeatureViewStore) -> some View {
+    private var buttonsView: some View {
         HStack {
             Spacer()
             
             Button {
-                viewStore.send(.shutterTapped)
+                store.send(.shutterTapped)
             } label: {
                 ZStack {
                     Circle()

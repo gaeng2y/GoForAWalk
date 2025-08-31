@@ -8,69 +8,62 @@
 
 import CameraInterface
 import ComposableArchitecture
+import DesignSystem
 import SwiftUI
 
 public struct PostFootstepView: View {
     typealias CameraResultViewStore = ViewStore<PostFootstepFeature.State, PostFootstepFeature.Action>
         
-    let store: StoreOf<PostFootstepFeature>
-    
-    
+    @Bindable var store: StoreOf<PostFootstepFeature>
     
     public var body: some View {
-        WithViewStore(self.store, observe: \.self) { viewStore in
-            NavigationStack {
-                GeometryReader { geometry in
-                    VStack {
-                        Spacer()
-                        
-                        viewStore.resultImage
-                            .resizable()
-                            .scaledToFit()
-                            .frame(
-                                width: geometry.size.width,
-                                height: geometry.size.width * CameraSetting.ratio)
-                            .background(Color.white)
-                        
-                        Spacer()
-                        
-                        TextField(
-                            "(선택) 오늘의 한 마디를 남겨주세요 :)",
-                            text: viewStore.binding(
-                                get: \.todaysMessage,
-                                send: PostFootstepFeature.Action.todaysMessageChanged
-                            )
-                        )
-                        .textFieldStyle(RoundedBorderTextFieldStyle())
-                        .padding(.horizontal, 35)
-                        
-                        buttonsView(viewStore: viewStore)
-                            .frame(maxWidth: .infinity)
-                            .frame(height: 45)
-                            .padding(.horizontal, 45)
-                        
-                        Spacer()
-                    }
-                    .background(Color.white)
+        NavigationStack {
+            GeometryReader { proxy in
+                VStack {
+                    Spacer()
                     
+                    store.resultImage
+                        .resizable()
+                        .scaledToFit()
+                        .frame(
+                            width: proxy.size.width,
+                            height: proxy.size.width * CameraSetting.ratio)
+                        .background(Color.white)
+                    
+                    Spacer()
+                    
+                    TextField(
+                         "(선택) 오늘의 한 마디를 남겨주세요 :)",
+                         text: $store.todaysMessage
+                     )
+                    .textFieldStyle(RoundedBorderTextFieldStyle())
+                    .padding(.horizontal, 35)
+                    
+                    buttonsView
+                        .frame(height: 100)
+                        .padding(.horizontal, 45)
+                    
+                    Spacer()
                 }
-                .navigationTitle("발자취")
+                .background(Color.white)
             }
+            .navigationTitle("발자취")
         }
     }
     
-    private func buttonsView(viewStore: CameraResultViewStore) -> some View {
+    private var buttonsView: some View {
         HStack(spacing: 10) {
             Button {
-                viewStore.send(.saveButtonTapped)
+                store.send(.saveButtonTapped)
             } label: {
                 Text("남기기 😽")
             }
+            .tint(DesignSystemAsset.Colors.accentColor.swiftUIColor)
             .buttonStyle(.borderedProminent)
             
             
             Button {
-                viewStore.send(.cancelButtonTapped)
+                store.send(.cancelButtonTapped)
             } label: {
                 Text("취소")
             }
