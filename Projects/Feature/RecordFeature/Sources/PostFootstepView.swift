@@ -48,6 +48,7 @@ public struct PostFootstepView: View {
                 .background(Color.white)
             }
             .navigationTitle("발자취")
+            .alert($store.scope(state: \.alert, action: \.alert))
         }
     }
     

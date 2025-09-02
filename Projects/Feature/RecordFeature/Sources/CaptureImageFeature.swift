@@ -18,7 +18,6 @@ public struct CaptureImageFeature {
     public struct State: Equatable {
         @Presents var cameraResult: PostFootstepFeature.State?
         var viewFinderImage: Image?
-        var disableDismissAnimation: Bool = true
         
         var isFlipped: Bool = false
         var flipDegree: Double = 0.0 {
@@ -61,10 +60,8 @@ public struct CaptureImageFeature {
         Reduce { state, action in
             switch action {
                 
-                // MARK: View Life Cycle
-                
+            // MARK: View Life Cycle
             case .viewWillAppear:
-                
                 return .run { send in
                     await cameraClient.start()
                     
@@ -78,8 +75,7 @@ public struct CaptureImageFeature {
                     }
                 }
                 
-                // MARK: - Image
-                
+            // MARK: - Image
             case let .viewFinderUpdate(image):
                 state.viewFinderImage = image
                 return .none

@@ -58,16 +58,15 @@ public struct MainTabView: View {
             }
         }
         .tint(DesignSystemAsset.Colors.accentColor.swiftUIColor)
-        .fullScreenCover(store: self.store.scope(
-            state: \.$usingCamera,
-            action: \.usingCamera)
+        .fullScreenCover(
+            store: self.store.scope(
+                state: \.$usingCamera,
+                action: \.usingCamera
+            )
         ) { store in
             NavigationStack {
                 CaptureImageView(store: store)
             }
-        }
-        .transaction { transaction in
-            transaction.disablesAnimations = store.disableDismissAnimation
         }
     }
 }

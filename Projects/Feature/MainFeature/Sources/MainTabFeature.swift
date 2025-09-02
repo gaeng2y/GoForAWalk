@@ -22,7 +22,6 @@ public struct MainTabFeature {
         var profile: ProfileFeature.State = .init()
         @Presents var usingCamera: CaptureImageFeature.State?
         var image: Image?
-        var disableDismissAnimation: Bool = false
         
         public init() {}
     }
@@ -54,12 +53,10 @@ public struct MainTabFeature {
                 
             case .presentCaptureImage:
                 state.currentTab = .home
-                state.disableDismissAnimation = false
                 state.usingCamera = CaptureImageFeature.State()
                 return .none
                 
             case let .usingCamera(.presented(.delegate(.savePhoto(image)))):
-                state.disableDismissAnimation = true
                 state.image = image
                 return .none
                 

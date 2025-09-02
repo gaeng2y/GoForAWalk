@@ -60,9 +60,6 @@ public struct CaptureImageView: View {
                 PostFootstepView(store: postFootstepFeature)
             }
         }
-        .transaction { transaction in
-            transaction.disablesAnimations = store.disableDismissAnimation
-        }
     }
     
     private var viewFinder: some View {

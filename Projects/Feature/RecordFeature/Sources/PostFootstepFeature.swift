@@ -18,6 +18,7 @@ public struct PostFootstepFeature {
         var resultImage: Image
         var todaysMessage: String = ""
         let maxCharacterCount = 50
+        @Presents var alert: AlertState<Action.Alert>?
     }
     
     public enum Action: BindableAction, Equatable {
@@ -25,10 +26,16 @@ public struct PostFootstepFeature {
         case cancelButtonTapped
         case saveButtonTapped
         case delegate(Delegate)
+        case alert(PresentationAction<Alert>)
+        case showErrorAlert(String)
         
         public enum Delegate: Equatable {
             case savePhotos(Image)
             case dismiss
+        }
+        
+        public enum Alert: Equatable {
+            case confirmError
         }
     }
     
@@ -60,7 +67,9 @@ public struct PostFootstepFeature {
                 
             case .delegate:
                 return .run { [state] send in
-                    let imageData = await ImageRenderer(content: state.resultImage).uiImage?.jpegData(compressionQuality: 0.4)
+                    let imageData = await ImageRenderer(content: state.resultImage)
+                        .uiImage?
+                        .jpegData(compressionQuality: 0.4)
                     guard let imageData else {
                         return
                     }
@@ -69,11 +78,30 @@ public struct PostFootstepFeature {
                         try await feedClient.createFootstep(dto)
                         await send(.delegate(.dismiss))
                     } catch {
-                        print(error.localizedDescription)
+                        await send(.showErrorAlert(error.localizedDescription))
                     }
                 }
                 .cancellable(id: "createFootstep")
+                
+            case .showErrorAlert(let errorMessage):
+                state.alert = AlertState {
+                    TextState("오류")
+                } actions: {
+                    ButtonState(role: .cancel) {
+                        TextState("확인")
+                    }
+                } message: {
+                    TextState("발자취는 하루에 한 번만 등록 가능해요!")
+                }
+                return .none
+                
+            case .alert(.presented(.confirmError)):
+                return .none
+                
+            case .alert:
+                return .none
             }
         }
+        .ifLet(\.$alert, action: \.alert)
     }
 }
