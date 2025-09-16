@@ -28,7 +28,6 @@ public struct MainTabFeature {
     
     public enum Action {
         case selectTab(MainTab)
-        case presentCaptureImage
         
         case feed(FeedFeature.Action)
         case profile(ProfileFeature.Action)
@@ -48,16 +47,21 @@ public struct MainTabFeature {
         Reduce { state, action in
             switch action {
             case .selectTab(let tab):
-                state.currentTab = tab
-                return .none
-                
-            case .presentCaptureImage:
-                state.currentTab = .home
-                state.usingCamera = CaptureImageFeature.State()
+                switch tab {
+                case .record:
+                    state.currentTab = .home
+                    state.usingCamera = CaptureImageFeature.State()
+                default:
+                    state.currentTab = tab   
+                }
                 return .none
                 
             case let .usingCamera(.presented(.delegate(.savePhoto(image)))):
                 state.image = image
+                return .none
+                
+            case .usingCamera(.dismiss):
+                state.usingCamera = nil
                 return .none
                 
             default:

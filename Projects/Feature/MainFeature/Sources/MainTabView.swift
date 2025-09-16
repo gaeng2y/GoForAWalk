@@ -39,9 +39,6 @@ public struct MainTabView: View {
             
             Tab(MainTab.record.title, systemImage: MainTab.record.imageName, value: MainTab.record) {
                 Text("등록")
-                    .onAppear {
-                        store.send(.presentCaptureImage)
-                    }
             }
             
             Tab(
