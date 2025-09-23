@@ -1,5 +1,5 @@
 import Foundation
-import NetworkInterface
+import NetworkingInterface
 import KeyChainStore
 
 public final class NetworkProviderImpl: NetworkProvider {

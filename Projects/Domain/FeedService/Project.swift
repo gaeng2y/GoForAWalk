@@ -9,14 +9,14 @@ let project = Project.module(
             module: .domain(.FeedService),
             dependencies: [
                 .domain(target: .Auth),
-                .core(target: .Network, type: .interface)
+                .core(target: .Networking, type: .interface)
             ]
         ),
         .implements(
             module: .domain(.FeedService),
             dependencies: [
                 .domain(target: .FeedService, type: .interface),
-                .core(target: .Network),
+                .core(target: .Networking),
                 .shared(target: .GlobalThirdPartyLibrary)
             ]
         ),

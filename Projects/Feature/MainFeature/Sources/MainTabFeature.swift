@@ -10,7 +10,7 @@ import ComposableArchitecture
 import FeedFeature
 import ProfileFeature
 import RecordFeature
-import SwiftUICore
+import SwiftUI
 
 @Reducer
 public struct MainTabFeature {

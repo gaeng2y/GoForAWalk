@@ -6,7 +6,7 @@
 //
 
 import Foundation
-import NetworkInterface
+import NetworkingInterface
 
 public struct AuthEndpoint {
     public static func signIn(

@@ -15,7 +15,7 @@ let project = Project.module(
             module: .domain(.Auth),
             dependencies: [
                 .domain(target: .Auth, type: .interface),
-                .core(target: .Network),
+                .core(target: .Networking),
                 .core(target: .KeyChainStore),
                 .shared(target: .GlobalThirdPartyLibrary)
             ]

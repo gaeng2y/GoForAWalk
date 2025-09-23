@@ -8,7 +8,7 @@
 
 import Auth
 import Foundation
-import NetworkInterface
+import NetworkingInterface
 
 public struct FeedEndpoint {
     public static func fetchFootsteps() -> EndPoint<FetchFootstepsResponseDTO> {

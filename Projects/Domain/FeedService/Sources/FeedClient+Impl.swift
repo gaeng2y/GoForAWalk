@@ -9,7 +9,7 @@
 import FeedServiceInterface
 import ComposableArchitecture
 import Foundation
-import Network
+import Networking
 
 extension FeedClient: DependencyKey {
     public static let liveValue = FeedClient(

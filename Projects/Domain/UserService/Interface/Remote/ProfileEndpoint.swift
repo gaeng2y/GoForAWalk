@@ -8,7 +8,7 @@
 
 import Auth
 import Foundation
-import NetworkInterface
+import NetworkingInterface
 
 public struct ProfileEndpoint {
     public static func fetchUserProfile() -> EndPoint<ProfileResponseDTO> {

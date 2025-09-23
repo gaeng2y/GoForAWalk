@@ -9,7 +9,7 @@
 import UserServiceInterface
 import ComposableArchitecture
 import Foundation
-import Network
+import Networking
 
 extension ProfileClient: DependencyKey {
     public static var liveValue: ProfileClient = .init(

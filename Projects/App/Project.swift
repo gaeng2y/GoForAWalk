@@ -32,7 +32,7 @@ let targets: [Target] = [
             .feature(target: .MainFeature),
             .domain(target: .Auth),
             .core(target: .KeyChainStore),
-            .core(target: .Network)
+            .core(target: .Networking)
         ],
         settings: .settings(base: env.baseSetting)
     )

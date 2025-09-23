@@ -38,7 +38,6 @@ public struct CaptureImageFeature {
         case moveToCameraResult(Image)
         
         case shutterTapped
-        case switchButtonTapped
         case dismissButtonTapped
         
         case flipDegreeUpdate
@@ -69,9 +68,8 @@ public struct CaptureImageFeature {
                         .map { $0.image }
                     
                     for await image in imageStream {
-                        Task { @MainActor in
-                            send(.viewFinderUpdate(image))
-                        }
+                        print(image)
+                        await send(.viewFinderUpdate(image))
                     }
                 }
                 
@@ -94,15 +92,6 @@ public struct CaptureImageFeature {
                 return .run { send in
                     let resultImage = await cameraClient.takePhoto()
                     await send(.moveToCameraResult(resultImage))
-                }
-                
-            case .switchButtonTapped:
-                state.flipImage = state.viewFinderImage
-                state.viewFinderImage = nil
-                
-                return .run { send in
-                    await cameraClient.switchCaptureDevice()
-                    await send(.flipImageRemove)
                 }
                 
             case .dismissButtonTapped:

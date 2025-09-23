@@ -8,7 +8,7 @@
 import AuthInterface
 import ComposableArchitecture
 import Foundation
-import Network
+import Networking
 
 extension AuthClient: DependencyKey {
     public static let liveValue = AuthClient(

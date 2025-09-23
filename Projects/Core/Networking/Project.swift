@@ -3,30 +3,30 @@ import ProjectDescription
 import ProjectDescriptionHelpers
 
 let project = Project.module(
-    name: ModulePaths.Core.Network.rawValue,
+    name: ModulePaths.Core.Networking.rawValue,
     targets: [
         .interface(
-            module: .core(.Network),
+            module: .core(.Networking),
             dependencies: []
         ),
         .implements(
-            module: .core(.Network),
+            module: .core(.Networking),
             dependencies: [
-                .core(target: .Network, type: .interface),
+                .core(target: .Networking, type: .interface),
                 .core(target: .KeyChainStore),
                 .shared(target: .Util)
             ]
         ),
         .testing(
-            module: .core(.Network),
+            module: .core(.Networking),
             dependencies: [
-                .core(target: .Network, type: .interface)
+                .core(target: .Networking, type: .interface)
             ]
         ),
         .tests(
-            module: .core(.Network),
+            module: .core(.Networking),
             dependencies: [
-                .core(target: .Network)
+                .core(target: .Networking)
             ]
         )
     ]
