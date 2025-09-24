@@ -100,19 +100,21 @@ public class Camera: NSObject {
     private var addToPhotoStream: ((AVCapturePhoto) -> Void)?
     
     private var addToPreviewStream: ((CIImage) -> Void)?
-    
+    private var previewStreamContinuation: AsyncStream<CIImage>.Continuation?
+
     private(set) var isPreviewPaused = false
-    
+
     // 현재 촬영 중인 비디오를 보여주는 stream -> 비디오를 화면에 보여줌
-    public lazy var previewStream: AsyncStream<CIImage> = {
+    public var previewStream: AsyncStream<CIImage> {
         AsyncStream { continuation in
+            self.previewStreamContinuation = continuation
             addToPreviewStream = { ciImage in
                 if !self.isPreviewPaused {
                     continuation.yield(ciImage)
                 }
             }
         }
-    }()
+    }
     
     // 사진 stream
     lazy var photoStream: AsyncStream<AVCapturePhoto> = {
@@ -299,12 +301,17 @@ public class Camera: NSObject {
     
     public func stop() {
         guard isCaptureSessionConfigured else { return }
-        
+
         if captureSession.isRunning {
             sessionQueue.async {
                 self.captureSession.stopRunning()
             }
         }
+
+        // Clean up stream continuation when stopping
+        previewStreamContinuation?.finish()
+        previewStreamContinuation = nil
+        addToPreviewStream = nil
     }
     
     // 카메라 전면 <-> 후면 전환
