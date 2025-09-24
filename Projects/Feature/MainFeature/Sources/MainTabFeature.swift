@@ -17,12 +17,13 @@ public struct MainTabFeature {
     @ObservableState
     public struct State {
         var currentTab: MainTab = .home
-        
+        var previousTab: MainTab = .home
+
         var feed: FeedFeature.State = .init()
         var profile: ProfileFeature.State = .init()
         @Presents var usingCamera: CaptureImageFeature.State?
         var image: Image?
-        
+
         public init() {}
     }
     
@@ -49,10 +50,11 @@ public struct MainTabFeature {
             case .selectTab(let tab):
                 switch tab {
                 case .record:
-                    state.currentTab = .home
+                    state.previousTab = state.currentTab
+                    state.currentTab = tab
                     state.usingCamera = CaptureImageFeature.State()
                 default:
-                    state.currentTab = tab   
+                    state.currentTab = tab
                 }
                 return .none
                 
@@ -62,6 +64,7 @@ public struct MainTabFeature {
                 
             case .usingCamera(.dismiss):
                 state.usingCamera = nil
+                state.currentTab = state.previousTab
                 return .none
                 
             default:
