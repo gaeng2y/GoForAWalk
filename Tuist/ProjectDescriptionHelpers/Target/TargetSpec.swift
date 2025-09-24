@@ -33,7 +33,7 @@ public struct TargetSpec: Configurable {
         productName: String? = nil,
         bundleId: String? = nil,
         deploymentTargets: DeploymentTargets? = env.deploymentTargets,
-        infoPlist: InfoPlist = .default,
+        infoPlist: InfoPlist = .extendingDefault(with: AppVersion.infoPlist),
         sources: SourceFilesList? = .sources,
         resources: ResourceFileElements? = nil,
         copyFiles: [CopyFilesAction]? = nil,
@@ -96,7 +96,8 @@ public struct TargetSpec: Configurable {
             dependencies: dependencies,
             settings: settings ?? .settings(
                 base: env.baseSetting
-                    .merging((product ?? self.product) == .framework ? .allLoadLDFlags : .ldFlags),
+                    .merging((product ?? self.product) == .framework ? .allLoadLDFlags : .ldFlags)
+                    .merging(AppVersion.buildSettings),
                 configurations: .default,
                 defaultSettings: .recommended
             ),

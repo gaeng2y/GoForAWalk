@@ -51,7 +51,8 @@ public extension Project {
             base: env.baseSetting
                 .merging(.codeSign)
                 .merging(settings)
-                .merging(ldFlagsSettings),
+                .merging(ldFlagsSettings)
+                .merging(AppVersion.buildSettings),
             configurations: configurations,
             defaultSettings: .recommended
         )
@@ -68,7 +69,7 @@ public extension Project {
                     product: .framework,
                     bundleId: "\(env.organizationName).\(name)Interface",
                     deploymentTargets: env.deploymentTargets,
-                    infoPlist: .default,
+                    infoPlist: .extendingDefault(with: AppVersion.infoPlist),
                     sources: .interface,
                     scripts: scripts,
                     dependencies: interfaceDependencies,
@@ -85,7 +86,7 @@ public extension Project {
                 product: product,
                 bundleId: "\(env.organizationName).\(name)",
                 deploymentTargets: env.deploymentTargets,
-                infoPlist: .extendingDefault(with: additionalPlistRows),
+                infoPlist: .extendingDefault(with: additionalPlistRows.merging(AppVersion.infoPlist) { _, new in new }),
                 sources: sources,
                 resources: resources,
                 scripts: scripts,
@@ -102,7 +103,7 @@ public extension Project {
                     product: .framework,
                     bundleId: "\(env.organizationName).\(name)Testing",
                     deploymentTargets: env.deploymentTargets,
-                    infoPlist: .default,
+                    infoPlist: .extendingDefault(with: AppVersion.infoPlist),
                     sources: .testing,
                     scripts: scripts,
                     dependencies: [
@@ -130,7 +131,7 @@ public extension Project {
                     product: .unitTests,
                     bundleId: "\(env.organizationName).\(name)Tests",
                     deploymentTargets: env.deploymentTargets,
-                    infoPlist: .default,
+                    infoPlist: .extendingDefault(with: AppVersion.infoPlist),
                     sources: .unitTests,
                     scripts: scripts,
                     dependencies: testTargetDependencies + unitTestDependencies
@@ -147,7 +148,7 @@ public extension Project {
                     product: .uiTests,
                     bundleId: "\(env.organizationName).\(name)UITests",
                     deploymentTargets: env.deploymentTargets,
-                    infoPlist: .default,
+                    infoPlist: .extendingDefault(with: AppVersion.infoPlist),
                     scripts: scripts,
                     dependencies: testTargetDependencies + uiTestDependencies
                 )

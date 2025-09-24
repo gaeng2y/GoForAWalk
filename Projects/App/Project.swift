@@ -8,7 +8,11 @@ import ProjectDescriptionHelpers
 let configurations: [Configuration] = .default
 
 let settings: Settings = .settings(
-    base: env.baseSetting,
+    base: env.baseSetting
+        .merging(AppVersion.buildSettings)
+        .merging([
+            "INFOPLIST_KEY_CFBundleDisplayName": SettingValue(stringLiteral: AppVersion.displayName)
+        ]),
     configurations: configurations,
     defaultSettings: .recommended
 )
