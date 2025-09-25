@@ -5,7 +5,7 @@
 	<key>BASE_URL</key>
 	<string>https://api.goforawalk.site/</string>
 	<key>CFBundleDisplayName</key>
-	<string>$(PRODUCT_NAME)</string>
+	<string>걷는</string>
 	<key>BASE_URL_PREFIX</key>
 	<string>api/v1/</string>
 	<key>CFBundleDevelopmentRegion</key>
