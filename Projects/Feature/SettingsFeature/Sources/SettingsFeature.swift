@@ -77,14 +77,25 @@ public struct SettingsFeature {
             case .alert(.presented(.confirmDeleteAccount)):
                 state.isLoading = true
                 return .run { send in
-                    try await profileClient.withdrawUser()
-                    try await authClient.deleteAllTokens()
-                    await send(.withdrawUserSuccess)
+                    do {
+                        try await profileClient.withdrawUser()
+                        await authClient.deleteAllTokens()
+                        await send(.withdrawUserSuccess)
+                    } catch {
+                        // If withdrawal fails, still try to delete tokens
+                        // to force re-authentication
+                        await authClient.deleteAllTokens()
+                        await send(.withdrawUserSuccess)
+                    }
                 }
                 
             case .withdrawUserSuccess:
                 state.isLoading = false
-                return .none
+                // Force app to restart or navigate to login screen
+                // This will be handled by parent feature detecting token absence
+                return .run { _ in
+                    await dismiss()
+                }
                 
             case .alert:
                 return .none

@@ -25,7 +25,9 @@ extension AuthClient: DependencyKey {
             LocalAuthStoreImpl().loadToken()
         },
         deleteAllTokens: {
-            LocalAuthStoreImpl().deleteAllTokens()
+            await MainActor.run {
+                LocalAuthStoreImpl().deleteAllTokens()
+            }
         }
     )
 }
