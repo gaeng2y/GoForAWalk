@@ -105,23 +105,28 @@ public struct SignInFeature {
                         }
                     }, message: {
                         TextState(error.localizedDescription)
-                    })
+                    }
+                )
                 return .none
                 
             case let .signInWithAppleCredential(authorization):
                 state.isLoading = true
                 
-                return .run { send in
-                    if let credential = authorization.credential as? ASAuthorizationAppleIDCredential,
-                       let identityToken = credential.identityToken {
-                        let (token, _) = try await authClient.signIn(.apple, String(data: identityToken, encoding: .utf8) ?? "")
-                        authClient.saveToken(token)
-                        await send(.isAlreadyAuthorized)
-                    } else {
-                        await send(.signInWithAppleError(NSError(domain: "AppleSignInError", code: 999)))
+                return .run(
+                    operation: { send in
+                        if let credential = authorization.credential as? ASAuthorizationAppleIDCredential,
+                           let identityToken = credential.identityToken {
+                            let (token, _) = try await authClient.signIn(.apple, String(data: identityToken, encoding: .utf8) ?? "")
+                            authClient.saveToken(token)
+                            await send(.isAlreadyAuthorized)
+                        } else {
+                            await send(.signInWithAppleError(NSError(domain: "AppleSignInError", code: 999)))
+                        }
+                    },
+                    catch: { error, send in
+                        await send(.signInWithAppleError(error))
                     }
-                }
-                
+                )
             case let .signInWithAppleError(error):
                 state.isLoading = false
                 state.alert = AlertState(

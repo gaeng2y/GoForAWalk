@@ -30,10 +30,15 @@ public struct SettingsFeature {
         case showDeleteAlert
         case alert(PresentationAction<Alert>)
         case withdrawUserSuccess
-        
+        case delegate(Delegate)
+
         @CasePathable
         public enum Alert {
             case confirmDeleteAccount
+        }
+
+        public enum Delegate {
+            case userDidLogout
         }
     }
     
@@ -91,13 +96,15 @@ public struct SettingsFeature {
                 
             case .withdrawUserSuccess:
                 state.isLoading = false
-                // Force app to restart or navigate to login screen
-                // This will be handled by parent feature detecting token absence
-                return .run { _ in
+                return .run { send in
+                    await send(.delegate(.userDidLogout))
                     await dismiss()
                 }
                 
             case .alert:
+                return .none
+
+            case .delegate:
                 return .none
             }
         }

@@ -27,6 +27,11 @@ public struct ProfileFeature {
         case fetchProfile(Profile)
         case path(StackAction<Path.State, Path.Action>)
         case navigateToSettings
+        case delegate(Delegate)
+
+        public enum Delegate {
+            case userDidLogout
+        }
     }
     
     @Reducer(state: .equatable)
@@ -50,12 +55,18 @@ public struct ProfileFeature {
             case .fetchProfile(let profile):
                 state.profile = profile
                 return .none
-                
+
+            case .path(.element(id: _, action: .settings(.delegate(.userDidLogout)))):
+                return .send(.delegate(.userDidLogout))
+
             case .path:
                 return .none
-                
+
             case .navigateToSettings:
                 state.path.append(.settings(SettingsFeature.State()))
+                return .none
+
+            case .delegate:
                 return .none
             }
         }

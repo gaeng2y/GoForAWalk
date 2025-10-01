@@ -27,6 +27,7 @@ public struct RootFeature {
     public enum Action {
         case signIn(SignInFeature.Action)
         case mainTab(MainTabFeature.Action)
+        case logout
     }
     
     public init() {}
@@ -37,12 +38,19 @@ public struct RootFeature {
             case .signIn(.isAlreadyAuthorized):
                 state.isSignIn = true
                 return .none
-                
+
+            case .mainTab(.delegate(.userDidLogout)):
+                return .send(.logout)
+
+            case .logout:
+                state.isSignIn = false
+                return .none
+
             default:
                 return .none
             }
         }
-        
+
         Scope(state: \.mainTab, action: \.mainTab) {
             MainTabFeature()
         }

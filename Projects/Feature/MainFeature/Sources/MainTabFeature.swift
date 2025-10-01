@@ -29,10 +29,15 @@ public struct MainTabFeature {
     
     public enum Action {
         case selectTab(MainTab)
-        
+
         case feed(FeedFeature.Action)
         case profile(ProfileFeature.Action)
         case usingCamera(PresentationAction<CaptureImageFeature.Action>)
+        case delegate(Delegate)
+
+        public enum Delegate {
+            case userDidLogout
+        }
     }
     
     public init() {}
@@ -66,7 +71,13 @@ public struct MainTabFeature {
                 state.usingCamera = nil
                 state.currentTab = state.previousTab
                 return .none
-                
+
+            case .profile(.delegate(.userDidLogout)):
+                return .send(.delegate(.userDidLogout))
+
+            case .delegate:
+                return .none
+
             default:
                 return .none
             }
