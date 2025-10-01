@@ -3,7 +3,7 @@
 <plist version="1.0">
 <dict>
 	<key>BASE_URL</key>
-	<string>https://api.goforawalk.site/</string>
+	<string>https://api-goforawalk.haero77.org/</string>
 	<key>CFBundleDisplayName</key>
 	<string>걷는</string>
 	<key>BASE_URL_PREFIX</key>
