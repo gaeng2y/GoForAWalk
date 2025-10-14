@@ -27,7 +27,8 @@ public struct FootstepsResponseDTO: Decodable {
         let formatter = ISO8601DateFormatter()
         formatter.formatOptions = [
             .withInternetDateTime,
-            .withTimeZone
+            .withTimeZone,
+            .withFractionalSeconds
         ]
         return .init(
             id: id,
