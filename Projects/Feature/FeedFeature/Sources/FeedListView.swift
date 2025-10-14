@@ -19,22 +19,20 @@ public struct FeedListView: View {
     
     public var body: some View {
         ScrollView {
-            VStack {
-                
-                if store.footsteps.isEmpty {
-                    Text("아직 발자취가 없어요.\n첫 발자취를 남겨볼까요?")
-                        .multilineTextAlignment(.center)
-                } else {
-                    LazyVStack {
-                        ForEach(store.footsteps) { footsteps in
-                            FeedCell(footstep: footsteps) { footstep in
-                                store.send(.footstepCellMenuTapped(footstep.id))
-                            }
-                            .padding(.vertical, 5)
-                            .padding(.horizontal, 10)
+            if store.footsteps.isEmpty {
+                Text("아직 발자취가 없어요.\n첫 발자취를 남겨볼까요?")
+                    .multilineTextAlignment(.center)
+                    .padding(.top, 40)
+            } else {
+                LazyVStack(spacing: 12) {
+                    ForEach(store.footsteps) { footsteps in
+                        FeedCell(footstep: footsteps) { footstep in
+                            store.send(.footstepCellMenuTapped(footstep.id))
                         }
+                        .padding(.horizontal, 16)
                     }
                 }
+                .padding(.vertical, 8)
             }
         }
         .navigationTitle("홈")
