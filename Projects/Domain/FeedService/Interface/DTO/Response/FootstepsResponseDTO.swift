@@ -9,6 +9,12 @@
 import Foundation
 
 public struct FootstepsResponseDTO: Decodable {
+    let id: Int
+    let userNickname: String
+    let content: String?
+    let imageUrl: String
+    let createdAt: String
+    
     private enum CodingKeys: String, CodingKey {
         case id = "footstepId"
         case userNickname
@@ -17,22 +23,21 @@ public struct FootstepsResponseDTO: Decodable {
         case createdAt
     }
     
-    let id: Int
-    let userNickname: String
-    let content: String?
-    let imageUrl: String
-    let createdAt: String
-    
-    public func toDomain() -> Footstep {
+    private static let iso8601DateFormatter: ISO8601DateFormatter = {
         let formatter = ISO8601DateFormatter()
         formatter.formatOptions = [
             .withInternetDateTime,
-            .withTimeZone
+            .withTimeZone,
+            .withFractionalSeconds
         ]
-        return .init(
+        return formatter
+    }()
+    
+    public func toDomain() -> Footstep {
+        Footstep(
             id: id,
             userNickname: userNickname,
-            createdAt: formatter.date(from: createdAt) ?? .now,
+            createdAt: Self.iso8601DateFormatter.date(from: createdAt) ?? .now,
             imageUrl: URL(string: imageUrl),
             content: content
         )
