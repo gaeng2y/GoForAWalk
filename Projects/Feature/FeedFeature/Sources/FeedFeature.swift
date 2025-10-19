@@ -44,8 +44,12 @@ public struct FeedFeature {
                 
             case .footstepCellMenuTapped(let id):
                 return .run { send in
-                    try await feedClient.deleteFootstep(id)
-                    await send(.onAppear)
+                    do {
+                        try await feedClient.deleteFootstep(id)
+                        await send(.onAppear)
+                    } catch {
+                        print(error.localizedDescription)
+                    }
                 }
             }
         }
