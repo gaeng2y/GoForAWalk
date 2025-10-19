@@ -54,7 +54,7 @@ public final class NetworkProviderImpl: NetworkProvider {
             print("responseJsonString: \(responseJsonString)")
         }
         
-        if let emptyResponse = try JSONDecoder().decode(EmptyData.self, from: data) as? T, data.isEmpty {
+        if data.isEmpty, let emptyResponse = EmptyData() as? T {
             return emptyResponse
         }
         
