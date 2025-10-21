@@ -8,7 +8,9 @@
 
 import Foundation
 
-public struct EmptyData: Decodable, Equatable { }
+public struct EmptyData: Decodable, Equatable {
+    public init() {}
+}
 
 public protocol Responsable {
     associatedtype Response
