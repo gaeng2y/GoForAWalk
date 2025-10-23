@@ -12,8 +12,8 @@ public struct ProjectEnvironment {
 public let env = ProjectEnvironment(
     name: "GoForAWalk",
     organizationName: "com.gaeng2y",
-    destinations: .iOS,
-    deploymentTargets: .multiplatform(iOS: "18.0"),
+    destinations: [.iPhone],
+    deploymentTargets: .iOS("18.0"),
     baseSetting: [
         "DEVELOPMENT_TEAM": "8UV3Y69NB7"
     ]

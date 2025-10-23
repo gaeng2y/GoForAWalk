@@ -104,3 +104,6 @@ Derived/
 *.xcworkspace
 *.xcodeproj
 master.key
+
+### Claude Code ###
+.claude/
