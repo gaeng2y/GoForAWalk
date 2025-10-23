@@ -2,7 +2,7 @@ import ProjectDescription
 
 public struct AppVersion {
     public static let marketing = "1.0.0"
-    public static let build = "6"
+    public static let build = "7"
     public static let displayName = "걷는"
 
     public static var infoPlist: [String: Plist.Value] {
