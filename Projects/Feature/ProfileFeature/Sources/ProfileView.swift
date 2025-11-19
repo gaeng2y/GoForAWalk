@@ -27,7 +27,7 @@ public struct ProfileView: View {
                         .bold()
                     
                     Button {
-                        print("닉네임 변경")
+                        store.send(.showNicknameChangeAlert)
                     } label: {
                         Image(systemName: "pencil.line")
                             .foregroundStyle(.black)
@@ -78,6 +78,25 @@ public struct ProfileView: View {
         }
         .onAppear {
             store.send(.onAppear)
+        }
+        .alert("닉네임 변경", isPresented: $store.isShowingNicknameAlert) {
+            TextField("새 닉네임 (최대 8자)", text: $store.nicknameInput)
+                .onChange(of: store.nicknameInput) { _, newValue in
+                    if newValue.count > 8 {
+                        store.nicknameInput = String(newValue.prefix(8))
+                    }
+                }
+
+            Button("취소", role: .cancel) {
+                store.send(.cancelNicknameChange)
+            }
+
+            Button("확인") {
+                store.send(.confirmNicknameChange)
+            }
+            .disabled(store.nicknameInput.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty)
+        } message: {
+            Text("새로운 닉네임을 입력하세요 (최대 8자)")
         }
     }
 }

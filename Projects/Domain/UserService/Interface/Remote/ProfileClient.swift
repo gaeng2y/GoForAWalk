@@ -11,12 +11,15 @@ import Foundation
 public struct ProfileClient {
     public var fetchProfile: @Sendable () async throws -> Profile
     public var withdrawUser: @Sendable () async throws -> Void
+    public var changeNickname: @Sendable (String) async throws -> Void
     
     public init(
         fetchProfile: @escaping @Sendable () async throws -> Profile,
-        withdrawUser: @escaping @Sendable () async throws -> Void
+        withdrawUser: @escaping @Sendable () async throws -> Void,
+        changeNickname: @escaping @Sendable (String) async throws -> Void
     ) {
         self.fetchProfile = fetchProfile
         self.withdrawUser = withdrawUser
+        self.changeNickname = changeNickname
     }
 }
