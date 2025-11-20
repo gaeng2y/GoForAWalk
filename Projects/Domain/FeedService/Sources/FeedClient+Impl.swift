@@ -27,6 +27,11 @@ extension FeedClient: DependencyKey {
         createFootstep: { body in
             let endpoint = FeedEndpoint.createFootstep(with: body)
             _ = try await NetworkProviderImpl.shared.request(endpoint)
+        },
+        checkTodayAvailability: {
+            let endpoint = FeedEndpoint.checkTodayAvailability()
+            let response = try await NetworkProviderImpl.shared.request(endpoint)
+            return response.toDomain()
         }
     )
 }
@@ -37,13 +42,21 @@ extension FeedClient: TestDependencyKey {
             return [.mock, .mock, .mock, .mock, .mock]
         },
         deleteFootstep: unimplemented("\(Self.self).deleteFootstep"),
-        createFootstep: unimplemented("\(Self.self).createFootstep")
+        createFootstep: unimplemented("\(Self.self).createFootstep"),
+        checkTodayAvailability: {
+            return TodayFootstepAvailability(
+                canCreateToday: true,
+                todayDate: "2025-11-20",
+                existingFootstep: nil
+            )
+        }
     )
-    
+
     public static let testValue = Self(
         fetchFootsteps: unimplemented("\(Self.self).fetchFootsteps"),
         deleteFootstep: unimplemented("\(Self.self).deleteFootstep"),
-        createFootstep: unimplemented("\(Self.self).createFootstep")
+        createFootstep: unimplemented("\(Self.self).createFootstep"),
+        checkTodayAvailability: unimplemented("\(Self.self).checkTodayAvailability")
     )
 }
 

@@ -65,6 +65,12 @@ public struct MainTabView: View {
                 CaptureImageView(store: store)
             }
         }
+        .alert(
+            store: self.store.scope(
+                state: \.$alert,
+                action: \.alert
+            )
+        )
     }
 }
 
