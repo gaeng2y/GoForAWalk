@@ -33,7 +33,7 @@ public struct FeedEndpoint {
             "Authorization": "Bearer \(LocalAuthStoreImpl().loadToken().accessToken)",
             "Content-Type": "multipart/form-data; boundary=\(boundary)"
         ]
-        
+
         let httpBody = createMultipartBody(
             with: body,
             boundary: boundary
@@ -44,6 +44,14 @@ public struct FeedEndpoint {
             httpMethod: .post,
             bodyParameters: httpBody,
             headers: headers
+        )
+    }
+    
+    public static func checkTodayAvailability() -> EndPoint<TodayFootstepAvailabilityResponseDTO> {
+        EndPoint(
+            path: "footsteps/today/availability",
+            httpMethod: .get,
+            headers: ["Authorization": "Bearer \(LocalAuthStoreImpl().loadToken().accessToken)"]
         )
     }
     
