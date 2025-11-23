@@ -26,4 +26,13 @@ public struct ProfileEndpoint {
             headers: ["Authorization": "Bearer \(LocalAuthStoreImpl().loadToken().accessToken)"]
         )
     }
+    
+    public static func changeNickname(with dto: ChangeNicknameRequestDTO) -> EndPoint<EmptyData> {
+        EndPoint(
+            path: "users/me/nickname",
+            httpMethod: .patch,
+            bodyParameters: dto,
+            headers: ["Authorization": "Bearer \(LocalAuthStoreImpl().loadToken().accessToken)"]
+        )
+    }
 }

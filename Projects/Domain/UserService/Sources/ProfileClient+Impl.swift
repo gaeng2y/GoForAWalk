@@ -22,6 +22,12 @@ extension ProfileClient: DependencyKey {
             let endpoint = ProfileEndpoint.withdrawUser()
             let response = try await NetworkProviderImpl.shared.request(endpoint)
             print(response)
+        },
+        changeNickname: { nickname in
+            let dto = ChangeNicknameRequestDTO(nickname: nickname)
+            let endpoint = ProfileEndpoint.changeNickname(with: dto)
+            let response = try await NetworkProviderImpl.shared.request(endpoint)
+            print(response)
         }
     )
 }
@@ -29,12 +35,14 @@ extension ProfileClient: DependencyKey {
 extension ProfileClient: TestDependencyKey {
     public static var previewValue: ProfileClient = .init(
         fetchProfile: unimplemented("\(Self.self).fetchProfile"),
-        withdrawUser: unimplemented("\(Self.self).withdrawUser")
+        withdrawUser: unimplemented("\(Self.self).withdrawUser"),
+        changeNickname: unimplemented("\(Self.self).changeNickname")
     )
     
     public static let testValue: ProfileClient = .init(
         fetchProfile: unimplemented("\(Self.self).fetchProfile"),
-        withdrawUser: unimplemented("\(Self.self).withdrawUser")
+        withdrawUser: unimplemented("\(Self.self).withdrawUser"),
+        changeNickname: unimplemented("\(Self.self).changeNickname")
     )
 }
 
