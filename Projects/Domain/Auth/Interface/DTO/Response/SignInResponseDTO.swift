@@ -14,7 +14,7 @@ public struct SignInResponseDTO: Decodable {
     }
     
     public struct UserInfo: Decodable {
-        let email: String?
+        let email: String
         let nickname: String
     }
     
@@ -33,8 +33,12 @@ public struct SignInResponseDTO: Decodable {
     }
     
     public func toDomain() -> (Token, User) {
-        let token = Token(accessToken: credentials.accessToken, userId: "\(userId)")
-        let user = User(nickname: userInfo.nickname, email: userInfo.nickname)
+        let token = Token(
+            accessToken: credentials.accessToken,
+            refreshToken: credentials.refreshToken,
+            userId: "\(userId)"
+        )
+        let user = User(nickname: userInfo.nickname, email: userInfo.email)
         return (token, user)
     }
 }

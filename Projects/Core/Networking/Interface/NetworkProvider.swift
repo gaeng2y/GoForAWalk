@@ -10,4 +10,5 @@ import Foundation
 
 public protocol NetworkProvider {
     func request<N: Networkable, T: Decodable>(_ endpoint: N) async throws -> T where N.Response == T
+    func requestWithoutRetry<N: Networkable, T: Decodable>(_ endpoint: N) async throws -> T where N.Response == T
 }

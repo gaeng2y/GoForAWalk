@@ -16,12 +16,14 @@ public final class LocalAuthStoreImpl: LocalAuthStore {
     public func loadToken() -> Token {
         Token(
             accessToken: KeyChainStore.shared.load(property: .accessToken),
+            refreshToken: KeyChainStore.shared.load(property: .refreshToken),
             userId: KeyChainStore.shared.load(property: .userIdentifier)
         )
     }
-    
+
     public func saveToken(token: Token) {
         KeyChainStore.shared.save(property: .accessToken, value: token.accessToken)
+        KeyChainStore.shared.save(property: .refreshToken, value: token.refreshToken)
         KeyChainStore.shared.save(property: .userIdentifier, value: token.userId)
     }
     

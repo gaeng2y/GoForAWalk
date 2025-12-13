@@ -37,18 +37,20 @@ public enum NetworkError: Error, Equatable {
     case invalidURL
     case failedDecoding
     case failedAuthorization
+    case sessionExpired
     case noResponse
     case badRequest
     case lostConnection
     case internalError
     case unknownError
-    
+
     var messsage: String {
         switch self {
         case .urlRequestError(let urlRequestError): urlRequestError.message
         case .invalidURL: "Invalid URL"
         case .failedDecoding: "Decoding failed"
         case .failedAuthorization: "Authorization failed"
+        case .sessionExpired: "Session expired"
         case .noResponse: "No Response"
         case .badRequest: "Bad Request From Client"
         case .lostConnection: "Connection Lost"

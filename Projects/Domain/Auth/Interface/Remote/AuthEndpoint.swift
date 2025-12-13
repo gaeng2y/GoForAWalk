@@ -19,4 +19,12 @@ public struct AuthEndpoint {
             bodyParameters: requestDTO
         )
     }
+
+    public static func refreshToken(refreshToken: String) -> EndPoint<SignInResponseDTO> {
+        EndPoint(
+            path: "auth/token/refresh",
+            httpMethod: .post,
+            headers: ["Authorization": "Bearer \(refreshToken)"]
+        )
+    }
 }
