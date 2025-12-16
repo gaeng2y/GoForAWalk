@@ -53,6 +53,7 @@ public extension ModulePaths {
 
 public extension ModulePaths {
     enum Shared: String, MicroTargetPathConvertable {
+        case DependencyInjection
         case Util
         case GlobalThirdPartyLibrary
     }
