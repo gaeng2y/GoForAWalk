@@ -9,6 +9,7 @@ public extension TargetDependency.SPM {
     static let kakaoCommon = TargetDependency.external(name:"KakaoSDKCommon")
     static let kakaoAuth = TargetDependency.external(name:"KakaoSDKAuth")
     static let kakaoUser = TargetDependency.external(name:"KakaoSDKUser")
+    static let alamofire = TargetDependency.external(name: "Alamofire")
 }
 
 public extension Package {

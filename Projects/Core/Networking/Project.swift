@@ -14,7 +14,8 @@ let project = Project.module(
             dependencies: [
                 .core(target: .Networking, type: .interface),
                 .core(target: .KeyChainStore),
-                .shared(target: .Util)
+                .shared(target: .Util),
+                .SPM.alamofire
             ]
         ),
         .testing(
