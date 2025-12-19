@@ -8,13 +8,13 @@
 import AuthInterface
 import Foundation
 
-public struct SignInResponseDTO: Decodable {
-    public struct Credentials: Decodable {
+struct SignInResponseDTO: Decodable {
+    struct Credentials: Decodable {
         let accessToken: String
         let refreshToken: String
     }
     
-    public struct UserInfo: Decodable {
+    struct UserInfo: Decodable {
         let email: String?
         let nickname: String
     }
@@ -23,7 +23,7 @@ public struct SignInResponseDTO: Decodable {
     let credentials: Credentials
     let userInfo: UserInfo
     
-    public init(
+    init(
         userId: Int,
         credentials: Credentials,
         userInfo: UserInfo
@@ -33,7 +33,7 @@ public struct SignInResponseDTO: Decodable {
         self.userInfo = userInfo
     }
     
-    public func toDomain() -> (Token, User) {
+    func toDomain() -> (Token, User) {
         let token = Token(
             accessToken: credentials.accessToken,
             refreshToken: credentials.refreshToken

@@ -14,6 +14,8 @@ import FeedServiceInterface
 import Foundation
 import KeyChainStoreInterface
 import NetworkingInterface
+import UserService
+import UserServiceInterface
 
 // MARK: - AuthClient
 
@@ -39,6 +41,16 @@ private enum FeedClientKey: DependencyKey {
     }
 }
 
+// MARK: - ProfileClient
+
+private enum ProfileClientKey: DependencyKey {
+    static var liveValue: any ProfileClient {
+        @Dependency(\.networkService) var networkService
+        
+        return ProfileClientImpl(networkService: networkService)
+    }
+}
+
 // MARK: - DependencyValues
 
 extension DependencyValues {
@@ -50,5 +62,10 @@ extension DependencyValues {
     public var feedClient: any FeedClient {
         get { self[FeedClientKey.self] }
         set { self[FeedClientKey.self] = newValue }
+    }
+    
+    public var profileClient: any ProfileClient {
+        get { self[ProfileClientKey.self] }
+        set { self[ProfileClientKey.self] = newValue }
     }
 }

@@ -8,7 +8,7 @@
 
 import Foundation
 
-public struct CreateFootstepResponseDTO: Decodable, Sendable {
+struct CreateFootstepResponseDTO: Decodable, Sendable {
     let userId: Int
     let userNickname: String
     let footstepId: Int

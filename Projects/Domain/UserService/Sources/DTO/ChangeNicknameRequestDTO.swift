@@ -8,7 +8,7 @@
 
 import Foundation
 
-public struct ChangeNicknameRequestDTO: Encodable {
+public struct ChangeNicknameRequestDTO: Encodable, Sendable {
     let nickname: String
     
     public init(nickname: String) {

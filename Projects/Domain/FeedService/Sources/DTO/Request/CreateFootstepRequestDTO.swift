@@ -10,12 +10,12 @@
 import FeedServiceInterface
 import Foundation
 
-public struct CreateFootstepRequestDTO: Encodable, Sendable {
-    public let data: Data
-    public let content: String
-    public let fileName: String // 예: "image.jpg"
+struct CreateFootstepRequestDTO: Encodable, Sendable {
+    let data: Data
+    let content: String
+    let fileName: String // 예: "image.jpg"
     
-    public init(
+    init(
         data: Data,
         content: String,
         fileName: String = "image.jpg"

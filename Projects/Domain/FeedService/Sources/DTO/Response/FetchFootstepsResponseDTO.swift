@@ -17,11 +17,11 @@
 import FeedServiceInterface
 import Foundation
 
-public struct FetchFootstepsResponseDTO: Decodable, Sendable {
-    public let footsteps: [FootstepsResponseDTO]
+struct FetchFootstepsResponseDTO: Decodable, Sendable {
+    let footsteps: [FootstepsResponseDTO]
 }
 
-public struct FootstepsResponseDTO: Decodable {
+struct FootstepsResponseDTO: Decodable {
     let id: Int
     let userNickname: String
     let content: String?
@@ -36,7 +36,7 @@ public struct FootstepsResponseDTO: Decodable {
         case createdAt
     }
     
-    public func toDomain() -> Footstep {
+    func toDomain() -> Footstep {
         Footstep(
             id: id,
             userNickname: userNickname,

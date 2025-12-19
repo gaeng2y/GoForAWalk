@@ -10,13 +10,13 @@ import Auth
 import Foundation
 import NetworkingInterface
 
-public enum FeedEndpoint: Endpoint {
+enum FeedEndpoint: Endpoint {
     case fetchFootsteps
     case deleteFootstep(id: Int)
     case createFootstep(dto: CreateFootstepRequestDTO)
     case checkTodayAvailability
     
-    public var path: String {
+    var path: String {
         switch self {
         case .fetchFootsteps: "footsteps"
         case .deleteFootstep(let id): "footsteps/\(id)"
@@ -25,7 +25,7 @@ public enum FeedEndpoint: Endpoint {
         }
     }
     
-    public var method: NetworkingMethod {
+    var method: NetworkingMethod {
         switch self {
         case .fetchFootsteps: .get
         case .deleteFootstep: .delete
@@ -34,9 +34,9 @@ public enum FeedEndpoint: Endpoint {
         }
     }
     
-    public var authRequirement: AuthRequirement { .bearer }
+    var authRequirement: AuthRequirement { .bearer }
     
-    public var task: HTTPTask {
+    var task: HTTPTask {
         switch self {
         case .fetchFootsteps:
             return .requestPlain

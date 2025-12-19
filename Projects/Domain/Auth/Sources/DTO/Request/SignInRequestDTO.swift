@@ -7,14 +7,10 @@
 
 import Foundation
 
-public struct SignInRequestDTO: Encodable, Equatable, Sendable {
+struct SignInRequestDTO: Encodable, Equatable, Sendable {
     let idToken: String
-    
-    public init(idToken: String) {
-        self.idToken = idToken
-    }
 }
 
-public extension SignInRequestDTO {
+extension SignInRequestDTO {
     static let mock = Self(idToken: "ABCD-EJEO-KENLW_DKFLS")
 }

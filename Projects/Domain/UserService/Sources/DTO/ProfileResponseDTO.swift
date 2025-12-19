@@ -7,8 +7,9 @@
 //
 
 import Foundation
+import UserServiceInterface
 
-public struct ProfileResponseDTO: Decodable {
+public struct ProfileResponseDTO: Decodable, Sendable {
     let userId: Int
     let userNickname: String
     let userEmail: String?
