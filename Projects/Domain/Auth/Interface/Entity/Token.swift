@@ -8,22 +8,22 @@
 
 import Foundation
 
-public struct Token: Equatable {
+public struct Token: Equatable, Sendable {
     public let accessToken: String
-    public let userId: String
+    public let refreshToken: String
     
     public init(
         accessToken: String,
-        userId: String
+        refreshToken: String
     ) {
         self.accessToken = accessToken
-        self.userId = userId
+        self.refreshToken = refreshToken
     }
 }
 
 public extension Token {
     static let mock = Token(
         accessToken: "mockAccessToken",
-        userId: "123"
+        refreshToken: "mockRefreshToken"
     )
 }

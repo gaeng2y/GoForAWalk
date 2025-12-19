@@ -8,7 +8,7 @@
 
 import Foundation
 
-public struct User {
+public struct User: Sendable {
     public let nickname: String
     public let email: String
     

@@ -11,9 +11,4 @@ import Foundation
 public enum TokenProperty: String, CaseIterable {
     case accessToken = "ACCESS-TOKEN"
     case refreshToken = "REFRESH-TOKEN"
-    
-    case userIdentifier = "USER-IDENTIFIER"
-    case nickname = "NICKNAME"
-    case email = "EMAIL"
-    
 }
