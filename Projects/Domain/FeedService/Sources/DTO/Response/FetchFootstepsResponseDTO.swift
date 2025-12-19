@@ -17,7 +17,7 @@
 import FeedServiceInterface
 import Foundation
 
-public struct FetchFootstepsResponseDTO: Decodable {
+public struct FetchFootstepsResponseDTO: Decodable, Sendable {
     public let footsteps: [FootstepsResponseDTO]
 }
 

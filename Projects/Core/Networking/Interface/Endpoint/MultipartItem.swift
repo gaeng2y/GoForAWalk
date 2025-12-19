@@ -34,4 +34,14 @@ public struct MultipartFormItem: Sendable {
     ) -> MultipartFormItem {
         MultipartFormItem(data: data, name: name, fileName: fileName, mimeType: "image/png")
     }
+    
+    /// 텍스트 필드
+    public static func field(name: String, value: String) -> MultipartFormItem {
+        MultipartFormItem(
+            data: value.data(using: .utf8) ?? Data(),
+            name: name,
+            fileName: nil,
+            mimeType: nil
+        )
+    }
 }

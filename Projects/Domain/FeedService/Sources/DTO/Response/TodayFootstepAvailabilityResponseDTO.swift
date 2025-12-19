@@ -9,12 +9,12 @@
 import FeedServiceInterface
 import Foundation
 
-public struct TodayFootstepAvailabilityResponseDTO: Decodable {
+public struct TodayFootstepAvailabilityResponseDTO: Decodable, Sendable {
     let canCreateToday: Bool
     let todayDate: String
     let existingFootstep: ExistingFootstep?
     
-    public struct ExistingFootstep: Decodable {
+    public struct ExistingFootstep: Decodable, Sendable {
         let footstepId: Int
         let imageUrl: String
         let content: String

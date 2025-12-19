@@ -1,5 +1,5 @@
 //
-//  AuthServiceImpl.swift
+//  AuthClientImpl.swift
 //  Auth
 //
 //  Created by Kyeongmo Yang on 12/20/25.
@@ -11,7 +11,7 @@ import Foundation
 import KeyChainStoreInterface
 import NetworkingInterface
 
-public final class AuthServiceImpl: AuthService {
+public final class AuthClientImpl: AuthClient {
     private let networkService: NetworkService
     private let keychainStore: KeychainStore
     

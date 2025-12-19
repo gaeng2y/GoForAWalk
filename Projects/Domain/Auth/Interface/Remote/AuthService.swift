@@ -8,7 +8,7 @@
 
 import Foundation
 
-public protocol AuthService: Sendable {
+public protocol AuthClient: Sendable {
     func signIn(type: LoginType, idToken: String) async throws -> (Token, User)
     func saveToken(_ token: Token)
     func loadToken() -> Token?

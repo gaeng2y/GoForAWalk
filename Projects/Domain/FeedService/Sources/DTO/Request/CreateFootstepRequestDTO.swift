@@ -10,21 +10,18 @@
 import FeedServiceInterface
 import Foundation
 
-public struct CreateFootstepRequestDTO: Encodable {
+public struct CreateFootstepRequestDTO: Encodable, Sendable {
     public let data: Data
     public let content: String
     public let fileName: String // 예: "image.jpg"
-    public let mimeType: String
     
     public init(
         data: Data,
         content: String,
-        fileName: String = "image.jpg",
-        mimeType: String = "image/jpeg"
+        fileName: String = "image.jpg"
     ) {
         self.data = data
         self.content = content
         self.fileName = fileName
-        self.mimeType = mimeType
     }
 }
