@@ -8,7 +8,7 @@
 
 import Foundation
 
-public enum LoginType: String {
+public enum LoginType: String, Sendable {
     case kakao = "KAKAO"
     case apple = "APPLE"
 }

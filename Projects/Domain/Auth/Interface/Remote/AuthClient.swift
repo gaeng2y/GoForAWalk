@@ -26,3 +26,10 @@ public struct AuthClient {
         self.deleteAllTokens = deleteAllTokens
     }
 }
+
+public protocol AuthService: Sendable {
+      func signIn(type: LoginType, idToken: String) async throws -> (Token, User)
+      func saveToken(_ token: Token)
+      func loadToken() -> Token
+      func deleteAllTokens() async
+  }

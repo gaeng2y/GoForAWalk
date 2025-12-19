@@ -7,7 +7,9 @@ let project = Project.module(
     targets: [
         .interface(
             module: .core(.Networking),
-            dependencies: []
+            dependencies: [
+                .SPM.alamofire
+            ]
         ),
         .implements(
             module: .core(.Networking),

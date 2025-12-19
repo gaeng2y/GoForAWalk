@@ -7,7 +7,7 @@
 
 import Foundation
 
-public struct SignInRequestDTO: Encodable, Equatable {
+public struct SignInRequestDTO: Encodable, Equatable, Sendable {
     let idToken: String
     
     public init(idToken: String) {

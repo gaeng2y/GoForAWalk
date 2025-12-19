@@ -5,27 +5,46 @@
 //  Created by Claude Code
 //
 
-import AVFoundation
-import Camera
-import CameraInterface
-import CoreImage
+import Auth
+import AuthInterface
 import Dependencies
 import Foundation
-import KeyChainStore
-import KeyChainStoreInterface
 import Networking
 import NetworkingInterface
 import SwiftUI
 
-// MARK: - NetworkProvider
+// MARK: - Core
 
-private enum NetworkProviderKey: DependencyKey {
-    public static let liveValue: NetworkProvider = NetworkProviderImpl()
+private enum NetworkServiceKey: DependencyKey {
+    typealias Value = any NetworkService
+    static let liveValue: Value = NetworkServiceImpl()
 }
 
 extension DependencyValues {
-    public var networkProvider: NetworkProvider {
-        get { self[NetworkProviderKey.self] }
-        set { self[NetworkProviderKey.self] = newValue }
+    public var networkService: NetworkService {
+        get { self[NetworkServiceKey.self] }
+        set { self[NetworkServiceKey.self] = newValue }
     }
 }
+
+// MARK: - Domain
+
+private enum AuthServiceKey: DependencyKey {
+    static var liveValue: any AuthService {
+        // 이미 등록된 networkService를 가져와서 주입
+        @Dependency(\.networkService) var networkService
+        
+        return AuthServiceImpl(
+            networkService: networkService
+        )
+    }
+}
+
+extension DependencyValues {
+    public var authService: any AuthService {
+        get { self[AuthServiceKey.self] }
+        set { self[AuthServiceKey.self] = newValue }
+    }
+}
+
+// MARK: - Feature

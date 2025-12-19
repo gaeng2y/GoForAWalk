@@ -15,4 +15,5 @@ public enum TokenProperty: String, CaseIterable {
     case userIdentifier = "USER-IDENTIFIER"
     case nickname = "NICKNAME"
     case email = "EMAIL"
+    
 }
