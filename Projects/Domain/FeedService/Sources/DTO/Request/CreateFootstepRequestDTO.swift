@@ -7,6 +7,7 @@
 //  Copyright © 2025 com.gaeng2y. All rights reserved.
 //
 
+import FeedServiceInterface
 import Foundation
 
 public struct CreateFootstepRequestDTO: Encodable {

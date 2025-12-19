@@ -5,6 +5,7 @@
 //  Created by Kyeongmo Yang on 4/28/25.
 //
 
+import AuthInterface
 import Foundation
 import NetworkingInterface
 

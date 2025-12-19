@@ -5,6 +5,7 @@
 //  Created by Claude Code
 //
 
+import Alamofire
 import Auth
 import AuthInterface
 import Dependencies
@@ -17,12 +18,15 @@ import SwiftUI
 
 // MARK: - Core
 
-private enum NetworkServiceKey: DependencyKey {
-    static let liveValue: NetworkService = NetworkServiceImpl()
-}
-
 private enum KeychainStoreKey: DependencyKey {
     static let liveValue: KeychainStore = KeychainStoreImpl()
+}
+
+private enum NetworkServiceKey: DependencyKey {
+    static var liveValue: NetworkService {
+        @Dependency(\.keychainStore) var keychainStore: KeychainStore
+        return NetworkServiceImpl(keychainStore: keychainStore)
+    }
 }
 
 extension DependencyValues {

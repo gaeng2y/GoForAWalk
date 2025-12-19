@@ -5,6 +5,7 @@
 //  Created by Kyeongmo Yang on 4/28/25.
 //
 
+import AuthInterface
 import Foundation
 
 public struct SignInResponseDTO: Decodable {
@@ -33,8 +34,14 @@ public struct SignInResponseDTO: Decodable {
     }
     
     public func toDomain() -> (Token, User) {
-        let token = Token(accessToken: credentials.accessToken, userId: "\(userId)")
-        let user = User(nickname: userInfo.nickname, email: userInfo.nickname)
+        let token = Token(
+            accessToken: credentials.accessToken,
+            refreshToken: credentials.refreshToken
+        )
+        let user = User(
+            nickname: userInfo.nickname,
+            email: userInfo.nickname
+        )
         return (token, user)
     }
 }

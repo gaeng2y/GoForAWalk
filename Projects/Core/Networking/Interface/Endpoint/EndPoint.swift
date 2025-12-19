@@ -42,11 +42,11 @@ public protocol Endpoint: URLRequestConvertible, Sendable {
     /// 인증 요구사항 정의
     ///
     /// 이 API 엔드포인트가 어떤 인증을 필요로 하는지 명시합니다.
-    /// 인증 헤더는 이 설정에 따라 자동으로 추가됩니다.
+    /// 인증 헤더는 AuthorizationInterceptor에서 자동으로 추가됩니다.
     ///
     /// **예시:**
     /// - 로그인 API: `.none` (인증 불필요)
-    /// - 사용자 정보 API: `.required(String) 토큰 필요
+    /// - 사용자 정보 API: `.bearer` (Bearer 토큰 필요)
     var authRequirement: AuthRequirement { get }
     
     /// 커스텀 HTTP 헤더 정보 (선택사항)
@@ -77,10 +77,11 @@ public protocol Endpoint: URLRequestConvertible, Sendable {
 /// Alamofire와 호환되도록 URLRequest로 변환하는 핵심 로직을 구현합니다.
 ///
 /// **주요 기능:**
-/// - 기본값 제공 (authRequirement, customHeaders, task)
-/// - 인증 헤더 자동 생성
+/// - 기본값 제공 (customHeaders, task)
 /// - URLRequest 생성 및 설정
 /// - 다양한 HTTPTask 타입 처리
+///
+/// - Note: Bearer 인증 헤더는 AuthorizationInterceptor에서 자동으로 처리됩니다.
 public extension Endpoint {
     /// 기본 baseURL 값 (Info.plist에서 가져옴)
     ///
@@ -97,31 +98,6 @@ public extension Endpoint {
     /// 특별한 헤더가 필요 없는 엔드포인트에서 사용됩니다.
     /// 필요한 경우 각 엔드포인트에서 이 값을 override할 수 있습니다.
     var customHeaders: [String: String]? { nil }
-    
-    /// 최종 HTTP 헤더 (인증 + 커스텀 헤더 조합)
-    ///
-    /// authRequirement에 따른 인증 헤더와 customHeaders를 자동으로 조합합니다.
-    /// 이 프로퍼티는 직접 override하지 마시고, authRequirement와 customHeaders를 사용하세요.
-    ///
-    /// **자동 처리되는 인증 헤더:**
-    /// - `.none`: 인증 헤더 추가 안함
-    /// - `.required(token)`: "Authorization: Bearer {token}" 헤더 추가
-    var headers: [String: String]? {
-        var finalHeaders = customHeaders ?? [:]
-        
-        // 인증 요구사항에 따라 인증 헤더 자동 추가
-        switch authRequirement {
-        case .none:
-            // 인증이 필요 없는 API는 인증 헤더를 추가하지 않음
-            break
-            
-        case .required(let token):
-            // JWT Bearer 토큰 인증 방식
-            finalHeaders["Authorization"] = "Bearer \(token)"
-        }
-        
-        return finalHeaders.isEmpty ? nil : finalHeaders
-    }
     
     /// Endpoint를 Alamofire가 사용할 수 있는 URLRequest로 변환합니다.
     ///
@@ -160,7 +136,7 @@ public extension Endpoint {
         
         var httpHeaders: HTTPHeaders?
         // 4. HTTP 헤더 설정 (Alamofire의 HTTPHeaders 타입 사용)
-        if let headers = self.headers {
+        if let headers = self.customHeaders {
             httpHeaders = HTTPHeaders(headers)
         }
         
@@ -174,8 +150,13 @@ public extension Endpoint {
             method: method.httpMethod,
             headers: httpHeaders
         )
-        
-        // 6. HTTP Body 데이터 처리 (task 타입에 따라 분기)
+
+        // 6. 인증이 필요한 경우 마커 헤더 추가 (Interceptor에서 처리)
+        if case .bearer = authRequirement {
+            request.headers.add(name: "X-Requires-Auth", value: "bearer")
+        }
+
+        // 7. HTTP Body 데이터 처리 (task 타입에 따라 분기)
         switch task {
         case .requestEncodable(let body):
             // Encodable & Sendable 객체를 JSON Data로 인코딩

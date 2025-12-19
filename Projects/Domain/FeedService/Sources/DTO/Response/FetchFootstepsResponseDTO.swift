@@ -1,12 +1,25 @@
 //
-//  FootstepsResponseDTO.swift
+//  FetchFootstepsResponseDTO.swift
 //  FeedServiceInterface
 //
-//  Created by Kyeongmo Yang on 6/10/25.
+//  Created by Kyeongmo Yang on 6/9/25.
 //  Copyright © 2025 com.gaeng2y. All rights reserved.
 //
 
+/*
+ "footstepId": 1,
+ "userNickname": "abc",
+ "content": "이 편지는 영국에서...", (nullable)
+ "imageUrl": "htts://google/image1.png",
+ "createdAt": "2025-05-10T22:00+09:00"
+ */
+
+import FeedServiceInterface
 import Foundation
+
+public struct FetchFootstepsResponseDTO: Decodable {
+    public let footsteps: [FootstepsResponseDTO]
+}
 
 public struct FootstepsResponseDTO: Decodable {
     let id: Int
@@ -23,21 +36,11 @@ public struct FootstepsResponseDTO: Decodable {
         case createdAt
     }
     
-    private static let iso8601DateFormatter: ISO8601DateFormatter = {
-        let formatter = ISO8601DateFormatter()
-        formatter.formatOptions = [
-            .withInternetDateTime,
-            .withTimeZone,
-            .withFractionalSeconds
-        ]
-        return formatter
-    }()
-    
     public func toDomain() -> Footstep {
         Footstep(
             id: id,
             userNickname: userNickname,
-            createdAt: Self.iso8601DateFormatter.date(from: createdAt) ?? .now,
+            createdAt: DateFormatter.footstep.date(from: createdAt) ?? .now,
             imageUrl: URL(string: imageUrl),
             content: content
         )

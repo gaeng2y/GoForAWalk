@@ -19,5 +19,5 @@ public enum AuthRequirement: Sendable {
     ///
     /// 특정 인증 방식을 지정하여 해당하는 인증 헤더를 자동으로 추가합니다.
     /// 토큰을 String으로 받음
-    case required(String)
+    case bearer
 }

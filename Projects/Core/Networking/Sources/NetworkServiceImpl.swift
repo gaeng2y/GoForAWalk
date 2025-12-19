@@ -8,6 +8,7 @@
 
 import Alamofire
 import Foundation
+import KeyChainStoreInterface
 import NetworkingInterface
 
 // MARK: - NetworkServiceImpl
@@ -48,41 +49,23 @@ public final class NetworkServiceImpl: NetworkService {
     
     // MARK: - Properties
     
-    /// Alamofire 세션 객체
-    ///
-    /// **핵심 역할:**
-    /// - HTTP 요청 생성 및 전송 관리
-    /// - 연결 풀 관리로 성능 최적화
-    /// - 요청/응답 인터셉터 처리
-    /// - SSL/TLS 인증서 검증
     private let session: Alamofire.Session
     
     // MARK: - Initialization
     
-    /// NetworkServiceImpl을 초기화합니다
+    /// KeychainStore를 주입받아 AuthorizationInterceptor와 함께 초기화합니다
     ///
-    /// **의존성 주입 패턴:**
-    /// - session을 외부에서 주입받아 느슨한 결합(loose coupling)을 구현
-    /// - 테스트 시에는 Mock 구현체를 주입하여 네트워크 없이 테스트 가능
+    /// - Parameter keychainStore: 토큰 저장소
+    public init(keychainStore: KeychainStore) {
+        let interceptor = AuthorizationInterceptor(keychainStore: keychainStore)
+        self.session = Self.configureAFSession(interceptor: interceptor)
+    }
+    
+    /// 테스트용: Session을 직접 주입받아 초기화합니다
     ///
     /// - Parameter session: HTTP 요청을 처리할 Alamofire Session 인스턴스
     public init(session: Alamofire.Session) {
         self.session = session
-    }
-    
-    /// NetworkServiceImpl을 기본 설정으로 초기화하는 편의 생성자
-    ///
-    /// **기본 설정 내용:**
-    /// - 요청 타임아웃: 60초
-    /// - 리소스 타임아웃: 120초
-    /// - 연결성 대기: 활성화 (네트워크 복구 시 자동 재시도)
-    /// - 호스트별 최대 연결: 5개
-    /// - 캐시: 메모리 50MB, 디스크 200MB
-    /// - 로깅: APIEventLogger 자동 활성화
-    ///
-    /// - Note: 프로덕션 환경에서 권장되는 기본값들로 구성됩니다.
-    public convenience init() {
-        self.init(session: Self.configureAFSession())
     }
     
     // MARK: - Session Configuration
@@ -103,8 +86,9 @@ public final class NetworkServiceImpl: NetworkService {
     /// **모니터링:**
     /// - APIEventLogger를 통한 요청/응답 로깅
     ///
+    /// - Parameter interceptor: 인증 헤더 주입 및 토큰 갱신을 담당하는 Interceptor
     /// - Returns: 최적화된 설정이 적용된 Alamofire.Session 인스턴스
-    private static func configureAFSession() -> Alamofire.Session {
+    private static func configureAFSession(interceptor: AuthorizationInterceptor) -> Alamofire.Session {
         let configuration = URLSessionConfiguration.default
         configuration.timeoutIntervalForRequest = 60
         configuration.timeoutIntervalForResource = 120
@@ -119,13 +103,17 @@ public final class NetworkServiceImpl: NetworkService {
             diskPath: "GoForAWalkCache"
         )
         
-#if DEBUG
+        #if DEBUG
         let monitors: [EventMonitor] = [APIEventLogger()]
-#else
+        #else
         let monitors: [EventMonitor] = []
-#endif
+        #endif
         
-        return Alamofire.Session(configuration: configuration, eventMonitors: monitors)
+        return Alamofire.Session(
+            configuration: configuration,
+            interceptor: interceptor,
+            eventMonitors: monitors
+        )
     }
     
     // MARK: - NetworkService Implementation
@@ -142,13 +130,15 @@ public final class NetworkServiceImpl: NetworkService {
     /// - Returns: 제네릭 T 타입의 Swift 모델 객체
     /// - Throws: NetworkError - 네트워크 또는 디코딩 실패 시
     public func request<T: Decodable>(_ endpoint: any Endpoint) async throws -> T {
-        // Multipart 업로드인 경우 별도 처리
-        if case .uploadMultipart(let items) = endpoint.task {
+        
+        switch endpoint.task {
+        case .requestPlain, .requestParameters, .requestEncodable:
+            // 일반 요청 처리
+            return try await performRequest(endpoint)
+        case .uploadMultipart(let items):
+            // Multipart 업로드인 경우 별도 처리
             return try await uploadMultipart(endpoint, items: items)
         }
-        
-        // 일반 요청 처리
-        return try await performRequest(endpoint)
     }
     
     // MARK: - Private Methods
