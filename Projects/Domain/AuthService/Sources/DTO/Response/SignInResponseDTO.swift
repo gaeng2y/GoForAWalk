@@ -5,7 +5,7 @@
 //  Created by Kyeongmo Yang on 4/28/25.
 //
 
-import AuthInterface
+import AuthServiceInterface
 import Foundation
 
 struct SignInResponseDTO: Decodable {

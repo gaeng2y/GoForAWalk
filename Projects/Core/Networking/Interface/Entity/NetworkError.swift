@@ -26,6 +26,9 @@ public enum NetworkError: Error {
     /// 응답 데이터 디코딩 실패
     case decodingFailed(Error)
     
+    /// 요청 데이터 인코딩 실패
+    case encodingFailed(Error)
+    
     /// 네트워크 연결 실패 (e.g., 인터넷 없음, 타임아웃)
     case networkConnection(Error)
     

@@ -130,7 +130,6 @@ public final class NetworkServiceImpl: NetworkService {
     /// - Returns: 제네릭 T 타입의 Swift 모델 객체
     /// - Throws: NetworkError - 네트워크 또는 디코딩 실패 시
     public func request<T: Decodable>(_ endpoint: any Endpoint) async throws -> T {
-        
         switch endpoint.task {
         case .requestPlain, .requestParameters, .requestEncodable:
             // 일반 요청 처리
@@ -145,7 +144,8 @@ public final class NetworkServiceImpl: NetworkService {
     
     /// 일반 HTTP 요청을 수행합니다
     private func performRequest<T: Decodable>(_ endpoint: any Endpoint) async throws -> T {
-        let dataRequest = session.request(endpoint)
+        let urlRequest = try endpoint.asURLRequest()
+        let dataRequest = session.request(urlRequest)
             .validate(statusCode: 200..<300)
         
         let result = await dataRequest.serializingDecodable(T.self).result

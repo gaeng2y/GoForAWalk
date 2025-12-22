@@ -23,23 +23,7 @@ import NetworkingInterface
 /// - 다양한 HTTPTask 타입 처리
 ///
 /// - Note: Bearer 인증 헤더는 AuthorizationInterceptor에서 자동으로 처리됩니다.
-public extension Endpoint {
-    /// 기본 baseURL 값 (Info.plist에서 가져옴)
-    ///
-    /// 특별한 경우 잘넣어놓겠지만 없다면
-    /// https://api-goforawalk.haero77.org/ 를 넣어주도록 적용
-    var baseURL: URL {
-        let baseURLPath = Bundle.main.infoDictionary?["BASE_URL"] as? String ?? "https://api-goforawalk.haero77.org/"
-        let baseURLPrefixPath = Bundle.main.infoDictionary?["BASE_URL_PREFIX"] as? String ?? "api/v1"
-        return URL(string: baseURLPath + baseURLPrefixPath)!
-    }
-    
-    /// 기본 커스텀 헤더 값 (nil)
-    ///
-    /// 특별한 헤더가 필요 없는 엔드포인트에서 사용됩니다.
-    /// 필요한 경우 각 엔드포인트에서 이 값을 override할 수 있습니다.
-    var customHeaders: [String: String]? { nil }
-    
+extension Endpoint {
     /// Endpoint를 Alamofire가 사용할 수 있는 URLRequest로 변환합니다.
     ///
     /// 이 메서드는 URLRequestConvertible 프로토콜의 요구사항을 구현하며,
@@ -65,7 +49,7 @@ public extension Endpoint {
         
         // 2. URLComponents를 사용하여 쿼리 파라미터 처리 준비
         guard var urlComponents = URLComponents(url: url, resolvingAgainstBaseURL: false) else {
-            throw AFError.invalidURL(url: url)
+            throw NetworkError.invalidURL
         }
         
         // 3. 쿼리 파라미터가 있는 경우 URL에 추가
@@ -83,7 +67,7 @@ public extension Endpoint {
         
         // 5. 최종 URL 검증 및 URLRequest 생성
         guard let finalURL = urlComponents.url else {
-            throw AFError.invalidURL(url: url)
+            throw NetworkError.invalidURL
         }
         
         var request = try URLRequest(
@@ -91,12 +75,12 @@ public extension Endpoint {
             method: method.httpMethod,
             headers: httpHeaders
         )
-
+        
         // 6. 인증이 필요한 경우 마커 헤더 추가 (Interceptor에서 처리)
         if case .bearer = authRequirement {
             request.headers.add(name: "X-Requires-Auth", value: "bearer")
         }
-
+        
         // 7. HTTP Body 데이터 처리 (task 타입에 따라 분기)
         switch task {
         case .requestEncodable(let body):
@@ -108,8 +92,8 @@ public extension Endpoint {
                     request.headers.add(name: "Content-Type", value: "application/json")
                 }
             } catch {
-                // 인코딩 실패 시 에러 처리 (Alamofire 에러나 커스텀 에러로 래핑)
-                throw AFError.parameterEncodingFailed(reason: .jsonEncodingFailed(error: error))
+                // 인코딩 실패 시 에러 처리
+                throw NetworkError.encodingFailed(error)
             }
             
         case .requestPlain, .requestParameters:

@@ -6,10 +6,9 @@
 //  Copyright © 2025 com.gaeng2y. All rights reserved.
 //
 
-import Alamofire
 import Foundation
 
-public protocol Endpoint: URLRequestConvertible, Sendable {
+public protocol Endpoint: Sendable {
     /// API 서버의 기본 URL
     ///
     /// 모든 API 요청의 시작점이 되는 서버 주소입니다.
@@ -67,4 +66,22 @@ public protocol Endpoint: URLRequestConvertible, Sendable {
     /// HTTPTask 열거형의 케이스 중 하나를 반환합니다.
     /// 기본값은 .requestPlain (파라미터 없는 요청)입니다.
     var task: HTTPTask { get }
+}
+
+public extension Endpoint {
+    /// 기본 baseURL 값 (Info.plist에서 가져옴)
+    ///
+    /// 특별한 경우 잘넣어놓겠지만 없다면
+    /// https://api-goforawalk.haero77.org/ 를 넣어주도록 적용
+    var baseURL: URL {
+        let baseURLPath = Bundle.main.infoDictionary?["BASE_URL"] as? String ?? "https://api-goforawalk.haero77.org/"
+        let baseURLPrefixPath = Bundle.main.infoDictionary?["BASE_URL_PREFIX"] as? String ?? "api/v1"
+        return URL(string: baseURLPath + baseURLPrefixPath)!
+    }
+    
+    /// 기본 커스텀 헤더 값 (nil)
+    ///
+    /// 특별한 헤더가 필요 없는 엔드포인트에서 사용됩니다.
+    /// 필요한 경우 각 엔드포인트에서 이 값을 override할 수 있습니다.
+    var customHeaders: [String: String]? { nil }
 }

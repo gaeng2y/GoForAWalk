@@ -6,8 +6,8 @@
 //  Copyright © 2025 com.gaeng2y. All rights reserved.
 //
 
-import Auth
-import AuthInterface
+import AuthService
+import AuthServiceInterface
 import Dependencies
 import FeedService
 import FeedServiceInterface

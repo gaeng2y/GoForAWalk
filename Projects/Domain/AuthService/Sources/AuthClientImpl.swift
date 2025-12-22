@@ -6,7 +6,7 @@
 //  Copyright © 2025 com.gaeng2y. All rights reserved.
 //
 
-import AuthInterface
+import AuthServiceInterface
 import Foundation
 import KeyChainStoreInterface
 import NetworkingInterface
