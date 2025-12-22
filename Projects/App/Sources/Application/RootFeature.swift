@@ -6,7 +6,7 @@
 //  Copyright © 2025 com.gaeng2y. All rights reserved.
 //
 
-import Auth
+import AuthService
 import ComposableArchitecture
 import KeyChainStore
 import SignIn

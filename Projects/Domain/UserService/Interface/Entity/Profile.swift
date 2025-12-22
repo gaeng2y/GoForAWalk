@@ -8,7 +8,7 @@
 
 import Foundation
 
-public struct Profile: Equatable {
+public struct Profile: Equatable, Sendable {
     let id: Int
     public let nickname: String
     let email: String?

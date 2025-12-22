@@ -12,13 +12,13 @@ let project = Project.module(
         .implements(
             module: .feature(.SignIn),
             dependencies: [
-                .domain(target: .Auth, type: .interface),
-                .domain(target: .Auth)
+                .domain(target: .AuthService, type: .interface),
+                .domain(target: .AuthService)
             ]
         ),
         .tests(module: .feature(.SignIn), dependencies: [
             .feature(target: .SignIn),
-            .domain(target: .Auth, type: .testing)
+            .domain(target: .AuthService, type: .testing)
         ])
     ]
 )

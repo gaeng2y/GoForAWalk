@@ -8,7 +8,7 @@
 
 import Foundation
 
-public struct Footstep: Identifiable {
+public struct Footstep: Identifiable, Sendable {
     public let id: Int
     public let userNickname: String
     public let createdAt: Date
@@ -19,6 +19,20 @@ public struct Footstep: Identifiable {
         let formatter = DateFormatter()
         formatter.dateFormat = "yyyy-MM-dd"
         return formatter.string(from: createdAt)
+    }
+    
+    public init(
+        id: Int,
+        userNickname: String,
+        createdAt: Date,
+        imageUrl: URL?,
+        content: String?
+    ) {
+        self.id = id
+        self.userNickname = userNickname
+        self.createdAt = createdAt
+        self.imageUrl = imageUrl
+        self.content = content
     }
 }
 

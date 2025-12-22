@@ -6,8 +6,8 @@
 //  Copyright © 2025 com.gaeng2y. All rights reserved.
 //
 
-import Auth
-import AuthInterface
+import AuthService
+import AuthServiceInterface
 import AuthenticationServices
 import ComposableArchitecture
 import GlobalThirdPartyLibrary
@@ -30,7 +30,7 @@ public struct SignInFeature {
         case checkAuthorization
         case isAlreadyAuthorized
         case kakaoSignInButtonTapped
-        case signInWithKakakoResponse(AuthInterface.Token, AuthInterface.User)
+        case signInWithKakakoResponse(AuthServiceInterface.Token, AuthServiceInterface.User)
         case signInWithKakaoError(Error)
         case signInWithAppleCredential(ASAuthorization)
         case signInWithAppleError(Error)
