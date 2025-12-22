@@ -7,9 +7,7 @@ let project = Project.module(
     targets: [
         .interface(
             module: .core(.Networking),
-            dependencies: [
-                .shared(target: .GlobalThirdPartyLibrary)
-            ]
+            dependencies: []
         ),
         .implements(
             module: .core(.Networking),

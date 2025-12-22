@@ -36,7 +36,7 @@ public struct MultipartFormItem: Sendable {
     }
     
     /// 텍스트 필드
-    public static func field(name: String, value: String) -> MultipartFormItem {
+    public static func text(_ value: String, name: String) -> MultipartFormItem {
         MultipartFormItem(
             data: value.data(using: .utf8) ?? Data(),
             name: name,

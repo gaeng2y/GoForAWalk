@@ -15,7 +15,7 @@ enum TokenRefreshEndpoint: Endpoint {
     var path: String { "auth/token/refresh" }
     var method: NetworkingMethod { .post }
     var authRequirement: AuthRequirement { .none }
-    var customHeaders: [String : String]? {
+    var customHeaders: [String: String]? {
         switch self {
         case .refresh(let refreshToken):
             ["Authorization": "Bearer \(refreshToken)"]

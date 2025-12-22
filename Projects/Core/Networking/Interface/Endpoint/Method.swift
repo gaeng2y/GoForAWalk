@@ -6,7 +6,6 @@
 //  Copyright © 2025 com.gaeng2y. All rights reserved.
 //
 
-import Alamofire
 import Foundation
 
 public enum NetworkingMethod: String, Sendable {
@@ -15,16 +14,4 @@ public enum NetworkingMethod: String, Sendable {
     case put
     case patch
     case delete
-}
-
-extension NetworkingMethod {
-    var httpMethod: HTTPMethod {
-        switch self {
-        case .get: .get
-        case .post: .post
-        case .put: .put
-        case .patch: .patch
-        case .delete: .delete
-        }
-    }
 }

@@ -40,7 +40,7 @@ struct SignInResponseDTO: Decodable {
         )
         let user = User(
             nickname: userInfo.nickname,
-            email: userInfo.nickname
+            email: userInfo.email ?? ""
         )
         return (token, user)
     }
