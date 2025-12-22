@@ -8,8 +8,28 @@
 
 import Dependencies
 import Foundation
+import SettingsFeature
+import SettingsFeatureInterface
 
-// MARK: - Feature Dependencies
+// MARK: - SettingsFeature
 
-// Feature 레벨의 DependencyKey들을 여기에 추가합니다.
-// 예: Router, Coordinator 등
+private enum SettingsFeatureKey: DependencyKey {
+    static var liveValue: SettingsFeature {
+        @Dependency(\.authClient) var authClient
+        @Dependency(\.profileClient) var profileClient
+
+        return SettingsFeature.live(
+            authClient: authClient,
+            profileClient: profileClient
+        )
+    }
+}
+
+// MARK: - DependencyValues
+
+extension DependencyValues {
+    public var settingsFeature: SettingsFeature {
+        get { self[SettingsFeatureKey.self] }
+        set { self[SettingsFeatureKey.self] = newValue }
+    }
+}

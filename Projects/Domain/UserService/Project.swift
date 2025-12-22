@@ -7,16 +7,14 @@ let project = Project.module(
     targets: [
         .interface(
             module: .domain(.UserService),
-            dependencies: [
-                .domain(target: .Auth),
-                .core(target: .Networking, type: .interface)
-            ]
+            dependencies: []
         ),
         .implements(
             module: .domain(.UserService),
             dependencies: [
                 .domain(target: .UserService, type: .interface),
-                .core(target: .Networking),
+                .core(target: .Networking, type: .interface),
+                .shared(target: .Util),
                 .shared(target: .GlobalThirdPartyLibrary)
             ]
         ),

@@ -31,12 +31,12 @@ private enum NetworkServiceKey: DependencyKey {
 // MARK: - DependencyValues
 
 extension DependencyValues {
-    public var keychainStore: KeychainStore {
+    var keychainStore: KeychainStore {
         get { self[KeychainStoreKey.self] }
         set { self[KeychainStoreKey.self] = newValue }
     }
     
-    public var networkService: NetworkService {
+    var networkService: NetworkService {
         get { self[NetworkServiceKey.self] }
         set { self[NetworkServiceKey.self] = newValue }
     }

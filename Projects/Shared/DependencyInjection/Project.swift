@@ -10,6 +10,7 @@ let project = Project.module(
             product: .framework,
             dependencies: [
                 .shared(target: .GlobalThirdPartyLibrary),
+                
                 .core(target: .Networking, type: .interface),
                 .core(target: .Networking, type: .sources),
                 .core(target: .KeyChainStore, type: .interface),
@@ -17,8 +18,8 @@ let project = Project.module(
                 .core(target: .Camera, type: .interface),
                 .core(target: .Camera, type: .sources),
                 
-                .domain(target: .Auth, type: .interface),
-                .domain(target: .Auth, type: .sources),
+                .domain(target: .AuthService, type: .interface),
+                .domain(target: .AuthService, type: .sources),
                 .domain(target: .CameraService, type: .interface),
                 .domain(target: .CameraService, type: .sources),
                 .domain(target: .FeedService, type: .interface),

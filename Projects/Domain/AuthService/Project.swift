@@ -3,17 +3,16 @@ import ProjectDescription
 import ProjectDescriptionHelpers
 
 let project = Project.module(
-    name: ModulePaths.Core.Networking.rawValue,
+    name: ModulePaths.Domain.AuthService.rawValue,
     targets: [
         .interface(
-            module: .core(.Networking),
-            dependencies: [
-                .shared(target: .GlobalThirdPartyLibrary)
-            ]
+            module: .domain(.AuthService),
+            dependencies: []
         ),
         .implements(
-            module: .core(.Networking),
+            module: .domain(.AuthService),
             dependencies: [
+                .domain(target: .AuthService, type: .interface),
                 .core(target: .Networking, type: .interface),
                 .core(target: .KeyChainStore, type: .interface),
                 .shared(target: .Util),
@@ -21,15 +20,15 @@ let project = Project.module(
             ]
         ),
         .testing(
-            module: .core(.Networking),
+            module: .domain(.AuthService),
             dependencies: [
-                .core(target: .Networking, type: .interface)
+                .domain(target: .AuthService, type: .interface)
             ]
         ),
         .tests(
-            module: .core(.Networking),
+            module: .domain(.AuthService),
             dependencies: [
-                .core(target: .Networking)
+                .domain(target: .AuthService)
             ]
         )
     ]

@@ -53,18 +53,18 @@ private enum ProfileClientKey: DependencyKey {
 
 // MARK: - DependencyValues
 
-extension DependencyValues {
-    public var authService: any AuthClient {
+public extension DependencyValues {
+    var authClient: any AuthClient {
         get { self[AuthClientKey.self] }
         set { self[AuthClientKey.self] = newValue }
     }
     
-    public var feedClient: any FeedClient {
+    var feedClient: any FeedClient {
         get { self[FeedClientKey.self] }
         set { self[FeedClientKey.self] = newValue }
     }
     
-    public var profileClient: any ProfileClient {
+    var profileClient: any ProfileClient {
         get { self[ProfileClientKey.self] }
         set { self[ProfileClientKey.self] = newValue }
     }

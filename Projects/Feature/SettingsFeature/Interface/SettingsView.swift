@@ -8,7 +8,6 @@
 
 import ComposableArchitecture
 import DesignSystem
-import SettingsFeatureInterface
 import SwiftUI
 
 public struct SettingsView: View {
@@ -38,12 +37,4 @@ public struct SettingsView: View {
         .navigationTitle("설정")
         .alert($store.scope(state: \.alert, action: \.alert))
     }
-}
-
-#Preview {
-    SettingsView(
-        store: Store(initialState: SettingsFeature.State()) {
-            SettingsFeature()
-        }
-    )
 }
