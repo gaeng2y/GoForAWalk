@@ -10,14 +10,12 @@ import ComposableArchitecture
 import Foundation
 import SettingsFeature
 import UserServiceInterface
-import UserService
 
 @Reducer
 public struct ProfileFeature {
     @ObservableState
     public struct State: Equatable {
         var profile: Profile = .init()
-        var path: StackState<Path.State> = .init()
         var isShowingNicknameAlert = false
         var nicknameInput = ""
         
@@ -28,8 +26,6 @@ public struct ProfileFeature {
         case binding(BindingAction<State>)
         case onAppear
         case fetchProfile(Profile)
-        case path(StackAction<Path.State, Path.Action>)
-        case navigateToSettings
         case showNicknameChangeAlert
         case confirmNicknameChange
         case cancelNicknameChange
@@ -41,14 +37,13 @@ public struct ProfileFeature {
         }
     }
     
-    @Reducer(state: .equatable)
-    public enum Path {
-        case settings(SettingsFeature)
+    private let profileClient: ProfileClient
+    
+    public init(
+        profileClient: ProfileClient
+    ) {
+        self.profileClient = profileClient
     }
-    
-    @Dependency(\.profileClient) var profileClient
-    
-    public init() {}
     
     public var body: some ReducerOf<Self> {
         BindingReducer()
@@ -99,15 +94,10 @@ public struct ProfileFeature {
 
             case .path:
                 return .none
-
-            case .navigateToSettings:
-                state.path.append(.settings(SettingsFeature.State()))
-                return .none
-
+                
             case .delegate:
                 return .none
             }
         }
-        .forEach(\.path, action: \.path)
     }
 }

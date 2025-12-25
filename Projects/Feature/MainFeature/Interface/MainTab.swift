@@ -7,18 +7,19 @@
 //
 
 import Foundation
-import SwiftUI
 
 public enum MainTab: Hashable, CaseIterable {
     case home
     case record
     case profile
+    case settings
     
     var title: String {
         switch self {
         case .home: "홈"
         case .record: "인증"
         case .profile: "프로필"
+        case .settings: "설정"
         }
     }
     
@@ -27,6 +28,7 @@ public enum MainTab: Hashable, CaseIterable {
         case .home: "house"
         case .record: "camera.circle"
         case .profile: "person.circle"
+        case .settings: "gear"
         }
     }
 }
