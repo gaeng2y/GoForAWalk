@@ -7,7 +7,7 @@
 //
 
 import ComposableArchitecture
-import MainFeature
+import MainFeatureInterface
 import SignIn
 import SwiftUI
 
@@ -19,14 +19,15 @@ public struct RootView: View {
     }
     
     public var body: some View {
-        if store.state.isSignIn {
-            MainTabView(store: store.scope(state: \.mainTab, action: \.mainTab))
-        } else {
-            SignInView(store: store.scope(state: \.signIn, action: \.signIn))
-                .onAppear {
-                    store.send(.signIn(.checkAuthorization))
-                }
-        }
+        MainTabView(store: store.scope(state: \.mainTab, action: \.mainTab))
+//        if store.state.isSignIn {
+//            
+//        } else {
+//            SignInView(store: store.scope(state: \.signIn, action: \.signIn))
+//                .onAppear {
+//                    store.send(.signIn(.checkAuthorization))
+//                }
+//        }
     }
 }
 

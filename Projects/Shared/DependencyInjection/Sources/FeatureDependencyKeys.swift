@@ -8,8 +8,18 @@
 
 import Dependencies
 import Foundation
+import MainFeature
+import MainFeatureInterface
 import SettingsFeature
 import SettingsFeatureInterface
+
+// MARK: - MainTabFeature
+
+private enum MainTabFeatureKey: DependencyKey {
+    static var liveValue: MainTabFeature {
+        MainTabFeature.live()
+    }
+}
 
 // MARK: - SettingsFeature
 
@@ -28,6 +38,11 @@ private enum SettingsFeatureKey: DependencyKey {
 // MARK: - DependencyValues
 
 extension DependencyValues {
+    public var mainTabFeature: MainTabFeature {
+        get { self[MainTabFeatureKey.self] }
+        set { self[MainTabFeatureKey.self] = newValue }
+    }
+
     public var settingsFeature: SettingsFeature {
         get { self[SettingsFeatureKey.self] }
         set { self[SettingsFeatureKey.self] = newValue }

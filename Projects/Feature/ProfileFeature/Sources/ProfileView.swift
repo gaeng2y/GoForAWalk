@@ -19,63 +19,47 @@ public struct ProfileView: View {
     }
     
     public var body: some View {
-        NavigationStackStore(store.scope(state: \.path, action: \.path)) {
-            VStack {
-                HStack {
-                    Text(store.profile.nickname)
-                        .font(.system(size: 16))
-                        .bold()
-                    
-                    Button {
-                        store.send(.showNicknameChangeAlert)
-                    } label: {
-                        Image(systemName: "pencil.line")
-                            .foregroundStyle(.black)
-                    }
-                }
-                .padding(.vertical, 25)
+        VStack {
+            HStack {
+                Text(store.profile.nickname)
+                    .font(.system(size: 16))
+                    .bold()
                 
-                HStack {
-                    VStack {
-                        Text("\(store.profile.totalFootstepCount)")
-                            .font(.system(size: 22))
-                            .bold()
-                            .italic()
-                        
-                        Text("발자취 개수")
-                    }
+                Button {
+                    store.send(.showNicknameChangeAlert)
+                } label: {
+                    Image(systemName: "pencil.line")
+                        .foregroundStyle(.black)
+                }
+            }
+            .padding(.vertical, 25)
+            
+            HStack {
+                VStack {
+                    Text("\(store.profile.totalFootstepCount)")
+                        .font(.system(size: 22))
+                        .bold()
+                        .italic()
                     
-                    Spacer()
-                        .frame(width: 50)
-                    
-                    VStack {
-                        Text("\(store.profile.footstepStreakDays)")
-                            .font(.system(size: 22))
-                            .bold()
-                            .italic()
-                        
-                        Text("연속 발자취")
-                    }
+                    Text("발자취 개수")
                 }
                 
                 Spacer()
-            }
-            .navigationTitle("프로필")
-            .toolbar {
-                ToolbarItem {
-                    Image(systemName: "gear")
-                        .foregroundStyle(Color.black)
-                        .onTapGesture {
-                            store.send(.navigateToSettings)
-                        }
+                    .frame(width: 50)
+                
+                VStack {
+                    Text("\(store.profile.footstepStreakDays)")
+                        .font(.system(size: 22))
+                        .bold()
+                        .italic()
+                    
+                    Text("연속 발자취")
                 }
             }
-        } destination: { store in
-            switch store.case {
-            case .settings(let settingsStore):
-                SettingsView(store: settingsStore)
-            }
+            
+            Spacer()
         }
+        .navigationTitle("프로필")
         .onAppear {
             store.send(.onAppear)
         }

@@ -6,7 +6,7 @@
 //  Copyright © 2025 com.gaeng2y. All rights reserved.
 //
 
-import AuthService
+import AuthServiceInterface
 import Foundation
 import NetworkingInterface
 
@@ -45,7 +45,7 @@ enum FeedEndpoint: Endpoint {
         case .createFootstep(let dto):
             return .uploadMultipart([
                 .image(dto.data, name: "data", fileName: dto.fileName),
-                .field(name: "content", value: dto.content)
+                .text(dto.content, name: "content")
             ])
         case .checkTodayAvailability:
             return .requestPlain
