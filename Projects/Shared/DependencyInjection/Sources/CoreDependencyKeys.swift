@@ -6,12 +6,21 @@
 //  Copyright © 2025 com.gaeng2y. All rights reserved.
 //
 
+import Camera
+import CameraInterface
 import Dependencies
 import Foundation
 import KeyChainStore
 import KeyChainStoreInterface
 import Networking
 import NetworkingInterface
+
+// MARK: - Camera
+private enum CameraKey: DependencyKey {
+    static var liveValue: CameraService {
+        return CameraServiceImpl()
+    }
+}
 
 // MARK: - KeychainStore
 
@@ -31,6 +40,11 @@ private enum NetworkServiceKey: DependencyKey {
 // MARK: - DependencyValues
 
 extension DependencyValues {
+    var camera: CameraService {
+        get { self[CameraKey.self] }
+        set { self[CameraKey.self] = newValue }
+    }
+    
     var keychainStore: KeychainStore {
         get { self[KeychainStoreKey.self] }
         set { self[KeychainStoreKey.self] = newValue }
