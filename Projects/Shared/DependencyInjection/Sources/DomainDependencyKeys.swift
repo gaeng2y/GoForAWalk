@@ -8,6 +8,9 @@
 
 import AuthService
 import AuthServiceInterface
+import CameraInterface
+import CameraService
+import CameraServiceInterface
 import Dependencies
 import FeedService
 import FeedServiceInterface
@@ -23,11 +26,21 @@ private enum AuthClientKey: DependencyKey {
     static var liveValue: any AuthClient {
         @Dependency(\.networkService) var networkService
         @Dependency(\.keychainStore) var keychainStore
-        
+
         return AuthClientImpl(
             networkService: networkService,
             keychainStore: keychainStore
         )
+    }
+}
+
+// MARK: - CameraClient
+
+private enum CameraClientKey: DependencyKey {
+    static var liveValue: any CameraClient {
+        @Dependency(\.camera) var cameraService
+
+        return CameraClientImpl(cameraService: cameraService)
     }
 }
 
@@ -58,12 +71,17 @@ public extension DependencyValues {
         get { self[AuthClientKey.self] }
         set { self[AuthClientKey.self] = newValue }
     }
-    
+
+    var cameraClient: any CameraClient {
+        get { self[CameraClientKey.self] }
+        set { self[CameraClientKey.self] = newValue }
+    }
+
     var feedClient: any FeedClient {
         get { self[FeedClientKey.self] }
         set { self[FeedClientKey.self] = newValue }
     }
-    
+
     var profileClient: any ProfileClient {
         get { self[ProfileClientKey.self] }
         set { self[ProfileClientKey.self] = newValue }
