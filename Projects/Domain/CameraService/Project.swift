@@ -14,11 +14,8 @@ let project = Project.module(
         .implements(
             module: .domain(.CameraService),
             dependencies: [
-                .domain(
-                    target: .CameraService,
-                    type: .interface
-                ),
-                .core(target: .Camera),
+                .domain(target: .CameraService, type: .interface),
+                .core(target: .Camera, type: .interface),
                 .shared(target: .GlobalThirdPartyLibrary)
             ]
         ),
