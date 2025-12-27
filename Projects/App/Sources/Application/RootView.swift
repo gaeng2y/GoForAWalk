@@ -33,8 +33,8 @@ public struct RootView: View {
 
 #Preview {
     RootView(
-        store: Store(initialState: RootFeature.State()) {
+        store: .init(initialState: RootFeature.State()) {
             RootFeature()
         }
-    )
+    ) 
 }

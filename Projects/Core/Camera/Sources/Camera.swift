@@ -14,7 +14,7 @@ import SwiftUI
 import UIKit
 
 
-public class Camera: NSObject {
+public final class CameraServiceImpl: NSObject, CameraService, Sendable {
     private let captureSession = AVCaptureSession()
     private var isCaptureSessionConfigured = false
     private var deviceInput: AVCaptureDeviceInput?
@@ -382,7 +382,7 @@ public class Camera: NSObject {
     }
 }
 
-extension Camera: AVCapturePhotoCaptureDelegate {
+extension CameraServiceImpl: AVCapturePhotoCaptureDelegate {
     
     // 사진 촬영 완료후 실행되는 메소드
     public func photoOutput(_ output: AVCapturePhotoOutput, didFinishProcessingPhoto photo: AVCapturePhoto, error: Error?) {
@@ -400,7 +400,7 @@ extension Camera: AVCapturePhotoCaptureDelegate {
     }
 }
 
-extension Camera: AVCaptureVideoDataOutputSampleBufferDelegate {
+extension CameraServiceImpl: AVCaptureVideoDataOutputSampleBufferDelegate {
     // 비디오 preview를 보내주는 메소드 -> previewStream으로 전달
     public func captureOutput(_ output: AVCaptureOutput, didOutput sampleBuffer: CMSampleBuffer, from connection: AVCaptureConnection) {
         guard let pixelBuffer = sampleBuffer.imageBuffer else { return }

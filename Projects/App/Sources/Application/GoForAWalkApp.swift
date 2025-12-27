@@ -19,9 +19,11 @@ struct GoForAWalkApp: App {
     
     var body: some Scene {
         WindowGroup {
-            RootView(store: .init(initialState: RootFeature.State()) {
-                RootFeature()
-            }).onOpenURL { url in
+            RootView(
+                store: .init(initialState: RootFeature.State()) {
+                    RootFeature()
+                }
+            ).onOpenURL { url in
                 if AuthApi.isKakaoTalkLoginUrl(url) {
                     _ = AuthController.handleOpenUrl(url: url)
                 }
