@@ -7,11 +7,23 @@
 //
 
 import Dependencies
+import FeedFeature
+import FeedFeatureInterface
 import Foundation
 import MainFeature
 import MainFeatureInterface
 import SettingsFeature
 import SettingsFeatureInterface
+
+// MARK: - FeedFeature
+
+private enum FeedFeatureKey: DependencyKey {
+    static var liveValue: FeedFeature {
+        @Dependency(\.feedClient) var feedClient
+
+        return FeedFeature.live(feedClient: feedClient)
+    }
+}
 
 // MARK: - MainTabFeature
 
@@ -38,6 +50,11 @@ private enum SettingsFeatureKey: DependencyKey {
 // MARK: - DependencyValues
 
 extension DependencyValues {
+    public var feedFeature: FeedFeature {
+        get { self[FeedFeatureKey.self] }
+        set { self[FeedFeatureKey.self] = newValue }
+    }
+
     public var mainTabFeature: MainTabFeature {
         get { self[MainTabFeatureKey.self] }
         set { self[MainTabFeatureKey.self] = newValue }

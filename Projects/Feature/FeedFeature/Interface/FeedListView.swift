@@ -43,7 +43,9 @@ public struct FeedListView: View {
 }
 
 #Preview {
-    FeedListView(store: .init(initialState: FeedFeature.State()) {
-        FeedFeature()
-    })
+    FeedListView(
+        store: .init(initialState: FeedFeature.State()) {
+            FeedFeature.preview()
+        }
+    )
 }

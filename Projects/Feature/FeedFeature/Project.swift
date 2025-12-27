@@ -5,12 +5,20 @@ import ProjectDescriptionHelpers
 let project = Project.module(
     name: ModulePaths.Feature.FeedFeature.rawValue,
     targets: [
-        .interface(module: .feature(.FeedFeature)),
+        .interface(
+            module: .feature(.FeedFeature),
+            dependencies: [
+                .domain(target: .FeedService, type: .interface),
+                .userInterface(target: .DesignSystem),
+                .shared(target: .GlobalThirdPartyLibrary)
+            ]
+        ),
         .implements(
             module: .feature(.FeedFeature),
             dependencies: [
                 .feature(target: .FeedFeature, type: .interface),
-                .domain(target: .FeedService)
+                .domain(target: .FeedService, type: .interface),
+                .shared(target: .GlobalThirdPartyLibrary)
             ]
         ),
         .testing(
@@ -18,7 +26,6 @@ let project = Project.module(
             dependencies: [
                 .feature(target: .FeedFeature, type: .interface),
                 .domain(target: .FeedService, type: .interface),
-                .domain(target: .FeedService),
                 .userInterface(target: .DesignSystem)
             ]
         ),

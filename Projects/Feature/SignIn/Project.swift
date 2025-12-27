@@ -7,13 +7,18 @@ let project = Project.module(
     targets: [
         .interface(
             module: .feature(.SignIn),
-            dependencies: []
+            dependencies: [
+                .domain(target: .AuthService, type: .interface),
+                .userInterface(target: .DesignSystem),
+                .shared(target: .GlobalThirdPartyLibrary)
+            ]
         ),
         .implements(
             module: .feature(.SignIn),
             dependencies: [
+                .feature(target: .SignIn, type: .interface),
                 .domain(target: .AuthService, type: .interface),
-                .domain(target: .AuthService)
+                .shared(target: .GlobalThirdPartyLibrary)
             ]
         ),
         .tests(module: .feature(.SignIn), dependencies: [
