@@ -8,7 +8,7 @@
 
 import Foundation
 
-public enum MainTab: Hashable, CaseIterable {
+public enum MainTab: Equatable, Hashable, CaseIterable {
     case home
     case record
     case profile

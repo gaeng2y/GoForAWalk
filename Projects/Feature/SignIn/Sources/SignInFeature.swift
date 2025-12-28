@@ -6,7 +6,6 @@
 //  Copyright © 2025 com.gaeng2y. All rights reserved.
 //
 
-import AuthService
 import AuthServiceInterface
 import AuthenticationServices
 import ComposableArchitecture
@@ -14,47 +13,18 @@ import GlobalThirdPartyLibrary
 import KakaoSDKAuth
 import KakaoSDKUser
 import KeyChainStore
+import SignInInterface
 
-@Reducer
-public struct SignInFeature {
-    @ObservableState
-    public struct State {
-        public var isLoading: Bool = false
-        @Presents var alert: AlertState<Action.Alert>?
-        
-        public init() {}
-    }
-    
-    public enum Action {
-        case alert(PresentationAction<Alert>)
-        case checkAuthorization
-        case isAlreadyAuthorized
-        case kakaoSignInButtonTapped
-        case signInWithKakakoResponse(AuthServiceInterface.Token, AuthServiceInterface.User)
-        case signInWithKakaoError(Error)
-        case signInWithAppleCredential(ASAuthorization)
-        case signInWithAppleError(Error)
-        
-        @CasePathable
-        public enum Alert {
-            case messageReceived(String)
-        }
-    }
-    
-    @Dependency(\.authClient) var authClient
-    
-    public init() {}
-    
-    public var body: some ReducerOf<Self> {
-        Reduce { state, action in
+public extension SignInFeature {
+    static func live(authClient: any AuthClient) -> Self {
+        Self { state, action in
             switch action {
             case .checkAuthorization:
-                if KeyChainStore.shared.validateToken() {
+                if authClient.loadToken() != nil {
                     return .send(.isAlreadyAuthorized)
                 } else {
-                    return .run { send in
-                        await authClient.deleteAllTokens()
-                    }
+                    authClient.deleteAll()
+                    return .none
                 }
                 
             case .kakaoSignInButtonTapped:
@@ -80,12 +50,11 @@ public struct SignInFeature {
                                     continuation.resume(returning: oauthToken)
                                 }
                             }
-                            
                         }
-                        let (token, userInfo) = try await authClient.signIn(.kakao, oauthToken?.idToken ?? "")
+                        let (token, userInfo) = try await authClient.signIn(type: .kakao, idToken: oauthToken?.idToken ?? "")
                         await send(.signInWithKakakoResponse(token, userInfo))
                     } catch {
-                        await send(.signInWithKakaoError(error))
+                        send(.signInWithKakaoError(error))
                     }
                 }
                 
@@ -97,15 +66,9 @@ public struct SignInFeature {
             case let .signInWithKakaoError(error):
                 state.isLoading = false
                 state.alert = AlertState(
-                    title: {
-                        TextState("알림")
-                    }, actions: {
-                        ButtonState {
-                            TextState("확인")
-                        }
-                    }, message: {
-                        TextState(error.localizedDescription)
-                    }
+                    title: { TextState("알림") },
+                    actions: { ButtonState { TextState("확인") } },
+                    message: { TextState(error.localizedDescription) }
                 )
                 return .none
                 
@@ -116,7 +79,7 @@ public struct SignInFeature {
                     operation: { send in
                         if let credential = authorization.credential as? ASAuthorizationAppleIDCredential,
                            let identityToken = credential.identityToken {
-                            let (token, _) = try await authClient.signIn(.apple, String(data: identityToken, encoding: .utf8) ?? "")
+                            let (token, _) = try await authClient.signIn(type: .apple, idToken: String(data: identityToken, encoding: .utf8) ?? "")
                             authClient.saveToken(token)
                             await send(.isAlreadyAuthorized)
                         } else {
@@ -127,25 +90,21 @@ public struct SignInFeature {
                         await send(.signInWithAppleError(error))
                     }
                 )
+                
             case let .signInWithAppleError(error):
                 state.isLoading = false
                 state.alert = AlertState(
-                    title: {
-                        TextState("알림")
-                    }, actions: {
-                        ButtonState {
-                            TextState("확인")
-                        }
-                    }, message: {
-                        TextState(error.localizedDescription)
-                    })
+                    title: { TextState("알림") },
+                    actions: { ButtonState { TextState("확인") } },
+                    message: { TextState(error.localizedDescription) }
+                )
                 return .none
                 
             case .isAlreadyAuthorized:
                 state.isLoading = false
                 return .none
                 
-            default:
+            case .alert:
                 return .none
             }
         }

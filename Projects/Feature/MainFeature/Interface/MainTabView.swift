@@ -20,17 +20,11 @@ public struct MainTabView: View {
     }
     
     public var body: some View {
-        TabView(selection: $store.currentTab.sending(\.selectTab)) {
-            EmptyView()
-        }
-        .tint(DesignSystemAsset.Colors.accentColor.swiftUIColor)
-    }
-}
-//            Tab(
-//                MainTab.home.title,
-//                systemImage: MainTab.home.imageName,
-//                value: MainTab.home
-//            ) {
+        TabView {
+            Tab(
+                MainTab.home.title,
+                systemImage: MainTab.home.imageName
+            ) {
 //                NavigationStack {
 //                    FeedListView(
 //                        store: store.scope(
@@ -39,32 +33,36 @@ public struct MainTabView: View {
 //                        )
 //                    )
 //                }
-//            }
-//            
+                Text("피드")
+            }
+            
 //            Tab(MainTab.record.title, systemImage: MainTab.record.imageName, value: MainTab.record) {
 //                Text("등록")
 //            }
-//            
-//            Tab(
-//                MainTab.profile.title,
-//                systemImage: MainTab.profile.imageName,
-//                value: MainTab.profile
-//            ) {
+            
+            Tab(
+                MainTab.profile.title,
+                systemImage: MainTab.profile.imageName
+            ) {
 //                ProfileView(
 //                    store: store.scope(
 //                        state: \.profile,
 //                        action: \.profile
 //                    )
 //                )
-//            }
-//            
-//            Tab(
-//                MainTab.settings.title,
-//                systemImage: MainTab.settings.imageName,
-//                value: MainTab.settings
-//            ) {
-//                SettingsView(store: )
-//            }
+                Text("프로필")
+            }
+            
+            Tab(
+                MainTab.settings.title,
+                systemImage: MainTab.settings.imageName
+            ) {
+                Text("설정")
+            }
+        }
+        .tint(DesignSystemAsset.Colors.accentColor.swiftUIColor)
+    }
+}
 //        }
 //        .fullScreenCover(
 //            store: self.store.scope(

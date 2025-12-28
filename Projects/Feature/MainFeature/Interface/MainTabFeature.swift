@@ -13,7 +13,7 @@ import SwiftUI
 @Reducer
 public struct MainTabFeature {
     @ObservableState
-    public struct State {
+    public struct State: Equatable {
         public var currentTab: MainTab = .home
         
 //        var feed: FeedFeature.State = .init()
