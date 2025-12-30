@@ -24,13 +24,15 @@ public struct ProfileView: View {
                 Text(store.profile.nickname)
                     .font(.system(size: 16))
                     .bold()
-                
+                    .redacted(reason: store.isLoading ? .placeholder : [])
+
                 Button {
                     store.send(.showNicknameChangeAlert)
                 } label: {
                     Image(systemName: "pencil.line")
                         .foregroundStyle(.black)
                 }
+                .disabled(store.isLoading)
             }
             .padding(.vertical, 25)
             
@@ -40,19 +42,21 @@ public struct ProfileView: View {
                         .font(.system(size: 22))
                         .bold()
                         .italic()
-                    
+                        .redacted(reason: store.isLoading ? .placeholder : [])
+
                     Text("발자취 개수")
                 }
-                
+
                 Spacer()
                     .frame(width: 50)
-                
+
                 VStack {
                     Text("\(store.profile.footstepStreakDays)")
                         .font(.system(size: 22))
                         .bold()
                         .italic()
-                    
+                        .redacted(reason: store.isLoading ? .placeholder : [])
+
                     Text("연속 발자취")
                 }
             }

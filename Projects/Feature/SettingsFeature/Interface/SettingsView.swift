@@ -18,19 +18,17 @@ public struct SettingsView: View {
     }
     
     public var body: some View {
-        NavigationView {
-            List {
-                ForEach(
-                    SettingsMenu.allCases,
-                    id: \.self
-                ) { menu in
-                    Label(
-                        menu.title,
-                        systemImage: menu.imageName
-                    )
-                    .onTapGesture {
-                        store.send(.settingsMenuTapped(menu))
-                    }
+        List {
+            ForEach(
+                SettingsMenu.allCases,
+                id: \.self
+            ) { menu in
+                Label(
+                    menu.title,
+                    systemImage: menu.imageName
+                )
+                .onTapGesture {
+                    store.send(.settingsMenuTapped(menu))
                 }
             }
         }

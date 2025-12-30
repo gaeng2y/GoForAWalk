@@ -27,6 +27,7 @@ public extension ProfileFeature {
                 
             case .fetchProfile(let profile):
                 state.profile = profile
+                state.isLoading = false
                 return .none
                 
             case .showNicknameChangeAlert:
@@ -51,18 +52,7 @@ public extension ProfileFeature {
                 return .none
                 
             case .nicknameChanged:
-                return .run { send in
-                    let profile = try await profileClient.fetchProfile()
-                    await send(.fetchProfile(profile))
-                }
-                
-//            case .path(.element(id: _, action: .settings(.delegate(.userDidLogout)))):
-//                return .send(.delegate(.userDidLogout))
-                
-//            case .path:
-//                return .none
-                
-            case .delegate:
+                state.profile = state.profile.copying(nickname: state.nicknameInput)
                 return .none
             }
         }

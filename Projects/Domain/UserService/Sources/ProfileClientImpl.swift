@@ -23,11 +23,11 @@ public final class ProfileClientImpl: ProfileClient {
     }
     
     public func withdrawUser() async throws {
-        let _: EmptyData = try await networkService.request(ProfileEndpoint.withdraw)
+        try await networkService.requestWithoutResponse(ProfileEndpoint.withdraw)
     }
-    
+
     public func changeNickname(_ nickname: String) async throws {
         let dto = ChangeNicknameRequestDTO(nickname: nickname)
-        let _: EmptyData = try await networkService.request(ProfileEndpoint.changeNickname(dto))
+        try await networkService.requestWithoutResponse(ProfileEndpoint.changeNickname(dto))
     }
 }

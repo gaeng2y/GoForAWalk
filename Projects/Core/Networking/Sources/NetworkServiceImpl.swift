@@ -139,7 +139,23 @@ public final class NetworkServiceImpl: NetworkService {
             return try await uploadMultipart(endpoint, items: items)
         }
     }
-    
+
+    /// 응답 본문이 없는 API 요청을 비동기적으로 실행합니다
+    public func requestWithoutResponse(_ endpoint: any Endpoint) async throws {
+        let urlRequest = try endpoint.asURLRequest()
+        let dataRequest = session.request(urlRequest)
+            .validate(statusCode: 200..<300)
+
+        let result = await dataRequest.serializingData(emptyResponseCodes: [200, 201, 204]).result
+
+        switch result {
+        case .success:
+            return
+        case .failure(let afError):
+            throw mapToNetworkError(afError, from: dataRequest.data)
+        }
+    }
+
     // MARK: - Private Methods
     
     /// 일반 HTTP 요청을 수행합니다
