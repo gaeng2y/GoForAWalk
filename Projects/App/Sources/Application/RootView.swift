@@ -8,33 +8,30 @@
 
 import ComposableArchitecture
 import MainFeatureInterface
-import SignIn
+import SignInInterface
 import SwiftUI
 
 public struct RootView: View {
-    public let store: StoreOf<RootFeature>
-    
+    let store: StoreOf<RootFeature>
+
     public init(store: StoreOf<RootFeature>) {
         self.store = store
     }
-    
-    public var body: some View {
-        MainTabView(store: store.scope(state: \.mainTab, action: \.mainTab))
-//        if store.state.isSignIn {
-//            
-//        } else {
-//            SignInView(store: store.scope(state: \.signIn, action: \.signIn))
-//                .onAppear {
-//                    store.send(.signIn(.checkAuthorization))
-//                }
-//        }
-    }
-}
 
-#Preview {
-    RootView(
-        store: .init(initialState: RootFeature.State()) {
-            RootFeature()
+    public var body: some View {
+        Group {
+            if store.isSignIn {
+                MainTabView(
+                    store: store.scope(state: \.mainTab, action: \.mainTab)
+                )
+            } else {
+                SignInView(
+                    store: store.scope(state: \.signIn, action: \.signIn)
+                )
+            }
         }
-    ) 
+        .onAppear {
+            store.send(.onAppear)
+        }
+    }
 }
