@@ -9,7 +9,7 @@
 import Foundation
 
 public protocol KeychainStore: Sendable {
-    func save(property: TokenProperty, value: String)
-    func load(property: TokenProperty) throws(KeychainError) -> String
-    func deleteAll()
+    func save(property: TokenProperty, value: String) async
+    func load(property: TokenProperty) async throws(KeychainError) -> String
+    func deleteAll() async
 }

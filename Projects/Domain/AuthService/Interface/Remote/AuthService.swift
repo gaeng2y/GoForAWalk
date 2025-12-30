@@ -9,8 +9,14 @@
 import Foundation
 
 public protocol AuthClient: Sendable {
-    func signIn(type: LoginType, idToken: String) async throws -> (Token, User)
-    func saveToken(_ token: Token)
-    func loadToken() -> Token?
-    func deleteAll()
+    /// 카카오 OAuth 로그인 수행
+    func signInWithKakao() async throws -> (Token, User)
+    /// Apple OAuth 로그인 수행
+    @MainActor func signInWithApple() async throws -> (Token, User)
+    /// 토큰 저장
+    func saveToken(_ token: Token) async
+    /// 토큰 로드
+    func loadToken() async -> Token?
+    /// 모든 토큰 삭제
+    func deleteAll() async
 }

@@ -125,8 +125,3 @@ struct FeedCell: View {
 #Preview {
     FeedCell(footstep: .mock) { _ in }
 }
-
-fileprivate extension Color {
-    static let ff6b6b = Color(red: 1.0, green: 107/255, blue: 107/255)
-    static let gray757990 = Color(red: 117/255, green: 121/255, blue: 144/255)
-}

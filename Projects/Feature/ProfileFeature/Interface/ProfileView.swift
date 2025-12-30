@@ -85,8 +85,8 @@ public struct ProfileView: View {
     }
 }
 
-#Preview {
-    ProfileView(store: .init(initialState: ProfileFeature.State()) {
-        ProfileFeature()
-    })
-}
+//#Preview {
+//    ProfileView(store: .init(initialState: ProfileFeature.State()) {
+//        ProfileFeature()
+//    })
+//}

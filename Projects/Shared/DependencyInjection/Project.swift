@@ -7,7 +7,7 @@ let project = Project.module(
     targets: [
         .implements(
             module: .shared(.DependencyInjection),
-            product: .framework,
+            product: .staticLibrary,
             dependencies: [
                 .shared(target: .GlobalThirdPartyLibrary),
                 

@@ -6,16 +6,19 @@ let project = Project.module(
     name: ModulePaths.Feature.ProfileFeature.rawValue,
     targets: [
         .interface(
-            module: .feature(.ProfileFeature)
+            module: .feature(.ProfileFeature),
+            dependencies: [
+                .domain(target: .UserService, type: .interface),
+                .userInterface(target: .DesignSystem),
+                .shared(target: .GlobalThirdPartyLibrary)
+            ]
         ),
         .implements(
             module: .feature(.ProfileFeature),
             dependencies: [
                 .feature(target: .ProfileFeature, type: .interface),
-                .feature(target: .SettingsFeature),
                 .domain(target: .UserService, type: .interface),
-                .domain(target: .UserService),
-                .userInterface(target: .DesignSystem)
+                .shared(target: .GlobalThirdPartyLibrary)
             ]
         ),
         .testing(

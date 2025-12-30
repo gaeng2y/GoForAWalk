@@ -9,37 +9,39 @@
 import Foundation
 import KeyChainStoreInterface
 
-public struct KeychainStoreImpl: KeychainStore {
-    public init() {}
-    
+public actor KeychainStoreImpl: KeychainStore {
+    public static let shared = KeychainStoreImpl()
+
+    private init() {}
+
     public func save(
         property: TokenProperty,
         value: String
     ) {
-       let query: NSDictionary = [
-           kSecClass: kSecClassGenericPassword,
-           kSecAttrAccount: property.rawValue,
-           kSecValueData: value.data(using: .utf8, allowLossyConversion: false) ?? .init()
-       ]
-       
-       SecItemDelete(query)
-       SecItemAdd(query, nil)
-   }
-   
+        let query: NSDictionary = [
+            kSecClass: kSecClassGenericPassword,
+            kSecAttrAccount: property.rawValue,
+            kSecValueData: value.data(using: .utf8, allowLossyConversion: false) ?? .init()
+        ]
+
+        SecItemDelete(query)
+        SecItemAdd(query, nil)
+    }
+
     public func load(
         property: TokenProperty
     ) throws(KeychainError) -> String {
-       let query: NSDictionary = [
-           kSecClass: kSecClassGenericPassword,
-           kSecAttrAccount: property.rawValue,
-           kSecReturnData: kCFBooleanTrue!,
-           kSecMatchLimit: kSecMatchLimitOne
-       ]
-       
-       var dataTypeRef: AnyObject?
-       
+        let query: NSDictionary = [
+            kSecClass: kSecClassGenericPassword,
+            kSecAttrAccount: property.rawValue,
+            kSecReturnData: kCFBooleanTrue!,
+            kSecMatchLimit: kSecMatchLimitOne
+        ]
+
+        var dataTypeRef: AnyObject?
+
         let status = SecItemCopyMatching(query as CFDictionary, &dataTypeRef)
-        
+
         switch status {
         case errSecSuccess:
             guard let data = dataTypeRef as? Data,
@@ -52,22 +54,20 @@ public struct KeychainStoreImpl: KeychainStore {
         default:
             throw .unhandledError(status)
         }
-   }
-   
-   public func deleteAll() {
-       TokenProperty.allCases.forEach {
-           delete(property: $0)
-       }
-   }
-}
+    }
 
-private extension KeychainStoreImpl {
+    public func deleteAll() {
+        TokenProperty.allCases.forEach {
+            delete(property: $0)
+        }
+    }
+
     private func delete(property: TokenProperty) {
         let query: NSDictionary = [
             kSecClass: kSecClassGenericPassword,
             kSecAttrAccount: property.rawValue
         ]
-        
+
         SecItemDelete(query)
     }
 }

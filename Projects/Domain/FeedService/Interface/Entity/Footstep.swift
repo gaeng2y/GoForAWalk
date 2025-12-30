@@ -8,7 +8,11 @@
 
 import Foundation
 
-public struct Footstep: Identifiable, Sendable {
+public struct Footstep: Identifiable, Equatable, Sendable {
+    public static func == (lhs: Footstep, rhs: Footstep) -> Bool {
+        lhs.id == rhs.id
+    }
+    
     public let id: Int
     public let userNickname: String
     public let createdAt: Date

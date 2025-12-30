@@ -19,10 +19,9 @@ let project = Project.module(
             module: .feature(.MainFeature),
             dependencies: [
                 .feature(target: .MainFeature, type: .interface),
-//                .feature(target: .FeedFeature),
-//                .feature(target: .RecordFeature),
-//                .feature(target: .ProfileFeature),
-//                .shared(target: .DependencyInjection),
+                .feature(target: .FeedFeature),
+                .feature(target: .RecordFeature),
+                .feature(target: .ProfileFeature),
                 .shared(target: .GlobalThirdPartyLibrary)
             ]
         ),
