@@ -16,9 +16,10 @@ public struct ProfileFeature {
     @ObservableState
     public struct State: Equatable {
         public var profile: Profile = .init()
+        public var isLoading = true
         public var isShowingNicknameAlert = false
         public var nicknameInput = ""
-        
+
         public init() {}
     }
     
@@ -30,11 +31,6 @@ public struct ProfileFeature {
         case confirmNicknameChange
         case cancelNicknameChange
         case nicknameChanged
-        case delegate(Delegate)
-
-        public enum Delegate {
-            case userDidLogout
-        }
     }
     
     private let profileClient: ProfileClient

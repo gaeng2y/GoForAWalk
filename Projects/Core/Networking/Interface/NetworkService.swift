@@ -68,4 +68,12 @@ public protocol NetworkService: Sendable {
     /// - Returns: 제네릭 T 타입(Decodable 준수)의 객체
     /// - Throws: NetworkError - 네트워크 통신이나 데이터 처리 중 발생하는 에러
     func request<T: Decodable>(_ endpoint: any Endpoint) async throws -> T
+
+    /// 응답 본문이 없는 API 요청을 비동기적으로 실행합니다.
+    ///
+    /// 서버가 빈 응답(204 No Content 등)을 반환하는 경우 사용합니다.
+    ///
+    /// - Parameter endpoint: Endpoint 프로토콜을 구현한 API 엔드포인트 정의
+    /// - Throws: NetworkError - 네트워크 통신 중 발생하는 에러
+    func requestWithoutResponse(_ endpoint: any Endpoint) async throws
 }

@@ -54,12 +54,14 @@ public struct MainTabView: View {
                 MainTab.settings.title,
                 systemImage: MainTab.settings.imageName
             ) {
-                SettingsView(
-                    store: store.scope(
-                        state: \.settings,
-                        action: \.settings
+                NavigationStack {
+                    SettingsView(
+                        store: store.scope(
+                            state: \.settings,
+                            action: \.settings
+                        )
                     )
-                )
+                }
             }
         }
         .tint(DesignSystemAsset.Colors.accentColor.swiftUIColor)

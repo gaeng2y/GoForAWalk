@@ -23,7 +23,7 @@ public final class FeedClientImpl: FeedClient {
     }
     
     public func deleteFootstep(id: Int) async throws {
-        let _: EmptyData = try await networkService.request(FeedEndpoint.deleteFootstep(id: id))
+        try await networkService.requestWithoutResponse(FeedEndpoint.deleteFootstep(id: id))
     }
     
     public func createFootstep(data: Data, content: String, fileName: String) async throws {
