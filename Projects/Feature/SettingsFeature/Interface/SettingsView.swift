@@ -11,10 +11,10 @@ import DesignSystem
 import SwiftUI
 
 public struct SettingsView: View {
-    @StateObject private var store: StoreOf<SettingsFeature>
+    @Bindable private var store: StoreOf<SettingsFeature>
     
     public init(store: StoreOf<SettingsFeature>) {
-        _store = .init(wrappedValue: store)
+        self.store = store
     }
     
     public var body: some View {

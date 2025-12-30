@@ -11,12 +11,12 @@ import DesignSystem
 import SwiftUI
 
 public struct FeedListView: View {
-    private var store: StoreOf<FeedFeature>
-    
+    let store: StoreOf<FeedFeature>
+
     public init(store: StoreOf<FeedFeature>) {
         self.store = store
     }
-    
+
     public var body: some View {
         ScrollView {
             if store.footsteps.isEmpty {

@@ -8,9 +8,9 @@ let project = Project.module(
         .interface(
             module: .feature(.MainFeature),
             dependencies: [
-//                .feature(target: .FeedFeature, type: .interface),
-//                .feature(target: .ProfileFeature, type: .interface),
-//                .feature(target: .SettingsFeature, type: .interface),
+                .feature(target: .FeedFeature, type: .interface),
+                .feature(target: .ProfileFeature, type: .interface),
+                .feature(target: .SettingsFeature, type: .interface),
                 .userInterface(target: .DesignSystem),
                 .shared(target: .GlobalThirdPartyLibrary)
             ]
@@ -19,10 +19,9 @@ let project = Project.module(
             module: .feature(.MainFeature),
             dependencies: [
                 .feature(target: .MainFeature, type: .interface),
-//                .feature(target: .FeedFeature),
-//                .feature(target: .RecordFeature),
-//                .feature(target: .ProfileFeature),
-//                .shared(target: .DependencyInjection),
+                .feature(target: .FeedFeature),
+                .feature(target: .RecordFeature),
+                .feature(target: .ProfileFeature),
                 .shared(target: .GlobalThirdPartyLibrary)
             ]
         ),

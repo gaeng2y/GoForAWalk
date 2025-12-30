@@ -30,9 +30,26 @@ public final class AuthorizationInterceptor: RequestInterceptor {
         self.keychainStore = keychainStore
     }
     
-    // MARK: - RequestAdapter
-    
+    // MARK: - RequestAdapter (Completion-based - Alamofire가 호출하는 메서드)
+
     public func adapt(
+        _ urlRequest: URLRequest,
+        for session: Session,
+        completion: @escaping (Result<URLRequest, any Error>) -> Void
+    ) {
+        Task {
+            do {
+                let adaptedRequest = try await adapt(urlRequest, for: session)
+                completion(.success(adaptedRequest))
+            } catch {
+                completion(.failure(error))
+            }
+        }
+    }
+
+    // MARK: - RequestAdapter (Async - 실제 로직)
+
+    private func adapt(
         _ urlRequest: URLRequest,
         for session: Session
     ) async throws -> URLRequest {
@@ -47,16 +64,36 @@ public final class AuthorizationInterceptor: RequestInterceptor {
         request.setValue(nil, forHTTPHeaderField: "X-Requires-Auth")
         
         // 실제 Authorization 헤더 추가
-        if let accessToken = try? keychainStore.load(property: .accessToken) {
+        do {
+            let accessToken = try await keychainStore.load(property: .accessToken)
             request.setValue("Bearer \(accessToken)", forHTTPHeaderField: "Authorization")
+            debugPrint("🔐 [Interceptor] Token loaded successfully")
+        } catch {
+            debugPrint("🔐 [Interceptor] Token load failed: \(error)")
+            debugPrint("🔐 [Interceptor] URL: \(request.url?.absoluteString ?? "")")
         }
+        
         
         return request
     }
     
-    // MARK: - RequestRetrier
-    
+    // MARK: - RequestRetrier (Completion-based - Alamofire가 호출하는 메서드)
+
     public func retry(
+        _ request: Request,
+        for session: Session,
+        dueTo error: any Error,
+        completion: @escaping (RetryResult) -> Void
+    ) {
+        Task {
+            let result = await retry(request, for: session, dueTo: error)
+            completion(result)
+        }
+    }
+
+    // MARK: - RequestRetrier (Async - 실제 로직)
+
+    private func retry(
         _ request: Request,
         for session: Session,
         dueTo error: Error
@@ -79,25 +116,25 @@ public final class AuthorizationInterceptor: RequestInterceptor {
     // MARK: - Private Methods
     
     private func refreshToken() async throws {
-        guard let refreshToken = try? keychainStore.load(property: .refreshToken) else {
+        guard let refreshToken = try? await keychainStore.load(property: .refreshToken) else {
             throw AuthorizationError.refreshTokenNotFound
         }
-        
+
         let endpoint = TokenRefreshEndpoint.refresh(refreshToken: refreshToken)
         let urlRequest = try endpoint.asURLRequest()
-        
+
         let response = await AF.request(urlRequest)
             .validate(statusCode: 200..<300)
             .serializingDecodable(TokenRefreshResponseDTO.self)
             .response
-        
+
         switch response.result {
         case .success(let tokenResponse):
-            keychainStore.save(property: .accessToken, value: tokenResponse.data.credentials.accessToken)
-            keychainStore.save(property: .refreshToken, value: tokenResponse.data.credentials.refreshToken)
-            
+            await keychainStore.save(property: .accessToken, value: tokenResponse.data.credentials.accessToken)
+            await keychainStore.save(property: .refreshToken, value: tokenResponse.data.credentials.refreshToken)
+
         case .failure(let error):
-            keychainStore.deleteAll()
+            await keychainStore.deleteAll()
             throw AuthorizationError.tokenRefreshFailed(error)
         }
     }

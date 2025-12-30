@@ -13,26 +13,16 @@ struct SignInResponseDTO: Decodable {
         let accessToken: String
         let refreshToken: String
     }
-    
+
     struct UserInfo: Decodable {
         let email: String?
         let nickname: String
     }
-    
+
     let userId: Int
     let credentials: Credentials
     let userInfo: UserInfo
-    
-    init(
-        userId: Int,
-        credentials: Credentials,
-        userInfo: UserInfo
-    ) {
-        self.userId = userId
-        self.credentials = credentials
-        self.userInfo = userInfo
-    }
-    
+
     func toDomain() -> (Token, User) {
         let token = Token(
             accessToken: credentials.accessToken,

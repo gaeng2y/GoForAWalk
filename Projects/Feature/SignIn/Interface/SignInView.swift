@@ -6,16 +6,15 @@
 //  Copyright © 2025 com.gaeng2y. All rights reserved.
 //
 
-import AuthenticationServices
 import ComposableArchitecture
 import DesignSystem
 import SwiftUI
 
 public struct SignInView: View {
-    @StateObject private var store: StoreOf<SignInFeature>
-    
+    @Bindable var store: StoreOf<SignInFeature>
+
     public init(store: StoreOf<SignInFeature>) {
-        _store = .init(wrappedValue: store)
+        self.store = store
     }
     
     public var body: some View {
@@ -44,23 +43,11 @@ public struct SignInView: View {
                 .padding(.horizontal, 35)
                 
                 SignInButton(provider: .apple) {
-                }
-                .overlay {
-                    SignInWithAppleButton { request in
-                        request.requestedScopes = [.email]
-                    } onCompletion: { result in
-                        switch result {
-                        case .success(let authorization):
-                            store.send(.signInWithAppleCredential(authorization))
-                        case .failure(let error):
-                            store.send(.signInWithAppleError(error))
-                        }
-                    }
-                    .blendMode(.overlay)
+                    store.send(.appleSignInButtonTapped)
                 }
                 .frame(height: 54)
                 .cornerRadius(10)
-                    .padding(.horizontal, 35)
+                .padding(.horizontal, 35)
                 
                 Spacer().frame(height: 20)
             }

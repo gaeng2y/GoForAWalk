@@ -16,7 +16,8 @@ let project = Project.module(
                 .core(target: .Networking, type: .interface),
                 .core(target: .KeyChainStore, type: .interface),
                 .shared(target: .Util),
-                .shared(target: .GlobalThirdPartyLibrary)
+                .shared(target: .GlobalThirdPartyLibrary),
+                .sdk(name: "AuthenticationServices", type: .framework)
             ]
         ),
         .testing(

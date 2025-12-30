@@ -25,7 +25,7 @@ private enum CameraKey: DependencyKey {
 // MARK: - KeychainStore
 
 private enum KeychainStoreKey: DependencyKey {
-    static let liveValue: KeychainStore = KeychainStoreImpl()
+    static let liveValue: KeychainStore = KeychainStoreImpl.shared
 }
 
 // MARK: - NetworkService

@@ -17,8 +17,7 @@ let project = Project.module(
             module: .feature(.SignIn),
             dependencies: [
                 .feature(target: .SignIn, type: .interface),
-                .domain(target: .AuthService, type: .interface),
-                .shared(target: .GlobalThirdPartyLibrary)
+                .domain(target: .AuthService, type: .interface)
             ]
         ),
         .tests(module: .feature(.SignIn), dependencies: [

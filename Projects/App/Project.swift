@@ -32,7 +32,9 @@ let targets: [Target] = [
         entitlements: .file(path: .path("Support/GoForAWalk.entitlements")),
         scripts: scripts,
         dependencies: [
-            .shared(target: .DependencyInjection)
+            .shared(target: .DependencyInjection),
+            .feature(target: .MainFeature, type: .interface),
+            .feature(target: .SignIn, type: .interface)
         ],
         settings: .settings(base: env.baseSetting)
     )

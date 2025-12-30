@@ -56,10 +56,10 @@ public extension SettingsFeature {
                 return .run { [authClient] send in
                     do {
                         try await profileClient.withdrawUser()
-                        authClient.deleteAll()
+                        await authClient.deleteAll()
                         await send(.withdrawUserSuccess)
                     } catch {
-                        authClient.deleteAll()
+                        await authClient.deleteAll()
                         await send(.withdrawUserSuccess)
                     }
                 }

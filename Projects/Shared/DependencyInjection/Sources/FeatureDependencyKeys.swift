@@ -12,6 +12,8 @@ import FeedFeatureInterface
 import Foundation
 import MainFeature
 import MainFeatureInterface
+import ProfileFeature
+import ProfileFeatureInterface
 import RecordFeature
 import RecordFeatureInterface
 import SettingsFeature
@@ -33,7 +35,25 @@ private enum FeedFeatureKey: DependencyKey {
 
 private enum MainTabFeatureKey: DependencyKey {
     static var liveValue: MainTabFeature {
-        MainTabFeature.live()
+        @Dependency(\.feedFeature) var feedFeature
+        @Dependency(\.profileFeature) var profileFeature
+        @Dependency(\.settingsFeature) var settingsFeature
+
+        return MainTabFeature.live(
+            feedFeature: feedFeature,
+            profileFeature: profileFeature,
+            settingsFeature: settingsFeature
+        )
+    }
+}
+
+// MARK: - ProfileFeature
+
+private enum ProfileFeatureKey: DependencyKey {
+    static var liveValue: ProfileFeature {
+        @Dependency(\.profileClient) var profileClient
+
+        return ProfileFeature.live(profileClient: profileClient)
     }
 }
 
@@ -106,6 +126,11 @@ extension DependencyValues {
     public var postFootstepFeature: PostFootstepFeature {
         get { self[PostFootstepFeatureKey.self] }
         set { self[PostFootstepFeatureKey.self] = newValue }
+    }
+
+    public var profileFeature: ProfileFeature {
+        get { self[ProfileFeatureKey.self] }
+        set { self[ProfileFeatureKey.self] = newValue }
     }
 
     public var settingsFeature: SettingsFeature {

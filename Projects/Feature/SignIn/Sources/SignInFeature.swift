@@ -7,12 +7,7 @@
 //
 
 import AuthServiceInterface
-import AuthenticationServices
 import ComposableArchitecture
-import GlobalThirdPartyLibrary
-import KakaoSDKAuth
-import KakaoSDKUser
-import KeyChainStore
 import SignInInterface
 
 public extension SignInFeature {
@@ -20,78 +15,44 @@ public extension SignInFeature {
         Self { state, action in
             switch action {
             case .checkAuthorization:
-                if authClient.loadToken() != nil {
-                    return .send(.isAlreadyAuthorized)
-                } else {
-                    authClient.deleteAll()
-                    return .none
+                return .run { send in
+                    if await authClient.loadToken() != nil {
+                        await send(.isAlreadyAuthorized)
+                    } else {
+                        await authClient.deleteAll()
+                    }
                 }
-                
+
             case .kakaoSignInButtonTapped:
                 state.isLoading = true
-                
-                return .run { @MainActor send in
+                return .run { send in
                     do {
-                        let oauthToken: OAuthToken? = try await withCheckedThrowingContinuation { continuation in
-                            if UserApi.isKakaoTalkLoginAvailable() {
-                                UserApi.shared.loginWithKakaoTalk { oauthToken, error in
-                                    if let error {
-                                        continuation.resume(throwing: error)
-                                        return
-                                    }
-                                    continuation.resume(returning: oauthToken)
-                                }
-                            } else {
-                                UserApi.shared.loginWithKakaoAccount { oauthToken, error in
-                                    if let error {
-                                        continuation.resume(throwing: error)
-                                        return
-                                    }
-                                    continuation.resume(returning: oauthToken)
-                                }
-                            }
-                        }
-                        let (token, userInfo) = try await authClient.signIn(type: .kakao, idToken: oauthToken?.idToken ?? "")
-                        await send(.signInWithKakakoResponse(token, userInfo))
+                        let (token, user) = try await authClient.signInWithKakao()
+                        await send(.signInSuccess(token, user))
                     } catch {
-                        send(.signInWithKakaoError(error))
+                        await send(.signInFailure(error))
                     }
                 }
-                
-            case let .signInWithKakakoResponse(token, _):
-                state.isLoading = false
-                authClient.saveToken(token)
-                return .send(.isAlreadyAuthorized)
-                
-            case let .signInWithKakaoError(error):
-                state.isLoading = false
-                state.alert = AlertState(
-                    title: { TextState("알림") },
-                    actions: { ButtonState { TextState("확인") } },
-                    message: { TextState(error.localizedDescription) }
-                )
-                return .none
-                
-            case let .signInWithAppleCredential(authorization):
+
+            case .appleSignInButtonTapped:
                 state.isLoading = true
-                
-                return .run(
-                    operation: { send in
-                        if let credential = authorization.credential as? ASAuthorizationAppleIDCredential,
-                           let identityToken = credential.identityToken {
-                            let (token, _) = try await authClient.signIn(type: .apple, idToken: String(data: identityToken, encoding: .utf8) ?? "")
-                            authClient.saveToken(token)
-                            await send(.isAlreadyAuthorized)
-                        } else {
-                            await send(.signInWithAppleError(NSError(domain: "AppleSignInError", code: 999)))
-                        }
-                    },
-                    catch: { error, send in
-                        await send(.signInWithAppleError(error))
+                return .run { send in
+                    do {
+                        let (token, user) = try await authClient.signInWithApple()
+                        await send(.signInSuccess(token, user))
+                    } catch {
+                        await send(.signInFailure(error))
                     }
-                )
-                
-            case let .signInWithAppleError(error):
+                }
+
+            case let .signInSuccess(token, _):
+                state.isLoading = false
+                return .run { send in
+                    await authClient.saveToken(token)
+                    await send(.isAlreadyAuthorized)
+                }
+
+            case let .signInFailure(error):
                 state.isLoading = false
                 state.alert = AlertState(
                     title: { TextState("알림") },
@@ -99,11 +60,11 @@ public extension SignInFeature {
                     message: { TextState(error.localizedDescription) }
                 )
                 return .none
-                
+
             case .isAlreadyAuthorized:
                 state.isLoading = false
                 return .none
-                
+
             case .alert:
                 return .none
             }

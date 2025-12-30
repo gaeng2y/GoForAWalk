@@ -148,11 +148,11 @@ public final class NetworkServiceImpl: NetworkService {
         let dataRequest = session.request(urlRequest)
             .validate(statusCode: 200..<300)
         
-        let result = await dataRequest.serializingDecodable(T.self).result
+        let result = await dataRequest.serializingDecodable(Response<T>.self).result
         
         switch result {
         case .success(let value):
-            return value
+            return value.data
         case .failure(let afError):
             throw mapToNetworkError(afError, from: dataRequest.data)
         }
@@ -303,13 +303,16 @@ private final class APIEventLogger: EventMonitor {
         _ request: DataRequest,
         didParseResponse response: DataResponse<Value, AFError>
     ) {
+        debugPrint("=======================================")
         debugPrint("🛜 NETWORK Response LOG")
-        debugPrint(
-            "URL: " + (request.request?.url?.absoluteString ?? "") + "\n"
-            + "Result: " + "\(response.result)" + "\n"
-            + "StatusCode: " + "\(response.response?.statusCode ?? 0)" + "\n"
-            + "Data: \(response.data?.toPrettyPrintedString ?? "")"
-        )
+        debugPrint("=======================================")
+        debugPrint("URL: \(request.request?.url?.absoluteString ?? "")")
+        debugPrint("StatusCode: \(response.response?.statusCode ?? 0)")
+        debugPrint("Result: \(response.result)")
+        debugPrint("---------------------------------------")
+        debugPrint("Data:")
+        debugPrint(response.data?.toPrettyPrintedString ?? "nil")
+        debugPrint("=======================================")
     }
 }
 
