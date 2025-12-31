@@ -10,6 +10,7 @@ import Alamofire
 import Foundation
 import KeyChainStoreInterface
 import NetworkingInterface
+import Util
 
 // MARK: - AuthorizationInterceptor
 
@@ -31,7 +32,7 @@ public final class AuthorizationInterceptor: RequestInterceptor {
     }
     
     // MARK: - RequestAdapter (Completion-based - Alamofire가 호출하는 메서드)
-
+    
     public func adapt(
         _ urlRequest: URLRequest,
         for session: Session,
@@ -46,9 +47,9 @@ public final class AuthorizationInterceptor: RequestInterceptor {
             }
         }
     }
-
+    
     // MARK: - RequestAdapter (Async - 실제 로직)
-
+    
     private func adapt(
         _ urlRequest: URLRequest,
         for session: Session
@@ -78,7 +79,7 @@ public final class AuthorizationInterceptor: RequestInterceptor {
     }
     
     // MARK: - RequestRetrier (Completion-based - Alamofire가 호출하는 메서드)
-
+    
     public func retry(
         _ request: Request,
         for session: Session,
@@ -90,21 +91,29 @@ public final class AuthorizationInterceptor: RequestInterceptor {
             completion(result)
         }
     }
-
+    
     // MARK: - RequestRetrier (Async - 실제 로직)
-
+    
     private func retry(
         _ request: Request,
         for session: Session,
         dueTo error: Error
     ) async -> RetryResult {
-        // 401 에러인지 확인
+        // 1. 401 상태 코드 체크
         guard let response = request.task?.response as? HTTPURLResponse,
               response.statusCode == 401 else {
             return .doNotRetryWithError(error)
         }
         
-        // 토큰 갱신 시도
+        // 2. 응답 body에서 A_4101 코드 확인
+        guard let dataRequest = request as? DataRequest,
+              let data = dataRequest.data,
+              let errorResponse = try? JSONDecoder().decode(ErrorResponse.self, from: data),
+              errorResponse.code == "A_4101" else {
+            return .doNotRetryWithError(error)
+        }
+        
+        // 3. A_4101인 경우에만 토큰 갱신
         do {
             try await refreshToken()
             return .retry
@@ -116,25 +125,35 @@ public final class AuthorizationInterceptor: RequestInterceptor {
     // MARK: - Private Methods
     
     private func refreshToken() async throws {
+        debugPrint("🔄 [Interceptor] Token refresh started")
+        
         guard let refreshToken = try? await keychainStore.load(property: .refreshToken) else {
+            debugPrint("🔄 [Interceptor] Refresh token not found in keychain")
             throw AuthorizationError.refreshTokenNotFound
         }
-
+        
         let endpoint = TokenRefreshEndpoint.refresh(refreshToken: refreshToken)
         let urlRequest = try endpoint.asURLRequest()
-
+        
         let response = await AF.request(urlRequest)
             .validate(statusCode: 200..<300)
             .serializingDecodable(TokenRefreshResponseDTO.self)
             .response
-
+        
         switch response.result {
         case .success(let tokenResponse):
             await keychainStore.save(property: .accessToken, value: tokenResponse.data.credentials.accessToken)
             await keychainStore.save(property: .refreshToken, value: tokenResponse.data.credentials.refreshToken)
-
+            debugPrint("🔄 [Interceptor] Token refresh succeeded")
+            
         case .failure(let error):
+            debugPrint("🔄 [Interceptor] Token refresh failed: \(error)")
             await keychainStore.deleteAll()
+            // 강제 로그아웃 알림 발송 (A_4102, A_4103, A_4140)
+            await MainActor.run {
+                NotificationCenter.default.post(name: .forceLogoutRequired, object: nil)
+            }
+            debugPrint("🔄 [Interceptor] Force logout notification posted")
             throw AuthorizationError.tokenRefreshFailed(error)
         }
     }
