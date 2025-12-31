@@ -30,16 +30,14 @@ public extension PostFootstepFeature {
                 }
 
             case .saveButtonTapped:
-                return .run { [resultImage = state.resultImage] send in
-                    await send(.delegate(.savePhotos(resultImage)))
-                }
-
-            case .delegate:
+                guard !state.isLoading else { return .none }
+                state.isLoading = true
                 return .run { [state] send in
                     let imageData = await ImageRenderer(content: state.resultImage)
                         .uiImage?
                         .jpegData(compressionQuality: 0.4)
                     guard let imageData else {
+                        await send(.delegate(.dismiss))
                         return
                     }
                     do {
@@ -51,7 +49,11 @@ public extension PostFootstepFeature {
                 }
                 .cancellable(id: "createFootstep")
 
+            case .delegate:
+                return .none
+
             case .showErrorAlert:
+                state.isLoading = false
                 state.alert = AlertState {
                     TextState("오류")
                 } actions: {

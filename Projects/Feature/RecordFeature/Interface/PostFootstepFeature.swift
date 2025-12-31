@@ -19,6 +19,7 @@ public struct PostFootstepFeature {
         public var resultImage: Image
         public var todaysMessage: String = ""
         public let maxCharacterCount = 50
+        public var isLoading: Bool = false
         @Presents public var alert: AlertState<Action.Alert>?
 
         public init(resultImage: Image) {
