@@ -20,7 +20,7 @@ let project = Project.module(
                 .feature(target: .RecordFeature, type: .interface),
                 .domain(target: .CameraService, type: .interface),
                 .domain(target: .FeedService, type: .interface),
-                
+                .shared(target: .GlobalThirdPartyLibrary)
             ]
         ),
         .testing(
