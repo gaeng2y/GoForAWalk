@@ -8,21 +8,27 @@
 
 import FeedFeatureInterface
 import FeedServiceInterface
+import RecordFeatureInterface
 
 public extension FeedFeature {
-    static func live(feedClient: any FeedClient) -> Self {
-        Self { state, action in
+    static func live(
+        feedClient: any FeedClient,
+        captureImageFeature: CaptureImageFeature
+    ) -> Self {
+        Self(
+            captureImageFeature: captureImageFeature
+        ) { state, action in
             switch action {
             case .onAppear:
                 return .run { send in
                     let footsteps = try await feedClient.fetchFootsteps()
                     await send(.fetchFootstepsResponse(footsteps))
                 }
-                
+
             case .fetchFootstepsResponse(let footsteps):
                 state.footsteps = footsteps
                 return .none
-                
+
             case .footstepCellMenuTapped(let id):
                 return .run { send in
                     do {
@@ -32,6 +38,31 @@ public extension FeedFeature {
                         print(error.localizedDescription)
                     }
                 }
+
+            case .floatingButtonTapped:
+                return .run { send in
+                    let availability = try await feedClient.checkTodayAvailability()
+                    await send(.checkAvailabilityResponse(availability))
+                }
+
+            case .checkAvailabilityResponse(let availability):
+                if availability.canCreateToday {
+                    state.captureImage = CaptureImageFeature.State()
+                } else {
+                    state.showUnavailableAlert = true
+                }
+                return .none
+
+            case .dismissUnavailableAlert:
+                state.showUnavailableAlert = false
+                return .none
+
+            case .captureImage(.presented(.dismissButtonTapped)):
+                state.captureImage = nil
+                return .send(.onAppear)
+
+            case .captureImage:
+                return .none
             }
         }
     }

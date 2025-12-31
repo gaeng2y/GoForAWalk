@@ -9,7 +9,6 @@
 import ComposableArchitecture
 import Foundation
 import ProfileFeatureInterface
-import SettingsFeature
 import UserServiceInterface
 
 public extension ProfileFeature {
