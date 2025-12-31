@@ -9,6 +9,7 @@
 import ComposableArchitecture
 import FeedServiceInterface
 import Foundation
+import RecordFeatureInterface
 
 @Reducer
 public struct FeedFeature {
@@ -16,8 +17,10 @@ public struct FeedFeature {
     
     @ObservableState
     public struct State: Equatable {
+        @Presents public var captureImage: CaptureImageFeature.State?
         public var footsteps: [Footstep] = []
         public var isLoading: Bool = false
+        public var showUnavailableAlert: Bool = false
         
         public init() {}
     }
@@ -28,18 +31,30 @@ public struct FeedFeature {
         case onAppear
         case fetchFootstepsResponse([Footstep])
         case footstepCellMenuTapped(Int)
+        case floatingButtonTapped
+        case checkAvailabilityResponse(TodayFootstepAvailability)
+        case dismissUnavailableAlert
+        case captureImage(PresentationAction<CaptureImageFeature.Action>)
     }
     
-    // MARK: - Reduce Closure
+    // MARK: - Dependencies
     
+    let captureImageFeature: CaptureImageFeature
     let reduce: (inout State, Action) -> Effect<Action>
     
-    public init(reduce: @escaping (inout State, Action) -> Effect<Action>) {
+    public init(
+        captureImageFeature: CaptureImageFeature,
+        reduce: @escaping (inout State, Action) -> Effect<Action>
+    ) {
+        self.captureImageFeature = captureImageFeature
         self.reduce = reduce
     }
     
     public var body: some ReducerOf<Self> {
         Reduce(reduce)
+            .ifLet(\.$captureImage, action: \.captureImage) {
+                captureImageFeature
+            }
     }
 }
 
@@ -47,7 +62,9 @@ public struct FeedFeature {
 
 extension FeedFeature {
     public static func preview() -> Self {
-        Self { state, action in
+        Self(
+            captureImageFeature: .preview()
+        ) { state, action in
             switch action {
             case .onAppear:
                 return .none
@@ -57,6 +74,24 @@ extension FeedFeature {
                 return .none
                 
             case .footstepCellMenuTapped:
+                return .none
+                
+            case .floatingButtonTapped:
+                return .none
+                
+            case .checkAvailabilityResponse(let availability):
+                if availability.canCreateToday {
+                    state.captureImage = CaptureImageFeature.State()
+                } else {
+                    state.showUnavailableAlert = true
+                }
+                return .none
+                
+            case .dismissUnavailableAlert:
+                state.showUnavailableAlert = false
+                return .none
+                
+            case .captureImage:
                 return .none
             }
         }

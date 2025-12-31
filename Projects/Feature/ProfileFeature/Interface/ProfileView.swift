@@ -8,7 +8,6 @@
 
 import ComposableArchitecture
 import DesignSystem
-import SettingsFeature
 import SwiftUI
 
 public struct ProfileView: View {

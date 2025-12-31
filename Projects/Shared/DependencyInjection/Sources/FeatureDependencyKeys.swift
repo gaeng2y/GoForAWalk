@@ -26,8 +26,12 @@ import SignInInterface
 private enum FeedFeatureKey: DependencyKey {
     static var liveValue: FeedFeature {
         @Dependency(\.feedClient) var feedClient
+        @Dependency(\.captureImageFeature) var captureImageFeature
 
-        return FeedFeature.live(feedClient: feedClient)
+        return FeedFeature.live(
+            feedClient: feedClient,
+            captureImageFeature: captureImageFeature
+        )
     }
 }
 
