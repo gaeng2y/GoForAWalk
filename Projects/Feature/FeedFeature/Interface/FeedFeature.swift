@@ -18,6 +18,7 @@ public struct FeedFeature {
     public struct State: Equatable {
         public var footsteps: [Footstep] = []
         public var isLoading: Bool = false
+        public var deleteTargetId: Int? = nil
 
         public init() {}
     }
@@ -28,6 +29,8 @@ public struct FeedFeature {
         case onAppear
         case fetchFootstepsResponse([Footstep])
         case footstepCellMenuTapped(Int)
+        case deleteConfirmed
+        case cancelDelete
     }
 
     // MARK: - Dependencies
@@ -58,7 +61,16 @@ extension FeedFeature {
                 state.footsteps = footsteps
                 return .none
 
-            case .footstepCellMenuTapped:
+            case .footstepCellMenuTapped(let id):
+                state.deleteTargetId = id
+                return .none
+
+            case .deleteConfirmed:
+                state.deleteTargetId = nil
+                return .none
+
+            case .cancelDelete:
+                state.deleteTargetId = nil
                 return .none
             }
         }

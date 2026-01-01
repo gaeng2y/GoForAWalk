@@ -40,6 +40,22 @@ public struct FeedListView: View {
         .onAppear {
             store.send(.onAppear)
         }
+        .alert(
+            "발자취 삭제",
+            isPresented: Binding(
+                get: { store.deleteTargetId != nil },
+                set: { if !$0 { store.send(.cancelDelete) } }
+            )
+        ) {
+            Button("삭제", role: .destructive) {
+                store.send(.deleteConfirmed)
+            }
+            Button("취소", role: .cancel) {
+                store.send(.cancelDelete)
+            }
+        } message: {
+            Text("정말 삭제하시겠습니까?")
+        }
     }
 }
 
