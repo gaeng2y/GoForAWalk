@@ -1,4 +1,3 @@
-
 //
 //  CreateFootstepRequestDTO.swift
 //  FeedServiceInterface

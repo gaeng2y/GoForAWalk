@@ -15,11 +15,15 @@ public struct Footstep: Identifiable, Equatable, Sendable {
     
     public let id: Int
     public let userNickname: String
+    public let date: String?
     public let createdAt: Date
     public let imageUrl: URL?
     public let content: String?
     
     public var presentedDate: String {
+        if let date {
+            return date
+        }
         let formatter = DateFormatter()
         formatter.dateFormat = "yyyy-MM-dd"
         return formatter.string(from: createdAt)
@@ -28,12 +32,14 @@ public struct Footstep: Identifiable, Equatable, Sendable {
     public init(
         id: Int,
         userNickname: String,
+        date: String? = nil,
         createdAt: Date,
         imageUrl: URL?,
         content: String?
     ) {
         self.id = id
         self.userNickname = userNickname
+        self.date = date
         self.createdAt = createdAt
         self.imageUrl = imageUrl
         self.content = content

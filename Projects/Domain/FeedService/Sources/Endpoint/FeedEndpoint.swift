@@ -12,6 +12,7 @@ import NetworkingInterface
 
 enum FeedEndpoint: Endpoint {
     case fetchFootsteps
+    case fetchCalendarFootsteps(startDate: String, endDate: String)
     case deleteFootstep(id: Int)
     case createFootstep(dto: CreateFootstepRequestDTO)
     case checkTodayAvailability
@@ -19,6 +20,7 @@ enum FeedEndpoint: Endpoint {
     var path: String {
         switch self {
         case .fetchFootsteps: "footsteps"
+        case .fetchCalendarFootsteps: "footsteps/calendar"
         case .deleteFootstep(let id): "footsteps/\(id)"
         case .createFootstep: "footsteps"
         case .checkTodayAvailability: "footsteps/today/availability"
@@ -28,6 +30,7 @@ enum FeedEndpoint: Endpoint {
     var method: NetworkingMethod {
         switch self {
         case .fetchFootsteps: .get
+        case .fetchCalendarFootsteps: .get
         case .deleteFootstep: .delete
         case .createFootstep: .post
         case .checkTodayAvailability: .get
@@ -40,6 +43,11 @@ enum FeedEndpoint: Endpoint {
         switch self {
         case .fetchFootsteps:
             return .requestPlain
+        case .fetchCalendarFootsteps(let startDate, let endDate):
+            return .requestParameters([
+                "startDate": startDate,
+                "endDate": endDate
+            ])
         case .deleteFootstep:
             return .requestPlain
         case .createFootstep(let dto):
