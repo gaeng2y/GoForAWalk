@@ -111,9 +111,14 @@ public struct PostFootstepView: View {
             Button {
                 store.send(.saveButtonTapped)
             } label: {
-                Text("남기기 😽")
-                    .font(.system(size: 17, weight: .semibold))
-                    .foregroundColor(.white)
+                if store.isLoading {
+                    ProgressView()
+                        .progressViewStyle(CircularProgressViewStyle(tint: .white))
+                } else {
+                    Text("남기기 😽")
+                        .font(.system(size: 17, weight: .semibold))
+                        .foregroundColor(.white)
+                }
             }
             .frame(height: 50)
             .frame(maxWidth: .infinity)
@@ -129,6 +134,7 @@ public struct PostFootstepView: View {
             )
             .cornerRadius(25)
             .shadow(color: DesignSystemAsset.Colors.accentColor.swiftUIColor.opacity(0.3), radius: 8, x: 0, y: 4)
+            .disabled(store.isLoading)
             
             Button {
                 store.send(.cancelButtonTapped)
