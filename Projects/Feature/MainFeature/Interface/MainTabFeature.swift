@@ -8,8 +8,10 @@
 
 import ComposableArchitecture
 import FeedFeatureInterface
+import FeedServiceInterface
 import Foundation
 import ProfileFeatureInterface
+import RecordFeatureInterface
 import SettingsFeatureInterface
 import SwiftUI
 
@@ -23,6 +25,8 @@ public struct MainTabFeature {
         public var feed: FeedFeature.State = .init()
         public var profile: ProfileFeature.State = .init()
         public var settings: SettingsFeature.State = .init()
+        @Presents public var captureImage: CaptureImageFeature.State?
+        public var showUnavailableAlert: Bool = false
 
         public init() {}
     }
@@ -34,6 +38,10 @@ public struct MainTabFeature {
         case feed(FeedFeature.Action)
         case profile(ProfileFeature.Action)
         case settings(SettingsFeature.Action)
+        case floatingButtonTapped
+        case checkAvailabilityResponse(TodayFootstepAvailability)
+        case dismissUnavailableAlert
+        case captureImage(PresentationAction<CaptureImageFeature.Action>)
         case delegate(Delegate)
 
         public enum Delegate {
@@ -46,17 +54,20 @@ public struct MainTabFeature {
     let feedFeature: FeedFeature
     let profileFeature: ProfileFeature
     let settingsFeature: SettingsFeature
+    let captureImageFeature: CaptureImageFeature
     let reduce: (inout State, Action) -> Effect<Action>
 
     public init(
         feedFeature: FeedFeature,
         profileFeature: ProfileFeature,
         settingsFeature: SettingsFeature,
+        captureImageFeature: CaptureImageFeature,
         reduce: @escaping (inout State, Action) -> Effect<Action>
     ) {
         self.feedFeature = feedFeature
         self.profileFeature = profileFeature
         self.settingsFeature = settingsFeature
+        self.captureImageFeature = captureImageFeature
         self.reduce = reduce
     }
 
@@ -71,6 +82,9 @@ public struct MainTabFeature {
             settingsFeature
         }
         Reduce(reduce)
+            .ifLet(\.$captureImage, action: \.captureImage) {
+                captureImageFeature
+            }
     }
 }
 

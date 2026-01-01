@@ -26,12 +26,8 @@ import SignInInterface
 private enum FeedFeatureKey: DependencyKey {
     static var liveValue: FeedFeature {
         @Dependency(\.feedClient) var feedClient
-        @Dependency(\.captureImageFeature) var captureImageFeature
 
-        return FeedFeature.live(
-            feedClient: feedClient,
-            captureImageFeature: captureImageFeature
-        )
+        return FeedFeature.live(feedClient: feedClient)
     }
 }
 
@@ -42,11 +38,15 @@ private enum MainTabFeatureKey: DependencyKey {
         @Dependency(\.feedFeature) var feedFeature
         @Dependency(\.profileFeature) var profileFeature
         @Dependency(\.settingsFeature) var settingsFeature
+        @Dependency(\.captureImageFeature) var captureImageFeature
+        @Dependency(\.feedClient) var feedClient
 
         return MainTabFeature.live(
             feedFeature: feedFeature,
             profileFeature: profileFeature,
-            settingsFeature: settingsFeature
+            settingsFeature: settingsFeature,
+            captureImageFeature: captureImageFeature,
+            feedClient: feedClient
         )
     }
 }
