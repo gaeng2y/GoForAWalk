@@ -100,15 +100,21 @@ public struct MainTabView: View {
     }
     
     private func tabImage(for tab: MainTab) -> Image {
+        enum IconName {
+            static let home = "house"
+            static let profile = "person.crop.rectangle"
+            static let menu = "line.3.horizontal"
+        }
+        
         switch tab {
         case .home:
-            Image(systemName: "house")
+            return Image(systemName: IconName.home)
         case .history:
-            DesignSystemAsset.Images.historyTabIcon.swiftUIImage
+            return DesignSystemAsset.Images.historyTabIcon.swiftUIImage
         case .profile:
-            Image(systemName: "person.crop.rectangle")
+            return Image(systemName: IconName.profile)
         case .menu:
-            Image(systemName: "line.3.horizontal")
+            return Image(systemName: IconName.menu)
         }
     }
 }
