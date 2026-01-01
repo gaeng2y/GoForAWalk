@@ -10,25 +10,16 @@ import Foundation
 
 public enum MainTab: Equatable, Hashable, CaseIterable {
     case home
-    case record
+    case history
     case profile
-    case settings
+    case menu
     
     var title: String {
         switch self {
         case .home: "홈"
-        case .record: "인증"
+        case .history: "기록"
         case .profile: "프로필"
-        case .settings: "설정"
-        }
-    }
-    
-    var imageName: String {
-        switch self {
-        case .home: "house"
-        case .record: "camera.circle"
-        case .profile: "person.circle"
-        case .settings: "gear"
+        case .menu: "전체"
         }
     }
 }

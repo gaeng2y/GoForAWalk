@@ -16,58 +16,28 @@ import SwiftUI
 
 public struct MainTabView: View {
     @Bindable var store: StoreOf<MainTabFeature>
-
+    
     public init(store: StoreOf<MainTabFeature>) {
         self.store = store
     }
-
+    
     public var body: some View {
         ZStack(alignment: .bottomTrailing) {
             TabView {
-                Tab(
-                    MainTab.home.title,
-                    systemImage: MainTab.home.imageName
-                ) {
-                    NavigationStack {
-                        FeedListView(
-                            store: store.scope(
-                                state: \.feed,
-                                action: \.feed
-                            )
-                        )
-                    }
-                }
-
-                Tab(
-                    MainTab.profile.title,
-                    systemImage: MainTab.profile.imageName
-                ) {
-                    NavigationStack {
-                        ProfileView(
-                            store: store.scope(
-                                state: \.profile,
-                                action: \.profile
-                            )
-                        )
-                    }
-                }
-
-                Tab(
-                    MainTab.settings.title,
-                    systemImage: MainTab.settings.imageName
-                ) {
-                    NavigationStack {
-                        SettingsView(
-                            store: store.scope(
-                                state: \.settings,
-                                action: \.settings
-                            )
-                        )
+                ForEach(MainTab.allCases, id: \.self) { tab in
+                    Tab {
+                        tabContent(for: tab)
+                    } label: {
+                        Label {
+                            Text(tab.title)
+                        } icon: {
+                            tabImage(for: tab)
+                        }
                     }
                 }
             }
             .tint(DesignSystemAsset.Colors.accentColor.swiftUIColor)
-
+            
             // Floating Action Button
             Button {
                 store.send(.floatingButtonTapped)
@@ -105,12 +75,46 @@ public struct MainTabView: View {
             Text("발자취는 하루에 한 번만 남길 수 있어요.")
         }
     }
+    
+    @ViewBuilder
+    private func tabContent(for tab: MainTab) -> some View {
+        switch tab {
+        case .home:
+            NavigationStack {
+                FeedListView(store: store.scope(state: \.feed, action: \.feed))
+            }
+            
+        case .history:
+            Text("달력")
+            
+        case .profile:
+            NavigationStack {
+                ProfileView(store: store.scope(state: \.profile, action: \.profile))
+            }
+            
+        case .menu:
+            NavigationStack {
+                SettingsView(store: store.scope(state: \.settings, action: \.settings))
+            }
+        }
+    }
+    
+    private func tabImage(for tab: MainTab) -> Image {
+        enum IconName {
+            static let home = "house"
+            static let profile = "person.crop.rectangle"
+            static let menu = "line.3.horizontal"
+        }
+        
+        switch tab {
+        case .home:
+            return Image(systemName: IconName.home)
+        case .history:
+            return DesignSystemAsset.Images.historyTabIcon.swiftUIImage
+        case .profile:
+            return Image(systemName: IconName.profile)
+        case .menu:
+            return Image(systemName: IconName.menu)
+        }
+    }
 }
-
-//#Preview {
-//    MainTabView(
-//        store: .init(initialState: MainTabFeature.State()) {
-//            MainTabFeature.preview()
-//        }
-//    )
-//}
