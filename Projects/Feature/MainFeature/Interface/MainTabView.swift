@@ -75,13 +75,13 @@ public struct MainTabView: View {
                 Image(systemName: "plus")
                     .font(.system(size: 24, weight: .semibold))
                     .foregroundStyle(.white)
-                    .frame(width: 56, height: 56)
+                    .frame(width: 70, height: 70)
                     .background(DesignSystemAsset.Colors.accentColor.swiftUIColor)
                     .clipShape(Circle())
                     .shadow(color: .black.opacity(0.3), radius: 4, x: 0, y: 2)
             }
-            .padding(.trailing, 20)
-            .padding(.bottom, 100)
+            .padding(.trailing, 30)
+            .padding(.bottom, 105)
         }
         .fullScreenCover(
             store: store.scope(

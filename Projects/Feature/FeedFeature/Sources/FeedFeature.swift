@@ -26,6 +26,12 @@ public extension FeedFeature {
                 return .none
 
             case .footstepCellMenuTapped(let id):
+                state.deleteTargetId = id
+                return .none
+
+            case .deleteConfirmed:
+                guard let id = state.deleteTargetId else { return .none }
+                state.deleteTargetId = nil
                 return .run { send in
                     do {
                         try await feedClient.deleteFootstep(id: id)
@@ -34,6 +40,10 @@ public extension FeedFeature {
                         print(error.localizedDescription)
                     }
                 }
+
+            case .cancelDelete:
+                state.deleteTargetId = nil
+                return .none
             }
         }
     }
