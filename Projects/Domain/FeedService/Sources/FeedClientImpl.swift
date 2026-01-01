@@ -22,10 +22,6 @@ public final class FeedClientImpl: FeedClient {
         return response.footsteps.map { $0.toDomain() }
     }
     
-    public func deleteFootstep(id: Int) async throws {
-        try await networkService.requestWithoutResponse(FeedEndpoint.deleteFootstep(id: id))
-    }
-    
     public func createFootstep(data: Data, content: String, fileName: String) async throws {
         let dto = CreateFootstepRequestDTO(
             data: data,
@@ -35,8 +31,19 @@ public final class FeedClientImpl: FeedClient {
         let _: CreateFootstepResponseDTO = try await networkService.request(FeedEndpoint.createFootstep(dto: dto))
     }
     
+    public func deleteFootstep(id: Int) async throws {
+        try await networkService.requestWithoutResponse(FeedEndpoint.deleteFootstep(id: id))
+    }
+    
     public func checkTodayAvailability() async throws -> TodayFootstepAvailability {
         let response: TodayFootstepAvailabilityResponseDTO = try await networkService.request(FeedEndpoint.checkTodayAvailability)
         return response.toDomain()
+    }
+    
+    public func fetchCalendarFootsteps(startDate: String, endDate: String) async throws -> [Footstep] {
+        let response: CalendarFootstepsResponseDTO = try await networkService.request(
+            FeedEndpoint.fetchCalendarFootsteps(startDate: startDate, endDate: endDate)
+        )
+        return response.footsteps.map { $0.toDomain() }
     }
 }

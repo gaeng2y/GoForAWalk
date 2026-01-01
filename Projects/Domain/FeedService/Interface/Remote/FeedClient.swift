@@ -10,7 +10,8 @@ import Foundation
 
 public protocol FeedClient: Sendable {
     func fetchFootsteps() async throws -> [Footstep]
-    func deleteFootstep(id: Int) async throws
     func createFootstep(data: Data, content: String, fileName: String) async throws
+    func deleteFootstep(id: Int) async throws
     func checkTodayAvailability() async throws -> TodayFootstepAvailability
+    func fetchCalendarFootsteps(startDate: String, endDate: String) async throws -> [Footstep]
 }
