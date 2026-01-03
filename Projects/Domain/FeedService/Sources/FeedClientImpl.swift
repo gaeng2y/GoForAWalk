@@ -44,6 +44,6 @@ public final class FeedClientImpl: FeedClient {
         let response: CalendarFootstepsResponseDTO = try await networkService.request(
             FeedEndpoint.fetchCalendarFootsteps(startDate: startDate, endDate: endDate)
         )
-        return response.footsteps.map { $0.toDomain() }
+        return response.footsteps.compactMap { $0.toDomain() }
     }
 }

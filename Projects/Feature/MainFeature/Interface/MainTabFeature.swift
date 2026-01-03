@@ -10,6 +10,7 @@ import ComposableArchitecture
 import FeedFeatureInterface
 import FeedServiceInterface
 import Foundation
+import HistoryFeatureInterface
 import ProfileFeatureInterface
 import RecordFeatureInterface
 import SettingsFeatureInterface
@@ -23,6 +24,7 @@ public struct MainTabFeature {
     public struct State: Equatable {
         public var currentTab: MainTab = .home
         public var feed: FeedFeature.State = .init()
+        public var history: FootstepHistoryFeature.State = .init()
         public var profile: ProfileFeature.State = .init()
         public var settings: SettingsFeature.State = .init()
         @Presents public var captureImage: CaptureImageFeature.State?
@@ -36,6 +38,7 @@ public struct MainTabFeature {
     public enum Action {
         case selectTab(MainTab)
         case feed(FeedFeature.Action)
+        case history(FootstepHistoryFeature.Action)
         case profile(ProfileFeature.Action)
         case settings(SettingsFeature.Action)
         case floatingButtonTapped
@@ -52,6 +55,7 @@ public struct MainTabFeature {
     // MARK: - Dependencies
 
     let feedFeature: FeedFeature
+    let historyFeature: FootstepHistoryFeature
     let profileFeature: ProfileFeature
     let settingsFeature: SettingsFeature
     let captureImageFeature: CaptureImageFeature
@@ -59,12 +63,14 @@ public struct MainTabFeature {
 
     public init(
         feedFeature: FeedFeature,
+        historyFeature: FootstepHistoryFeature,
         profileFeature: ProfileFeature,
         settingsFeature: SettingsFeature,
         captureImageFeature: CaptureImageFeature,
         reduce: @escaping (inout State, Action) -> Effect<Action>
     ) {
         self.feedFeature = feedFeature
+        self.historyFeature = historyFeature
         self.profileFeature = profileFeature
         self.settingsFeature = settingsFeature
         self.captureImageFeature = captureImageFeature
@@ -74,6 +80,9 @@ public struct MainTabFeature {
     public var body: some ReducerOf<Self> {
         Scope(state: \.feed, action: \.feed) {
             feedFeature
+        }
+        Scope(state: \.history, action: \.history) {
+            historyFeature
         }
         Scope(state: \.profile, action: \.profile) {
             profileFeature
