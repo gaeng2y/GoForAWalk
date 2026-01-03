@@ -102,6 +102,13 @@ extension FootstepHistoryFeature {
                 return .none
 
             case .deleteConfirmed:
+                return .send(.deleteResponse)
+
+            case .cancelDelete:
+                state.deleteTargetId = nil
+                return .none
+
+            case .deleteResponse:
                 if let targetId = state.deleteTargetId {
                     state.footsteps.removeAll { $0.id == targetId }
                     if state.selectedFootstep?.id == targetId {
@@ -109,13 +116,6 @@ extension FootstepHistoryFeature {
                     }
                 }
                 state.deleteTargetId = nil
-                return .none
-
-            case .cancelDelete:
-                state.deleteTargetId = nil
-                return .none
-
-            case .deleteResponse:
                 return .none
             }
         }
