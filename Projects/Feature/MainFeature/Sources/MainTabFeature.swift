@@ -9,6 +9,7 @@
 import ComposableArchitecture
 import FeedFeatureInterface
 import FeedServiceInterface
+import HistoryFeatureInterface
 import MainFeatureInterface
 import ProfileFeatureInterface
 import RecordFeatureInterface
@@ -18,6 +19,7 @@ import SwiftUI
 public extension MainTabFeature {
     static func live(
         feedFeature: FeedFeature,
+        historyFeature: FootstepHistoryFeature,
         profileFeature: ProfileFeature,
         settingsFeature: SettingsFeature,
         captureImageFeature: CaptureImageFeature,
@@ -25,6 +27,7 @@ public extension MainTabFeature {
     ) -> Self {
         Self(
             feedFeature: feedFeature,
+            historyFeature: historyFeature,
             profileFeature: profileFeature,
             settingsFeature: settingsFeature,
             captureImageFeature: captureImageFeature
@@ -35,6 +38,9 @@ public extension MainTabFeature {
                 return .none
 
             case .feed:
+                return .none
+
+            case .history:
                 return .none
 
             case .profile:

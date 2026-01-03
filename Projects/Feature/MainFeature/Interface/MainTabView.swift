@@ -9,6 +9,7 @@
 import ComposableArchitecture
 import DesignSystem
 import FeedFeatureInterface
+import HistoryFeatureInterface
 import ProfileFeatureInterface
 import RecordFeatureInterface
 import SettingsFeatureInterface
@@ -85,7 +86,10 @@ public struct MainTabView: View {
             }
             
         case .history:
-            Text("달력")
+            NavigationStack {
+                FootstepHistoryView(store: store.scope(state: \.history, action: \.history))
+                    .navigationTitle("기록")
+            }
             
         case .profile:
             NavigationStack {

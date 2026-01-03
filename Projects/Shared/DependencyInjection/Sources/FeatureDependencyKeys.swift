@@ -10,6 +10,8 @@ import Dependencies
 import FeedFeature
 import FeedFeatureInterface
 import Foundation
+import HistoryFeature
+import HistoryFeatureInterface
 import MainFeature
 import MainFeatureInterface
 import ProfileFeature
@@ -31,11 +33,22 @@ private enum FeedFeatureKey: DependencyKey {
     }
 }
 
+// MARK: - HistoryFeature
+
+private enum HistoryFeatureKey: DependencyKey {
+    static var liveValue: FootstepHistoryFeature {
+        @Dependency(\.feedClient) var feedClient
+
+        return FootstepHistoryFeature.live(feedClient: feedClient)
+    }
+}
+
 // MARK: - MainTabFeature
 
 private enum MainTabFeatureKey: DependencyKey {
     static var liveValue: MainTabFeature {
         @Dependency(\.feedFeature) var feedFeature
+        @Dependency(\.historyFeature) var historyFeature
         @Dependency(\.profileFeature) var profileFeature
         @Dependency(\.settingsFeature) var settingsFeature
         @Dependency(\.captureImageFeature) var captureImageFeature
@@ -43,6 +56,7 @@ private enum MainTabFeatureKey: DependencyKey {
 
         return MainTabFeature.live(
             feedFeature: feedFeature,
+            historyFeature: historyFeature,
             profileFeature: profileFeature,
             settingsFeature: settingsFeature,
             captureImageFeature: captureImageFeature,
@@ -120,6 +134,11 @@ extension DependencyValues {
     public var feedFeature: FeedFeature {
         get { self[FeedFeatureKey.self] }
         set { self[FeedFeatureKey.self] = newValue }
+    }
+
+    public var historyFeature: FootstepHistoryFeature {
+        get { self[HistoryFeatureKey.self] }
+        set { self[HistoryFeatureKey.self] = newValue }
     }
 
     public var mainTabFeature: MainTabFeature {

@@ -27,18 +27,20 @@ let project = Project.module(
                 .domain(target: .UserService, type: .interface),
                 .domain(target: .UserService, type: .sources),
                 
-                .feature(target: .FeedFeature, type: .interface),
-                .feature(target: .FeedFeature, type: .sources),
+                .feature(target: .SignIn, type: .interface),
+                .feature(target: .SignIn, type: .sources),
                 .feature(target: .MainFeature, type: .interface),
                 .feature(target: .MainFeature, type: .sources),
+                .feature(target: .FeedFeature, type: .interface),
+                .feature(target: .FeedFeature, type: .sources),
+                .feature(target: .HistoryFeature, type: .interface),
+                .feature(target: .HistoryFeature, type: .sources),
                 .feature(target: .ProfileFeature, type: .interface),
                 .feature(target: .ProfileFeature, type: .sources),
                 .feature(target: .RecordFeature, type: .interface),
                 .feature(target: .RecordFeature, type: .sources),
                 .feature(target: .SettingsFeature, type: .interface),
                 .feature(target: .SettingsFeature, type: .sources),
-                .feature(target: .SignIn, type: .interface),
-                .feature(target: .SignIn, type: .sources)
             ]
         )
     ]
