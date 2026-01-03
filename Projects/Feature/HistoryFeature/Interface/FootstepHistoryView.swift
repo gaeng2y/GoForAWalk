@@ -12,10 +12,10 @@ import SwiftUI
 
 public struct FootstepHistoryView: View {
     @Bindable var store: StoreOf<FootstepHistoryFeature>
-
+    
     @State private var selectedYear: Int = Calendar.current.component(.year, from: .now)
     @State private var selectedMonth: Int = Calendar.current.component(.month, from: .now)
-
+    
     private let calendar = Calendar.current
     private let weekdays = ["일", "월", "화", "수", "목", "금", "토"]
     private var years: [Int] {
@@ -23,27 +23,55 @@ public struct FootstepHistoryView: View {
         return Array((currentYear - 5)...(currentYear + 5))
     }
     private let months = Array(1...12)
-
+    
     public init(store: StoreOf<FootstepHistoryFeature>) {
         self.store = store
     }
-
+    
     public var body: some View {
-        VStack(spacing: 0) {
-            calendarHeader
-            weekdayHeader
-            calendarGrid
-            Spacer()
+        ScrollView {
+            VStack(spacing: 0) {
+                calendarHeader
+                weekdayHeader
+                calendarGrid
+                
+                // 선택된 발자취 표시
+                if let footstep = store.selectedFootstep {
+                    FeedCell(item: footstep) {
+                        store.send(.deleteMenuTapped(footstep.id))
+                    }
+                    .padding(.top, 24)
+                }
+                
+                Spacer()
+            }
+            .padding(.horizontal, 16)
         }
-        .padding(.horizontal, 16)
         .background(Color(.systemBackground))
+        .navigationTitle("기록")
         .onAppear {
             store.send(.onAppear)
         }
+        .alert(
+            "발자취 삭제",
+            isPresented: Binding(
+                get: { store.deleteTargetId != nil },
+                set: { if !$0 { store.send(.cancelDelete) } }
+            )
+        ) {
+            Button("삭제", role: .destructive) {
+                store.send(.deleteConfirmed)
+            }
+            Button("취소", role: .cancel) {
+                store.send(.cancelDelete)
+            }
+        } message: {
+            Text("정말 삭제하시겠습니까?")
+        }
     }
-
+    
     // MARK: - Calendar Header
-
+    
     private var calendarHeader: some View {
         HStack {
             Button {
@@ -53,7 +81,7 @@ public struct FootstepHistoryView: View {
                     Text(monthYearString)
                         .font(.title2)
                         .fontWeight(.bold)
-
+                    
                     Image(systemName: "chevron.down")
                         .font(.caption)
                 }
@@ -62,14 +90,14 @@ public struct FootstepHistoryView: View {
             .sheet(isPresented: $store.showDatePicker) {
                 monthYearPicker
             }
-
+            
             Spacer()
         }
         .padding(.vertical, 16)
     }
-
+    
     // MARK: - Month Year Picker
-
+    
     private var monthYearPicker: some View {
         MonthYearPickerView(
             selectedYear: $selectedYear,
@@ -80,7 +108,7 @@ public struct FootstepHistoryView: View {
             onConfirm: applySelectedMonth
         )
     }
-
+    
     private func applySelectedMonth() {
         var components = DateComponents()
         components.year = selectedYear
@@ -90,9 +118,9 @@ public struct FootstepHistoryView: View {
             store.send(.changeMonth(date))
         }
     }
-
+    
     // MARK: - Weekday Header
-
+    
     private var weekdayHeader: some View {
         HStack(spacing: 0) {
             ForEach(weekdays, id: \.self) { day in
@@ -104,12 +132,12 @@ public struct FootstepHistoryView: View {
         }
         .padding(.bottom, 8)
     }
-
+    
     // MARK: - Calendar Grid
-
+    
     private var calendarGrid: some View {
         let days = generateDaysInMonth()
-
+        
         return LazyVGrid(columns: Array(repeating: GridItem(.flexible()), count: 7), spacing: 8) {
             ForEach(days, id: \.self) { date in
                 CalendarDayCell(
@@ -124,15 +152,15 @@ public struct FootstepHistoryView: View {
             }
         }
     }
-
+    
     // MARK: - Helpers
-
+    
     private var monthYearString: String {
         let formatter = DateFormatter()
         formatter.dateFormat = "yyyy.MM"
         return formatter.string(from: store.currentMonth)
     }
-
+    
     private func generateDaysInMonth() -> [Date] {
         guard let monthInterval = calendar.dateInterval(of: .month, for: store.currentMonth),
               let monthFirstWeek = calendar.dateInterval(of: .weekOfMonth, for: monthInterval.start),
@@ -140,21 +168,21 @@ public struct FootstepHistoryView: View {
         else {
             return []
         }
-
+        
         let startDate = monthFirstWeek.start
         let endDate = monthLastWeek.end
-
+        
         var dates: [Date] = []
         var current = startDate
-
+        
         while current < endDate {
             dates.append(current)
             current = calendar.date(byAdding: .day, value: 1, to: current) ?? current
         }
-
+        
         return dates
     }
-
+    
     private func hasFootstep(on date: Date) -> Bool {
         let formatter = DateFormatter()
         formatter.dateFormat = "yyyy-MM-dd"
@@ -171,24 +199,24 @@ private struct CalendarDayCell: View {
     let hasFootstep: Bool
     let isToday: Bool
     let onTap: () -> Void
-
+    
     private let calendar = Calendar.current
-
+    
     private var isCurrentMonth: Bool {
         calendar.isDate(date, equalTo: currentMonth, toGranularity: .month)
     }
-
+    
     private var isSelected: Bool {
         guard let selectedDate else { return false }
         return calendar.isDate(date, inSameDayAs: selectedDate)
     }
-
+    
     private var dayNumber: String {
         let formatter = DateFormatter()
         formatter.dateFormat = "d"
         return formatter.string(from: date)
     }
-
+    
     var body: some View {
         Button(action: onTap) {
             VStack(spacing: 4) {
@@ -196,7 +224,7 @@ private struct CalendarDayCell: View {
                     .font(.body)
                     .fontWeight(isToday ? .bold : .regular)
                     .foregroundStyle(textColor)
-
+                
                 if hasFootstep && isCurrentMonth {
                     Text("🐻")
                 } else {
@@ -211,14 +239,14 @@ private struct CalendarDayCell: View {
         }
         .buttonStyle(.plain)
     }
-
+    
     private var textColor: Color {
         if !isCurrentMonth {
             return .secondary.opacity(0.5)
         }
         return .primary
     }
-
+    
     private var backgroundColor: Color {
         if isSelected && isCurrentMonth {
             return DesignSystemAsset.Colors.accentColor.swiftUIColor.opacity(0.4)
@@ -231,16 +259,16 @@ private struct CalendarDayCell: View {
 
 private struct MonthYearPickerView: View {
     @Environment(\.dismiss) private var dismiss
-
+    
     @Binding var selectedYear: Int
     @Binding var selectedMonth: Int
     let years: [Int]
     let months: [Int]
     let currentMonth: Date
     let onConfirm: () -> Void
-
+    
     private let calendar = Calendar.current
-
+    
     var body: some View {
         NavigationStack {
             HStack(spacing: 0) {
@@ -250,7 +278,7 @@ private struct MonthYearPickerView: View {
                     }
                 }
                 .pickerStyle(.wheel)
-
+                
                 Picker("월", selection: $selectedMonth) {
                     ForEach(months, id: \.self) { month in
                         Text("\(month)월").tag(month)

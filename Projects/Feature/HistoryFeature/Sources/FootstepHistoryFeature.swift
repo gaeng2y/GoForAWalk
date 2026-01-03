@@ -64,11 +64,47 @@ public extension FootstepHistoryFeature {
             case .fetchCalendarFootstepsResponse(let footsteps):
                 state.footsteps = footsteps
                 state.isLoading = false
+                // 선택된 날짜가 있으면 해당 발자취 설정
+                if let selectedDate = state.selectedDate {
+                    let formatter = DateFormatter()
+                    formatter.dateFormat = "yyyy-MM-dd"
+                    let dateString = formatter.string(from: selectedDate)
+                    state.selectedFootstep = footsteps.first { $0.date == dateString }
+                }
                 return .none
 
             case .fetchError(let message):
                 state.isLoading = false
                 print("HistoryFeature Error: \(message)")
+                return .none
+
+            case .deleteMenuTapped(let id):
+                state.deleteTargetId = id
+                return .none
+
+            case .deleteConfirmed:
+                guard let targetId = state.deleteTargetId else { return .none }
+                return .run { send in
+                    do {
+                        try await feedClient.deleteFootstep(id: targetId)
+                        await send(.deleteResponse)
+                    } catch {
+                        await send(.fetchError(error.localizedDescription))
+                    }
+                }
+
+            case .cancelDelete:
+                state.deleteTargetId = nil
+                return .none
+
+            case .deleteResponse:
+                if let targetId = state.deleteTargetId {
+                    state.footsteps.removeAll { $0.id == targetId }
+                    if state.selectedFootstep?.id == targetId {
+                        state.selectedFootstep = nil
+                    }
+                }
+                state.deleteTargetId = nil
                 return .none
             }
         }

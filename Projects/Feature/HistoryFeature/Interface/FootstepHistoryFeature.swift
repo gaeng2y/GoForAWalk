@@ -17,11 +17,12 @@ public struct FootstepHistoryFeature {
     @ObservableState
     public struct State: Equatable {
         public var currentMonth: Date = .now
-        public var selectedDate: Date? = nil
+        public var selectedDate: Date? = .now
         public var footsteps: [Footstep] = []
         public var selectedFootstep: Footstep? = nil
         public var isLoading: Bool = false
         public var showDatePicker: Bool = false
+        public var deleteTargetId: Int? = nil
 
         public init() {}
 
@@ -39,6 +40,10 @@ public struct FootstepHistoryFeature {
         case changeMonth(Date)
         case fetchCalendarFootstepsResponse([Footstep])
         case fetchError(String)
+        case deleteMenuTapped(Int)
+        case deleteConfirmed
+        case cancelDelete
+        case deleteResponse
     }
 
     // MARK: - Dependencies
@@ -90,6 +95,27 @@ extension FootstepHistoryFeature {
 
             case .fetchError:
                 state.isLoading = false
+                return .none
+
+            case .deleteMenuTapped(let id):
+                state.deleteTargetId = id
+                return .none
+
+            case .deleteConfirmed:
+                return .send(.deleteResponse)
+
+            case .cancelDelete:
+                state.deleteTargetId = nil
+                return .none
+
+            case .deleteResponse:
+                if let targetId = state.deleteTargetId {
+                    state.footsteps.removeAll { $0.id == targetId }
+                    if state.selectedFootstep?.id == targetId {
+                        state.selectedFootstep = nil
+                    }
+                }
+                state.deleteTargetId = nil
                 return .none
             }
         }

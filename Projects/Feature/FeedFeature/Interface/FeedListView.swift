@@ -26,7 +26,7 @@ public struct FeedListView: View {
             } else {
                 LazyVStack(spacing: 12) {
                     ForEach(store.footsteps) { footstep in
-                        FeedCell(footstep: footstep) { footstep in
+                        FeedCell(item: footstep) {
                             store.send(.footstepCellMenuTapped(footstep.id))
                         }
                         .padding(.horizontal, 16)

@@ -88,7 +88,6 @@ public struct MainTabView: View {
         case .history:
             NavigationStack {
                 FootstepHistoryView(store: store.scope(state: \.history, action: \.history))
-                    .navigationTitle("기록")
             }
             
         case .profile:
