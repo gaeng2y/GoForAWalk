@@ -24,6 +24,7 @@ extension ModulePaths: MicroTargetPathConvertable {
 
 public extension ModulePaths {
     enum Feature: String, MicroTargetPathConvertable {
+        case HistoryFeature
         case RecordFeature
         case SettingsFeature
         case ProfileFeature
@@ -36,10 +37,10 @@ public extension ModulePaths {
 
 public extension ModulePaths {
     enum Domain: String, MicroTargetPathConvertable {
+        case AuthService
         case CameraService
         case UserService
         case FeedService
-        case Auth
     }
 }
 
@@ -53,6 +54,7 @@ public extension ModulePaths {
 
 public extension ModulePaths {
     enum Shared: String, MicroTargetPathConvertable {
+        case DependencyInjection
         case Util
         case GlobalThirdPartyLibrary
     }

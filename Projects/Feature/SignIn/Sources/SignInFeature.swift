@@ -6,146 +6,66 @@
 //  Copyright © 2025 com.gaeng2y. All rights reserved.
 //
 
-import Auth
-import AuthInterface
-import AuthenticationServices
+import AuthServiceInterface
 import ComposableArchitecture
-import GlobalThirdPartyLibrary
-import KakaoSDKAuth
-import KakaoSDKUser
-import KeyChainStore
+import SignInInterface
 
-@Reducer
-public struct SignInFeature {
-    @ObservableState
-    public struct State {
-        public var isLoading: Bool = false
-        @Presents var alert: AlertState<Action.Alert>?
-        
-        public init() {}
-    }
-    
-    public enum Action {
-        case alert(PresentationAction<Alert>)
-        case checkAuthorization
-        case isAlreadyAuthorized
-        case kakaoSignInButtonTapped
-        case signInWithKakakoResponse(AuthInterface.Token, AuthInterface.User)
-        case signInWithKakaoError(Error)
-        case signInWithAppleCredential(ASAuthorization)
-        case signInWithAppleError(Error)
-        
-        @CasePathable
-        public enum Alert {
-            case messageReceived(String)
-        }
-    }
-    
-    @Dependency(\.authClient) var authClient
-    
-    public init() {}
-    
-    public var body: some ReducerOf<Self> {
-        Reduce { state, action in
+public extension SignInFeature {
+    static func live(authClient: any AuthClient) -> Self {
+        Self { state, action in
             switch action {
             case .checkAuthorization:
-                if KeyChainStore.shared.validateToken() {
-                    return .send(.isAlreadyAuthorized)
-                } else {
-                    return .run { send in
-                        await authClient.deleteAllTokens()
+                return .run { send in
+                    if await authClient.loadToken() != nil {
+                        await send(.isAlreadyAuthorized)
+                    } else {
+                        await authClient.deleteAll()
                     }
                 }
-                
+
             case .kakaoSignInButtonTapped:
                 state.isLoading = true
-                
-                return .run { @MainActor send in
+                return .run { send in
                     do {
-                        let oauthToken: OAuthToken? = try await withCheckedThrowingContinuation { continuation in
-                            if UserApi.isKakaoTalkLoginAvailable() {
-                                UserApi.shared.loginWithKakaoTalk { oauthToken, error in
-                                    if let error {
-                                        continuation.resume(throwing: error)
-                                        return
-                                    }
-                                    continuation.resume(returning: oauthToken)
-                                }
-                            } else {
-                                UserApi.shared.loginWithKakaoAccount { oauthToken, error in
-                                    if let error {
-                                        continuation.resume(throwing: error)
-                                        return
-                                    }
-                                    continuation.resume(returning: oauthToken)
-                                }
-                            }
-                            
-                        }
-                        let (token, userInfo) = try await authClient.signIn(.kakao, oauthToken?.idToken ?? "")
-                        await send(.signInWithKakakoResponse(token, userInfo))
+                        let (token, user) = try await authClient.signInWithKakao()
+                        await send(.signInSuccess(token, user))
                     } catch {
-                        await send(.signInWithKakaoError(error))
+                        await send(.signInFailure(error))
                     }
                 }
-                
-            case let .signInWithKakakoResponse(token, _):
-                state.isLoading = false
-                authClient.saveToken(token)
-                return .send(.isAlreadyAuthorized)
-                
-            case let .signInWithKakaoError(error):
-                state.isLoading = false
-                state.alert = AlertState(
-                    title: {
-                        TextState("알림")
-                    }, actions: {
-                        ButtonState {
-                            TextState("확인")
-                        }
-                    }, message: {
-                        TextState(error.localizedDescription)
-                    }
-                )
-                return .none
-                
-            case let .signInWithAppleCredential(authorization):
+
+            case .appleSignInButtonTapped:
                 state.isLoading = true
-                
-                return .run(
-                    operation: { send in
-                        if let credential = authorization.credential as? ASAuthorizationAppleIDCredential,
-                           let identityToken = credential.identityToken {
-                            let (token, _) = try await authClient.signIn(.apple, String(data: identityToken, encoding: .utf8) ?? "")
-                            authClient.saveToken(token)
-                            await send(.isAlreadyAuthorized)
-                        } else {
-                            await send(.signInWithAppleError(NSError(domain: "AppleSignInError", code: 999)))
-                        }
-                    },
-                    catch: { error, send in
-                        await send(.signInWithAppleError(error))
+                return .run { send in
+                    do {
+                        let (token, user) = try await authClient.signInWithApple()
+                        await send(.signInSuccess(token, user))
+                    } catch {
+                        await send(.signInFailure(error))
                     }
-                )
-            case let .signInWithAppleError(error):
+                }
+
+            case let .signInSuccess(token, _):
+                state.isLoading = false
+                return .run { send in
+                    await authClient.saveToken(token)
+                    await send(.isAlreadyAuthorized)
+                }
+
+            case let .signInFailure(error):
                 state.isLoading = false
                 state.alert = AlertState(
-                    title: {
-                        TextState("알림")
-                    }, actions: {
-                        ButtonState {
-                            TextState("확인")
-                        }
-                    }, message: {
-                        TextState(error.localizedDescription)
-                    })
+                    title: { TextState("알림") },
+                    actions: { ButtonState { TextState("확인") } },
+                    message: { TextState(error.localizedDescription) }
+                )
                 return .none
-                
+
             case .isAlreadyAuthorized:
                 state.isLoading = false
                 return .none
-                
-            default:
+
+            case .alert:
                 return .none
             }
         }

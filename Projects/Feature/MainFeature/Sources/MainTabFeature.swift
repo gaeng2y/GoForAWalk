@@ -7,136 +7,79 @@
 //
 
 import ComposableArchitecture
-import FeedFeature
-import FeedService
+import FeedFeatureInterface
 import FeedServiceInterface
-import ProfileFeature
-import RecordFeature
+import HistoryFeatureInterface
+import MainFeatureInterface
+import ProfileFeatureInterface
+import RecordFeatureInterface
+import SettingsFeatureInterface
 import SwiftUI
 
-@Reducer
-public struct MainTabFeature {
-    @ObservableState
-    public struct State {
-        var currentTab: MainTab = .home
-        var previousTab: MainTab = .home
-
-        var feed: FeedFeature.State = .init()
-        var profile: ProfileFeature.State = .init()
-        @Presents var usingCamera: CaptureImageFeature.State?
-        @Presents var alert: AlertState<Action.Alert>?
-        var image: Image?
-
-        public init() {}
-    }
-    
-    public enum Action {
-        case selectTab(MainTab)
-        case checkTodayAvailability
-        case todayAvailabilityResponse(TodayFootstepAvailability)
-        case showCannotCreateAlert
-
-        case feed(FeedFeature.Action)
-        case profile(ProfileFeature.Action)
-        case usingCamera(PresentationAction<CaptureImageFeature.Action>)
-        case alert(PresentationAction<Alert>)
-        case delegate(Delegate)
-
-        public enum Delegate {
-            case userDidLogout
-        }
-
-        public enum Alert {
-            case confirmCannotCreate
-        }
-    }
-    
-    @Dependency(\.feedClient) var feedClient
-
-    public init() {}
-
-    public var body: some ReducerOf<Self> {
-        Scope(state: \.feed, action: \.feed) {
-            FeedFeature()
-        }
-        Scope(state: \.profile, action: \.profile) {
-            ProfileFeature()
-        }
-        
-        Reduce { state, action in
+public extension MainTabFeature {
+    static func live(
+        feedFeature: FeedFeature,
+        historyFeature: FootstepHistoryFeature,
+        profileFeature: ProfileFeature,
+        settingsFeature: SettingsFeature,
+        captureImageFeature: CaptureImageFeature,
+        feedClient: any FeedClient
+    ) -> Self {
+        Self(
+            feedFeature: feedFeature,
+            historyFeature: historyFeature,
+            profileFeature: profileFeature,
+            settingsFeature: settingsFeature,
+            captureImageFeature: captureImageFeature
+        ) { state, action in
             switch action {
             case .selectTab(let tab):
-                switch tab {
-                case .record:
-                    state.previousTab = state.currentTab
-                    // 탭 변경 전에 API 호출
-                    return .send(.checkTodayAvailability)
-                default:
-                    state.currentTab = tab
-                }
+                state.currentTab = tab
                 return .none
 
-            case .checkTodayAvailability:
-                return .run { send in
-                    do {
-                        let availability = try await feedClient.checkTodayAvailability()
-                        await send(.todayAvailabilityResponse(availability))
-                    } catch {
-                        // 에러 발생 시 Alert 표시
-                        await send(.showCannotCreateAlert)
-                    }
-                }
-
-            case .todayAvailabilityResponse(let availability):
-                if availability.canCreateToday {
-                    // 생성 가능 → 카메라 열기
-                    state.currentTab = .record
-                    state.usingCamera = CaptureImageFeature.State()
-                } else {
-                    // 생성 불가 → Alert 표시
-                    return .send(.showCannotCreateAlert)
-                }
+            case .feed:
                 return .none
 
-            case .showCannotCreateAlert:
-                state.alert = AlertState {
-                    TextState("오늘의 발자취")
-                } actions: {
-                    ButtonState(role: .cancel) {
-                        TextState("확인")
-                    }
-                } message: {
-                    TextState("발자취는 하루에 한 번만 등록 가능해요!")
-                }
-                // 원래 탭으로 복귀
-                state.currentTab = state.previousTab
+            case .history:
                 return .none
 
-            case .alert:
+            case .profile:
                 return .none
 
-            case let .usingCamera(.presented(.delegate(.savePhoto(image)))):
-                state.image = image
-                return .none
-
-            case .usingCamera(.dismiss):
-                state.usingCamera = nil
-                state.currentTab = state.previousTab
-                return .none
-
-            case .profile(.delegate(.userDidLogout)):
+            case .settings(.delegate(.userDidLogout)):
                 return .send(.delegate(.userDidLogout))
+
+            case .settings:
+                return .none
+
+            case .floatingButtonTapped:
+                return .run { send in
+                    let availability = try await feedClient.checkTodayAvailability()
+                    await send(.checkAvailabilityResponse(availability))
+                }
+
+            case .checkAvailabilityResponse(let availability):
+                if availability.canCreateToday {
+                    state.captureImage = CaptureImageFeature.State()
+                } else {
+                    state.showUnavailableAlert = true
+                }
+                return .none
+
+            case .dismissUnavailableAlert:
+                state.showUnavailableAlert = false
+                return .none
+
+            case .captureImage(.presented(.dismissButtonTapped)):
+                state.captureImage = nil
+                return .send(.feed(.onAppear))
+
+            case .captureImage:
+                return .none
 
             case .delegate:
                 return .none
-
-            default:
-                return .none
             }
-        }
-        .ifLet(\.$alert, action: \.alert)
-        .ifLet(\.$usingCamera, action: \.usingCamera) {
-            CaptureImageFeature()
         }
     }
 }

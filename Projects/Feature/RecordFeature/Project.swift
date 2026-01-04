@@ -6,17 +6,21 @@ let project = Project.module(
     name: ModulePaths.Feature.RecordFeature.rawValue,
     targets: [
         .interface(
-            module: .feature(.RecordFeature)
+            module: .feature(.RecordFeature),
+            dependencies: [
+                .domain(target: .CameraService, type: .interface),
+                .domain(target: .FeedService, type: .interface),
+                .userInterface(target: .DesignSystem),
+                .shared(target: .GlobalThirdPartyLibrary)
+            ]
         ),
         .implements(
             module: .feature(.RecordFeature),
             dependencies: [
                 .feature(target: .RecordFeature, type: .interface),
                 .domain(target: .CameraService, type: .interface),
-                .domain(target: .CameraService),
                 .domain(target: .FeedService, type: .interface),
-                .domain(target: .FeedService),
-                .userInterface(target: .DesignSystem)
+                .shared(target: .GlobalThirdPartyLibrary)
             ]
         ),
         .testing(

@@ -6,53 +6,25 @@
 //  Copyright © 2025 com.gaeng2y. All rights reserved.
 //
 
-import Auth
-import AuthInterface
+import AuthServiceInterface
 import ComposableArchitecture
 import SettingsFeatureInterface
 import UserServiceInterface
-import UserService
 
-@Reducer
-public struct SettingsFeature {
-    @ObservableState
-    public struct State: Equatable {
-        let menus: [SettingsMenu] = SettingsMenu.allCases
-        var isLoading: Bool = false
-        @Presents var alert: AlertState<Action.Alert>?
-        
-        public init() {}
-    }
-    
-    public enum Action {
-        case backButtonTapped
-        case settingsMenuTapped(SettingsMenu)
-        case showDeleteAlert
-        case alert(PresentationAction<Alert>)
-        case withdrawUserSuccess
-        case delegate(Delegate)
-
-        @CasePathable
-        public enum Alert {
-            case confirmDeleteAccount
-        }
-
-        public enum Delegate {
-            case userDidLogout
-        }
-    }
-    
-    @Dependency(\.authClient) var authClient
-    @Dependency(\.profileClient) var profileClient
-    @Dependency(\.dismiss) var dismiss
-    
-    public init() {}
-    
-    public var body: some ReducerOf<Self> {
-        Reduce { state, action in
+public extension SettingsFeature {
+    static func live(
+        authClient: any AuthClient,
+        profileClient: any ProfileClient
+    ) -> Self {
+        Self(
+            authClient: authClient,
+            profileClient: profileClient
+        ) { state, action in
+            @Dependency(\.dismiss) var dismiss
+            
             switch action {
             case .backButtonTapped:
-                return .run { send in
+                return .run { _ in
                     await dismiss()
                 }
                 
@@ -81,15 +53,13 @@ public struct SettingsFeature {
                 
             case .alert(.presented(.confirmDeleteAccount)):
                 state.isLoading = true
-                return .run { send in
+                return .run { [authClient] send in
                     do {
                         try await profileClient.withdrawUser()
-                        await authClient.deleteAllTokens()
+                        await authClient.deleteAll()
                         await send(.withdrawUserSuccess)
                     } catch {
-                        // If withdrawal fails, still try to delete tokens
-                        // to force re-authentication
-                        await authClient.deleteAllTokens()
+                        await authClient.deleteAll()
                         await send(.withdrawUserSuccess)
                     }
                 }
@@ -103,11 +73,10 @@ public struct SettingsFeature {
                 
             case .alert:
                 return .none
-
+                
             case .delegate:
                 return .none
             }
         }
-        .ifLet(\.$alert, action: \.alert)
     }
 }

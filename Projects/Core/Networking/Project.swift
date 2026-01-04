@@ -13,8 +13,9 @@ let project = Project.module(
             module: .core(.Networking),
             dependencies: [
                 .core(target: .Networking, type: .interface),
-                .core(target: .KeyChainStore),
-                .shared(target: .Util)
+                .core(target: .KeyChainStore, type: .interface),
+                .shared(target: .Util),
+                .shared(target: .GlobalThirdPartyLibrary)
             ]
         ),
         .testing(

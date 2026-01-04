@@ -5,28 +5,44 @@ import ProjectDescription
 
 // MARK: - Interface
 public extension Target {
-    static func interface(module: ModulePaths, spec: TargetSpec) -> Target {
+    static func interface(
+        module: ModulePaths,
+        product: Product = .staticFramework,
+        spec: TargetSpec
+    ) -> Target {
         spec.with {
             $0.sources = .interface
         }
-        .toTarget(with: module.targetName(type: .interface), product: .framework)
+        .toTarget(with: module.targetName(type: .interface), product: product)
     }
 
-    static func interface(module: ModulePaths, dependencies: [TargetDependency] = []) -> Target {
+    static func interface(
+        module: ModulePaths,
+        product: Product = .staticFramework,
+        dependencies: [TargetDependency] = []
+    ) -> Target {
         TargetSpec(sources: .interface, dependencies: dependencies)
-            .toTarget(with: module.targetName(type: .interface), product: .framework)
+            .toTarget(with: module.targetName(type: .interface), product: product)
     }
 
-    static func interface(name: String, spec: TargetSpec) -> Target {
+    static func interface(
+        name: String,
+        product: Product = .staticFramework,
+        spec: TargetSpec
+    ) -> Target {
         spec.with {
             $0.sources = .interface
         }
-        .toTarget(with: "\(name)Interface", product: .framework)
+        .toTarget(with: "\(name)Interface", product: product)
     }
 
-    static func interface(name: String, dependencies: [TargetDependency] = []) -> Target {
+    static func interface(
+        name: String,
+        product: Product = .staticFramework,
+        dependencies: [TargetDependency] = []
+    ) -> Target {
         TargetSpec(sources: .interface, dependencies: dependencies)
-            .toTarget(with: "\(name)Interface", product: .framework)
+            .toTarget(with: "\(name)Interface", product: product)
     }
 }
 

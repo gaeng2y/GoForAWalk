@@ -6,20 +6,11 @@ let project = Project.module(
     name: ModulePaths.Core.Camera.rawValue,
     targets: [
         .interface(
-            module: .core(
-                .Camera
-            )
+            module: .core(.Camera)
         ),
         .implements(
-            module: .core(
-                .Camera
-            ),
-            dependencies: [
-                .core(
-                    target: .Camera,
-                    type: .interface
-                )
-            ]
+            module: .core(.Camera),
+            dependencies: [.core(target: .Camera, type: .interface)]
         ),
         .testing(
             module: .core(

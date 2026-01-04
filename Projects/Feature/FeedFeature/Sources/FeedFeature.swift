@@ -6,51 +6,44 @@
 //  Copyright © 2025 com.gaeng2y. All rights reserved.
 //
 
-import ComposableArchitecture
+import FeedFeatureInterface
 import FeedServiceInterface
-import FeedService
 
-@Reducer
-public struct FeedFeature {
-    @ObservableState
-    public struct State {
-        var footsteps: [Footstep] = []
-        var isLoading: Bool = false
-        
-        public init() {}
-    }
-    
-    public enum Action {
-        case onAppear
-        case fetchFootstepsResponse([Footstep])
-        case footstepCellMenuTapped(Int)
-    }
-    
-    @Dependency(\.feedClient) var feedClient
-    
-    public init() {}
-    
-    public var body: some ReducerOf<Self> {
-        Reduce { state, action in
+public extension FeedFeature {
+    static func live(
+        feedClient: any FeedClient
+    ) -> Self {
+        Self { state, action in
             switch action {
             case .onAppear:
                 return .run { send in
                     let footsteps = try await feedClient.fetchFootsteps()
                     await send(.fetchFootstepsResponse(footsteps))
                 }
+
             case .fetchFootstepsResponse(let footsteps):
                 state.footsteps = footsteps
                 return .none
-                
+
             case .footstepCellMenuTapped(let id):
+                state.deleteTargetId = id
+                return .none
+
+            case .deleteConfirmed:
+                guard let id = state.deleteTargetId else { return .none }
+                state.deleteTargetId = nil
                 return .run { send in
                     do {
-                        try await feedClient.deleteFootstep(id)
+                        try await feedClient.deleteFootstep(id: id)
                         await send(.onAppear)
                     } catch {
                         print(error.localizedDescription)
                     }
                 }
+
+            case .cancelDelete:
+                state.deleteTargetId = nil
+                return .none
             }
         }
     }

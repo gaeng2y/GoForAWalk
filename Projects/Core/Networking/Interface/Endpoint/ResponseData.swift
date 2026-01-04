@@ -8,6 +8,10 @@
 
 import Foundation
 
+public struct EmptyData: Decodable, Equatable {
+    public init() {}
+}
+
 public struct ResponseData<T: Decodable>: Decodable {
     public let data: T
 }

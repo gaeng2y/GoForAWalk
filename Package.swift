@@ -26,6 +26,12 @@ let package = Package(
         .package(
             url: "https://github.com/kakao/kakao-ios-sdk.git", 
             branch: "master"
+        ),
+        .package(
+            url: "https://github.com/Alamofire/Alamofire.git",
+            .upToNextMajor(
+                from: "5.0.0"
+            )
         )
     ]
 )
