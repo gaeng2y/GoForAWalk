@@ -14,7 +14,7 @@ import SignInInterface
 import Util
 
 @Reducer
-public struct RootFeature {
+public struct RootFeature: @unchecked Sendable {
     private static let hasLaunchedBeforeKey = "hasLaunchedBefore"
 
     @ObservableState

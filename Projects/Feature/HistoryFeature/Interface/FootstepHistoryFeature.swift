@@ -11,7 +11,7 @@ import FeedServiceInterface
 import Foundation
 
 @Reducer
-public struct FootstepHistoryFeature {
+public struct FootstepHistoryFeature: @unchecked Sendable {
     // MARK: - State
 
     @ObservableState

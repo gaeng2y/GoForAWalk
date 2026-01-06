@@ -11,7 +11,7 @@ import Foundation
 import UserServiceInterface
 
 @Reducer
-public struct ProfileFeature {
+public struct ProfileFeature: @unchecked Sendable {
     @ObservableState
     public struct State: Equatable {
         public var profile: Profile = .init()

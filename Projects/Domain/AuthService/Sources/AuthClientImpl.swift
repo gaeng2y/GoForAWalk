@@ -28,7 +28,7 @@ public final class AuthClientImpl: AuthClient, @unchecked Sendable {
     }
 
     public func signInWithKakao() async throws -> (AuthServiceInterface.Token, AuthServiceInterface.User) {
-        let oauthToken: OAuthToken = try await withCheckedThrowingContinuation { continuation in
+        let idToken: String = try await withCheckedThrowingContinuation { continuation in
             DispatchQueue.main.async {
                 if UserApi.isKakaoTalkLoginAvailable() {
                     UserApi.shared.loginWithKakaoTalk { oauthToken, error in
@@ -37,7 +37,7 @@ public final class AuthClientImpl: AuthClient, @unchecked Sendable {
                             return
                         }
                         if let oauthToken {
-                            continuation.resume(returning: oauthToken)
+                            continuation.resume(returning: oauthToken.idToken ?? "")
                         }
                     }
                 } else {
@@ -47,14 +47,14 @@ public final class AuthClientImpl: AuthClient, @unchecked Sendable {
                             return
                         }
                         if let oauthToken {
-                            continuation.resume(returning: oauthToken)
+                            continuation.resume(returning: oauthToken.idToken ?? "")
                         }
                     }
                 }
             }
         }
 
-        return try await signIn(type: .kakao, idToken: oauthToken.idToken ?? "")
+        return try await signIn(type: .kakao, idToken: idToken)
     }
 
     @MainActor

@@ -14,7 +14,7 @@ import SwiftUI
 import UIKit
 
 
-public final class CameraServiceImpl: NSObject, CameraService, Sendable {
+public final class CameraServiceImpl: NSObject, CameraService, @unchecked Sendable {
     private let captureSession = AVCaptureSession()
     private var isCaptureSessionConfigured = false
     private var deviceInput: AVCaptureDeviceInput?
