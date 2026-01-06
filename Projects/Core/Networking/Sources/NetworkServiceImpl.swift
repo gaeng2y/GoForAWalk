@@ -214,11 +214,11 @@ public final class NetworkServiceImpl: NetworkService {
         )
             .validate(statusCode: 200..<300)
         
-        let result = await uploadRequest.serializingDecodable(T.self).result
+        let result = await uploadRequest.serializingDecodable(Response<T>.self).result
         
         switch result {
         case .success(let value):
-            return value
+            return value.data
         case .failure(let afError):
             throw mapToNetworkError(afError, from: uploadRequest.data)
         }

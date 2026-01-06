@@ -52,7 +52,7 @@ public extension PostFootstepFeature {
             case .delegate:
                 return .none
 
-            case .showErrorAlert:
+            case .showErrorAlert(let description):
                 state.isLoading = false
                 state.alert = AlertState {
                     TextState("오류")
@@ -61,7 +61,7 @@ public extension PostFootstepFeature {
                         TextState("확인")
                     }
                 } message: {
-                    TextState("발자취는 하루에 한 번만 등록 가능해요!")
+                    TextState(description)
                 }
                 return .none
 
