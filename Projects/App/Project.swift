@@ -73,6 +73,10 @@ let schemes: [Scheme] = [
 let project = Project(
     name: env.name,
     organizationName: env.organizationName,
+    options: .options(
+        defaultKnownRegions: ["ko", "en"],
+        developmentRegion: "ko"
+    ),
     settings: settings,
     targets: targets,
     schemes: schemes
