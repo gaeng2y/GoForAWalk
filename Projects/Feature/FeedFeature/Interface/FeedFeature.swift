@@ -11,7 +11,7 @@ import FeedServiceInterface
 import Foundation
 
 @Reducer
-public struct FeedFeature {
+public struct FeedFeature: @unchecked Sendable {
     // MARK: - State
 
     @ObservableState

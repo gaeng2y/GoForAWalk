@@ -12,7 +12,7 @@ import CoreImage
 import SwiftUI
 
 @Reducer
-public struct CaptureImageFeature {
+public struct CaptureImageFeature: @unchecked Sendable {
     // MARK: - State
 
     @ObservableState

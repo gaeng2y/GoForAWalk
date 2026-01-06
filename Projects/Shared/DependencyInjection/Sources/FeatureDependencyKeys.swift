@@ -28,7 +28,7 @@ import SignInInterface
 private enum FeedFeatureKey: DependencyKey {
     static var liveValue: FeedFeature {
         @Dependency(\.feedClient) var feedClient
-
+        
         return FeedFeature.live(feedClient: feedClient)
     }
 }
@@ -38,7 +38,7 @@ private enum FeedFeatureKey: DependencyKey {
 private enum HistoryFeatureKey: DependencyKey {
     static var liveValue: FootstepHistoryFeature {
         @Dependency(\.feedClient) var feedClient
-
+        
         return FootstepHistoryFeature.live(feedClient: feedClient)
     }
 }
@@ -53,7 +53,7 @@ private enum MainTabFeatureKey: DependencyKey {
         @Dependency(\.settingsFeature) var settingsFeature
         @Dependency(\.captureImageFeature) var captureImageFeature
         @Dependency(\.feedClient) var feedClient
-
+        
         return MainTabFeature.live(
             feedFeature: feedFeature,
             historyFeature: historyFeature,
@@ -70,7 +70,7 @@ private enum MainTabFeatureKey: DependencyKey {
 private enum ProfileFeatureKey: DependencyKey {
     static var liveValue: ProfileFeature {
         @Dependency(\.profileClient) var profileClient
-
+        
         return ProfileFeature.live(profileClient: profileClient)
     }
 }
@@ -80,7 +80,7 @@ private enum ProfileFeatureKey: DependencyKey {
 private enum PostFootstepFeatureKey: DependencyKey {
     static var liveValue: PostFootstepFeature {
         @Dependency(\.feedClient) var feedClient
-
+        
         return PostFootstepFeature.live(feedClient: feedClient)
     }
 }
@@ -91,7 +91,7 @@ private enum CaptureImageFeatureKey: DependencyKey {
     static var liveValue: CaptureImageFeature {
         @Dependency(\.cameraClient) var cameraClient
         @Dependency(\.postFootstepFeature) var postFootstepFeature
-
+        
         return CaptureImageFeature.live(
             cameraClient: cameraClient,
             postFootstepFeature: postFootstepFeature
@@ -105,7 +105,7 @@ private enum SettingsFeatureKey: DependencyKey {
     static var liveValue: SettingsFeature {
         @Dependency(\.authClient) var authClient
         @Dependency(\.profileClient) var profileClient
-
+        
         return SettingsFeature.live(
             authClient: authClient,
             profileClient: profileClient
@@ -118,7 +118,7 @@ private enum SettingsFeatureKey: DependencyKey {
 private enum SignInFeatureKey: DependencyKey {
     static var liveValue: SignInFeature {
         @Dependency(\.authClient) var authClient
-
+        
         return SignInFeature.live(authClient: authClient)
     }
 }
@@ -130,37 +130,37 @@ extension DependencyValues {
         get { self[CaptureImageFeatureKey.self] }
         set { self[CaptureImageFeatureKey.self] = newValue }
     }
-
+    
     public var feedFeature: FeedFeature {
         get { self[FeedFeatureKey.self] }
         set { self[FeedFeatureKey.self] = newValue }
     }
-
+    
     public var historyFeature: FootstepHistoryFeature {
         get { self[HistoryFeatureKey.self] }
         set { self[HistoryFeatureKey.self] = newValue }
     }
-
+    
     public var mainTabFeature: MainTabFeature {
         get { self[MainTabFeatureKey.self] }
         set { self[MainTabFeatureKey.self] = newValue }
     }
-
+    
     public var postFootstepFeature: PostFootstepFeature {
         get { self[PostFootstepFeatureKey.self] }
         set { self[PostFootstepFeatureKey.self] = newValue }
     }
-
+    
     public var profileFeature: ProfileFeature {
         get { self[ProfileFeatureKey.self] }
         set { self[ProfileFeatureKey.self] = newValue }
     }
-
+    
     public var settingsFeature: SettingsFeature {
         get { self[SettingsFeatureKey.self] }
         set { self[SettingsFeatureKey.self] = newValue }
     }
-
+    
     public var signInFeature: SignInFeature {
         get { self[SignInFeatureKey.self] }
         set { self[SignInFeatureKey.self] = newValue }
