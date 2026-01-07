@@ -9,6 +9,7 @@
 import ComposableArchitecture
 import MainFeatureInterface
 import SignInInterface
+import SplashFeatureInterface
 import SwiftUI
 
 public struct RootView: View {
@@ -20,13 +21,20 @@ public struct RootView: View {
 
     public var body: some View {
         Group {
-            if store.isSignIn {
-                MainTabView(
-                    store: store.scope(state: \.mainTab, action: \.mainTab)
+            switch store.destination {
+            case .splash:
+                SplashView(
+                    store: store.scope(state: \.splash, action: \.splash)
                 )
-            } else {
+
+            case .signIn:
                 SignInView(
                     store: store.scope(state: \.signIn, action: \.signIn)
+                )
+
+            case .mainTab:
+                MainTabView(
+                    store: store.scope(state: \.mainTab, action: \.mainTab)
                 )
             }
         }

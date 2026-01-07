@@ -22,6 +22,8 @@ import SettingsFeature
 import SettingsFeatureInterface
 import SignIn
 import SignInInterface
+import SplashFeature
+import SplashFeatureInterface
 
 // MARK: - FeedFeature
 
@@ -118,8 +120,18 @@ private enum SettingsFeatureKey: DependencyKey {
 private enum SignInFeatureKey: DependencyKey {
     static var liveValue: SignInFeature {
         @Dependency(\.authClient) var authClient
-        
+
         return SignInFeature.live(authClient: authClient)
+    }
+}
+
+// MARK: - SplashFeature
+
+private enum SplashFeatureKey: DependencyKey {
+    static var liveValue: SplashFeature {
+        @Dependency(\.authClient) var authClient
+
+        return SplashFeature.live(authClient: authClient)
     }
 }
 
@@ -164,5 +176,10 @@ extension DependencyValues {
     public var signInFeature: SignInFeature {
         get { self[SignInFeatureKey.self] }
         set { self[SignInFeatureKey.self] = newValue }
+    }
+
+    public var splashFeature: SplashFeature {
+        get { self[SplashFeatureKey.self] }
+        set { self[SplashFeatureKey.self] = newValue }
     }
 }
