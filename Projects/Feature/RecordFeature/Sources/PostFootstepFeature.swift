@@ -33,9 +33,11 @@ public extension PostFootstepFeature {
                 guard !state.isLoading else { return .none }
                 state.isLoading = true
                 return .run { [state] send in
-                    let imageData = await ImageRenderer(content: state.resultImage)
-                        .uiImage?
-                        .jpegData(compressionQuality: 0.4)
+                    let imageData = await MainActor.run {
+                        ImageRenderer(content: state.resultImage)
+                            .uiImage?
+                            .jpegData(compressionQuality: 0.4)
+                    }
                     guard let imageData else {
                         await send(.delegate(.dismiss))
                         return

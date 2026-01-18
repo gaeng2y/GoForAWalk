@@ -15,6 +15,7 @@ public let env = ProjectEnvironment(
     destinations: [.iPhone],
     deploymentTargets: .iOS("18.0"),
     baseSetting: [
-        "DEVELOPMENT_TEAM": "8UV3Y69NB7"
+        "DEVELOPMENT_TEAM": "8UV3Y69NB7",
+        "SWIFT_VERSION": "6"
     ]
 )

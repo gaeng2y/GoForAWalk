@@ -129,7 +129,7 @@ public final class NetworkServiceImpl: NetworkService {
     /// - Parameter endpoint: 요청할 API 엔드포인트 (Endpoint 프로토콜 구현체)
     /// - Returns: 제네릭 T 타입의 Swift 모델 객체
     /// - Throws: NetworkError - 네트워크 또는 디코딩 실패 시
-    public func request<T: Decodable>(_ endpoint: any Endpoint) async throws -> T {
+    public func request<T: Decodable & Sendable>(_ endpoint: any Endpoint) async throws -> T {
         switch endpoint.task {
         case .requestPlain, .requestParameters, .requestEncodable:
             // 일반 요청 처리
@@ -159,7 +159,7 @@ public final class NetworkServiceImpl: NetworkService {
     // MARK: - Private Methods
     
     /// 일반 HTTP 요청을 수행합니다
-    private func performRequest<T: Decodable>(_ endpoint: any Endpoint) async throws -> T {
+    private func performRequest<T: Decodable & Sendable>(_ endpoint: any Endpoint) async throws -> T {
         let urlRequest = try endpoint.asURLRequest()
         let dataRequest = session.request(urlRequest)
             .validate(statusCode: 200..<300)
@@ -187,7 +187,7 @@ public final class NetworkServiceImpl: NetworkService {
     ///   - items: Multipart로 전송할 데이터 항목들
     /// - Returns: 서버 응답을 디코딩한 객체
     /// - Throws: NetworkError - 업로드 실패 시
-    private func uploadMultipart<T: Decodable>(
+    private func uploadMultipart<T: Decodable & Sendable>(
         _ endpoint: any Endpoint,
         items: [MultipartFormItem]
     ) async throws -> T {

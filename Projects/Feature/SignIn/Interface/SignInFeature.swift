@@ -11,7 +11,7 @@ import ComposableArchitecture
 import Foundation
 
 @Reducer
-public struct SignInFeature {
+public struct SignInFeature: @unchecked Sendable {
     // MARK: - State
 
     @ObservableState

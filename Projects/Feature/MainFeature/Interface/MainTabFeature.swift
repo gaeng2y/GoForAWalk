@@ -17,7 +17,7 @@ import SettingsFeatureInterface
 import SwiftUI
 
 @Reducer
-public struct MainTabFeature {
+public struct MainTabFeature: @unchecked Sendable {
     // MARK: - State
 
     @ObservableState

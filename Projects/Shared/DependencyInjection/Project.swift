@@ -27,6 +27,8 @@ let project = Project.module(
                 .domain(target: .UserService, type: .interface),
                 .domain(target: .UserService, type: .sources),
                 
+                .feature(target: .SplashFeature, type: .interface),
+                .feature(target: .SplashFeature, type: .sources),
                 .feature(target: .SignIn, type: .interface),
                 .feature(target: .SignIn, type: .sources),
                 .feature(target: .MainFeature, type: .interface),

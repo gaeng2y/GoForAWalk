@@ -9,7 +9,7 @@
 import Foundation
 
 extension DateFormatter {
-    static let footstep: ISO8601DateFormatter = {
+    nonisolated(unsafe) static let footstep: ISO8601DateFormatter = {
         let formatter = ISO8601DateFormatter()
         formatter.formatOptions = [
             .withInternetDateTime,

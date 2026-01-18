@@ -8,7 +8,7 @@
 
 import Foundation
 
-public enum TokenProperty: String, CaseIterable {
+public enum TokenProperty: String, CaseIterable, Sendable {
     case accessToken = "ACCESS-TOKEN"
     case refreshToken = "REFRESH-TOKEN"
 }

@@ -12,7 +12,7 @@ import Foundation
 import UserServiceInterface
 
 @Reducer
-public struct SettingsFeature {
+public struct SettingsFeature: @unchecked Sendable {
     @ObservableState
     public struct State: Equatable {
         let menus: [SettingsMenu] = SettingsMenu.allCases

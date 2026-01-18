@@ -1,8 +1,8 @@
 import ProjectDescription
 
 public struct AppVersion {
-    public static let marketing = "1.0.3"
-    public static let build = "12"
+    public static let marketing = "1.0.4"
+    public static let build = "13"
     public static let displayName = "걷는"
 
     public static var infoPlist: [String: Plist.Value] {

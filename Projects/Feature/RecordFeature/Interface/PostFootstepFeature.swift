@@ -11,11 +11,11 @@ import FeedServiceInterface
 import SwiftUI
 
 @Reducer
-public struct PostFootstepFeature {
+public struct PostFootstepFeature: @unchecked Sendable {
     // MARK: - State
 
     @ObservableState
-    public struct State: Equatable {
+    public struct State: Equatable, @unchecked Sendable {
         public var resultImage: Image
         public var todaysMessage: String = ""
         public let maxCharacterCount = 50

@@ -12,6 +12,12 @@ import KeyChainStoreInterface
 import NetworkingInterface
 import Util
 
+// MARK: - SendableWrapper
+
+private struct SendableWrapper<T>: @unchecked Sendable {
+    let value: T
+}
+
 // MARK: - AuthorizationInterceptor
 
 /// 인증 헤더 자동 주입 및 토큰 갱신을 담당하는 Interceptor
@@ -38,12 +44,13 @@ public final class AuthorizationInterceptor: RequestInterceptor {
         for session: Session,
         completion: @escaping (Result<URLRequest, any Error>) -> Void
     ) {
+        let sendableCompletion = SendableWrapper(value: completion)
         Task {
             do {
                 let adaptedRequest = try await adapt(urlRequest, for: session)
-                completion(.success(adaptedRequest))
+                sendableCompletion.value(.success(adaptedRequest))
             } catch {
-                completion(.failure(error))
+                sendableCompletion.value(.failure(error))
             }
         }
     }
@@ -86,9 +93,10 @@ public final class AuthorizationInterceptor: RequestInterceptor {
         dueTo error: any Error,
         completion: @escaping (RetryResult) -> Void
     ) {
+        let sendableCompletion = SendableWrapper(value: completion)
         Task {
             let result = await retry(request, for: session, dueTo: error)
-            completion(result)
+            sendableCompletion.value(result)
         }
     }
     

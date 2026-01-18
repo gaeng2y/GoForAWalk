@@ -34,7 +34,8 @@ let targets: [Target] = [
         dependencies: [
             .shared(target: .DependencyInjection),
             .feature(target: .MainFeature, type: .interface),
-            .feature(target: .SignIn, type: .interface)
+            .feature(target: .SignIn, type: .interface),
+            .feature(target: .SplashFeature, type: .interface)
         ],
         settings: .settings(base: env.baseSetting)
     )
@@ -73,6 +74,10 @@ let schemes: [Scheme] = [
 let project = Project(
     name: env.name,
     organizationName: env.organizationName,
+    options: .options(
+        defaultKnownRegions: ["ko", "en"],
+        developmentRegion: "ko"
+    ),
     settings: settings,
     targets: targets,
     schemes: schemes
