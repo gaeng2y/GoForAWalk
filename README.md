@@ -235,21 +235,29 @@ open GoForAWalk.xcworkspace
 모든 Feature 모듈은 TCA 패턴을 따릅니다:
 
 ```swift
+// In Interface/
 @Reducer
-public struct SomeFeature: Sendable {
-    @ObservableState
-    public struct State: Equatable { ... }
-
-    public enum Action {
-        case viewAction
-        case delegate(Delegate)
-
-        public enum Delegate { ... }
+public struct SomeFeature: @unchecked Sendable {
+    // ...
+    // 이 패턴은 Interface와 Implementation을 분리할 수 있게 합니다.
+    let reduce: (inout State, Action) -> Effect<Action>
+    
+    public init(reduce: @escaping (inout State, Action) -> Effect<Action>) {
+        self.reduce = reduce
     }
 
     public var body: some ReducerOf<Self> {
-        Reduce { state, action in
-            // 상태 변경 로직
+        Reduce(reduce)
+    }
+}
+
+// In Sources/
+extension SomeFeature {
+    // live 팩토리 메서드를 통해 의존성을 주입합니다.
+    static func live(client: SomeClient) -> Self {
+        Self { state, action in
+            // Reducer 로직 구현
+            return .none
         }
     }
 }
