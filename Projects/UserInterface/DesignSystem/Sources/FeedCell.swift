@@ -55,8 +55,8 @@ public struct FeedCell<Item: FeedCellDisplayable>: View {
                     case .empty:
                         ZStack {
                             Color.gray.opacity(0.05)
-                            Text("사진")
-                                .font(.system(size: 16))
+                            Image(systemName: "photo")
+                                .font(.system(size: 40))
                                 .foregroundStyle(.secondary)
                         }
                         .frame(height: 250)
@@ -69,8 +69,8 @@ public struct FeedCell<Item: FeedCellDisplayable>: View {
                     case .failure:
                         ZStack {
                             Color.gray.opacity(0.05)
-                            Text("사진")
-                                .font(.system(size: 16))
+                            Image(systemName: "photo")
+                                .font(.system(size: 40))
                                 .foregroundStyle(.secondary)
                         }
                         .frame(height: 250)
