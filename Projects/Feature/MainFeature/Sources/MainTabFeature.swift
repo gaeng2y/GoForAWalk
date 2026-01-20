@@ -74,6 +74,9 @@ public extension MainTabFeature {
                 state.captureImage = nil
                 return .send(.feed(.onAppear))
 
+            case .captureImage(.dismiss):
+                return .send(.feed(.onAppear))
+
             case .captureImage:
                 return .none
 
