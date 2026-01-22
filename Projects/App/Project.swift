@@ -36,8 +36,7 @@ let targets: [Target] = [
             .feature(target: .MainFeature, type: .interface),
             .feature(target: .SignIn, type: .interface),
             .feature(target: .SplashFeature, type: .interface),
-            .SPM.firebaseAnalytics,
-            .SPM.firebaseCrashlytics
+            .shared(target: .GlobalThirdPartyLibrary)
         ],
         settings: .settings(base: env.baseSetting)
     )
