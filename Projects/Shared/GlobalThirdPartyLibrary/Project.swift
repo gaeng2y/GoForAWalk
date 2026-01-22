@@ -12,7 +12,11 @@ let project = Project.module(
                 .SPM.tca,
                 .SPM.kakaoCommon,
                 .SPM.kakaoAuth,
-                .SPM.kakaoUser
+                .SPM.kakaoUser,
+                .SPM.alamofire,
+                .SPM.firebaseAnalytics,
+                .SPM.firebaseCrashlytics,
+                .SPM.lottie
             ]
         )
     ]

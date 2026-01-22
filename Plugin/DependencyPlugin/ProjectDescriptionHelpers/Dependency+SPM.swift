@@ -12,6 +12,7 @@ public extension TargetDependency.SPM {
     static let alamofire = TargetDependency.external(name: "Alamofire")
     static let firebaseAnalytics = TargetDependency.external(name: "FirebaseAnalytics")
     static let firebaseCrashlytics = TargetDependency.external(name: "FirebaseCrashlytics")
+    static let lottie = TargetDependency.external(name: "Lottie")
 }
 
 public extension Package {
