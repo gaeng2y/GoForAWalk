@@ -32,6 +32,14 @@ let package = Package(
             .upToNextMajor(
                 from: "5.0.0"
             )
+        ),
+        .package(
+            url: "https://github.com/firebase/firebase-ios-sdk.git",
+            .upToNextMajor(from: "12.8.0")
+        ),
+        .package(
+            url: "https://github.com/airbnb/lottie-spm.git",
+            .upToNextMajor(from: "4.0.0")
         )
     ]
 )

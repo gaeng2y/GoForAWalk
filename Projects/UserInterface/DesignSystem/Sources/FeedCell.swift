@@ -49,35 +49,21 @@ public struct FeedCell<Item: FeedCellDisplayable>: View {
                 .padding(.top, 16)
                 .padding(.bottom, 12)
 
-                // Image
-                AsyncImage(url: item.imageUrl) { phase in
-                    switch phase {
-                    case .empty:
-                        ZStack {
-                            Color.gray.opacity(0.05)
-                            Text("사진")
-                                .font(.system(size: 16))
+                // Image (1.6:1 ratio)
+                Color.gray.opacity(0.05)
+                    .aspectRatio(1.6, contentMode: .fit)
+                    .overlay {
+                        AsyncImage(url: item.imageUrl) { image in
+                            image
+                                .resizable()
+                                .scaledToFill()
+                        } placeholder: {
+                            Image(systemName: "photo")
+                                .font(.system(size: 40))
                                 .foregroundStyle(.secondary)
                         }
-                        .frame(height: 250)
-                    case .success(let image):
-                        image
-                            .resizable()
-                            .scaledToFill()
-                            .frame(height: 250)
-                            .clipped()
-                    case .failure:
-                        ZStack {
-                            Color.gray.opacity(0.05)
-                            Text("사진")
-                                .font(.system(size: 16))
-                                .foregroundStyle(.secondary)
-                        }
-                        .frame(height: 250)
-                    @unknown default:
-                        EmptyView()
                     }
-                }
+                    .clipped()
 
                 // Content text
                 if let content = item.content, !content.isEmpty {
@@ -88,6 +74,7 @@ public struct FeedCell<Item: FeedCellDisplayable>: View {
                         .padding(16)
                 }
             }
+            .clipShape(RoundedRectangle(cornerRadius: 12))
 
             // Layer 3: Menu button (독립적인 최상위 레이어)
             VStack {

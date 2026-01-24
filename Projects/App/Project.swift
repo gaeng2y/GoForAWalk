@@ -17,7 +17,7 @@ let settings: Settings = .settings(
     defaultSettings: .recommended
 )
 
-let scripts: [TargetScript] = generateEnvironment.scripts
+let scripts: [TargetScript] = generateEnvironment.scripts + [.firebaseCrashlytics]
 
 let targets: [Target] = [
     .target(
@@ -35,7 +35,8 @@ let targets: [Target] = [
             .shared(target: .DependencyInjection),
             .feature(target: .MainFeature, type: .interface),
             .feature(target: .SignIn, type: .interface),
-            .feature(target: .SplashFeature, type: .interface)
+            .feature(target: .SplashFeature, type: .interface),
+            .shared(target: .GlobalThirdPartyLibrary)
         ],
         settings: .settings(base: env.baseSetting)
     )

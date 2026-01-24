@@ -7,15 +7,12 @@
 //
 
 import KakaoSDKAuth
-import KakaoSDKCommon
 import KakaoSDKUser
 import SwiftUI
 
 @main
 struct GoForAWalkApp: App {
-    init() {
-        KakaoSDK.initSDK(appKey: "967669c3b7e25ab9fa8fda2775b8f581")
-    }
+    @UIApplicationDelegateAdaptor(AppDelegate.self) var delegate
     
     var body: some Scene {
         WindowGroup {

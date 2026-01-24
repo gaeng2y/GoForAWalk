@@ -95,6 +95,7 @@ Dependencies/
 ### SwiftPackageManager ###
 Packages
 xcuserdata
+Package.resolved
 
 ### Tuist ###
 XCConfig/*
