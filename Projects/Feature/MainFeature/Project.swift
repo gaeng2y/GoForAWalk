@@ -13,9 +13,7 @@ let project = Project.module(
                 .feature(target: .HistoryFeature, type: .interface),
                 .feature(target: .SettingsFeature, type: .interface),
                 .feature(target: .RecordFeature, type: .interface),
-                
                 .domain(target: .FeedService, type: .interface),
-                
                 .userInterface(target: .DesignSystem),
                 .shared(target: .GlobalThirdPartyLibrary)
             ]
@@ -28,9 +26,7 @@ let project = Project.module(
                 .feature(target: .HistoryFeature, type: .interface),
                 .feature(target: .RecordFeature, type: .interface),
                 .feature(target: .ProfileFeature, type: .interface),
-
                 .domain(target: .FeedService, type: .interface),
-
                 .shared(target: .GlobalThirdPartyLibrary)
             ]
         ),
