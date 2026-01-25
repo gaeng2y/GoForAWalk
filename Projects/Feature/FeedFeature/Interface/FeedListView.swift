@@ -18,15 +18,16 @@ public struct FeedListView: View {
     }
     
     public var body: some View {
-        ScrollView {
-            if store.isLoading {
-                EmptyView()
-            } else {
-                if store.footsteps.isEmpty {
-                    FeedEmptyView()
-                } else {
+        Group {
+            switch store.viewState {
+            case .loading:
+                ProgressView()
+            case .empty:
+                FeedEmptyView()
+            case .loaded(let footsteps):
+                ScrollView {
                     LazyVStack(spacing: 12) {
-                        ForEach(store.footsteps) { footstep in
+                        ForEach(footsteps) { footstep in
                             FeedCell(item: footstep) {
                                 store.send(.footstepCellMenuTapped(footstep.id))
                             }
