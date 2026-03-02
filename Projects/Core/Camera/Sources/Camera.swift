@@ -366,8 +366,8 @@ public final class CameraServiceImpl: NSObject, CameraService, @unchecked Sendab
                     photoSettings = AVCapturePhotoSettings(format: [AVVideoCodecKey: AVVideoCodecType.hevc])
                 }
                 
-                let isFlashAvailable = self.deviceInput?.device.isFlashAvailable ?? false
-                photoSettings.flashMode = isFlashAvailable ? .auto : .off
+                // Keep flash disabled to prevent unintended auto flash in low-light captures.
+                photoSettings.flashMode = .off
                 photoSettings.maxPhotoDimensions = CMVideoDimensions(width: 4032, height: 3024)
                 
                 if let previewPhotoPixelFormatType = photoSettings.availablePreviewPhotoPixelFormatTypes.first {
