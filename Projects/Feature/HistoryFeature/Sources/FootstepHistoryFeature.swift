@@ -84,10 +84,11 @@ public extension FootstepHistoryFeature {
 
             case .deleteConfirmed:
                 guard let targetId = state.deleteTargetId else { return .none }
+                state.deleteTargetId = nil
                 return .run { send in
                     do {
                         try await feedClient.deleteFootstep(id: targetId)
-                        await send(.deleteResponse)
+                        await send(.deleteResponse(targetId))
                     } catch {
                         await send(.fetchError(error.localizedDescription))
                     }
@@ -97,12 +98,10 @@ public extension FootstepHistoryFeature {
                 state.deleteTargetId = nil
                 return .none
 
-            case .deleteResponse:
-                if let targetId = state.deleteTargetId {
-                    state.footsteps.removeAll { $0.id == targetId }
-                    if state.selectedFootstep?.id == targetId {
-                        state.selectedFootstep = nil
-                    }
+            case .deleteResponse(let targetId):
+                state.footsteps.removeAll { $0.id == targetId }
+                if state.selectedFootstep?.id == targetId {
+                    state.selectedFootstep = nil
                 }
                 state.deleteTargetId = nil
                 return .none

@@ -1,275 +1,240 @@
-# 걷는
+# 걷는 (GoForAWalk)
 
-산책과 운동을 즐기는 사람들을 위한 iOS 앱입니다.
+산책 기록을 남기고 공유하는 iOS 앱입니다.  
+이 프로젝트는 `Tuist` 기반 모듈 아키텍처와 `SwiftUI + TCA`로 구성되어 있습니다.
 
-## 아키텍처
+## 프로젝트 구조
 
-이 프로젝트는 **Tuist**를 활용한 모듈화 아키텍처와 **SwiftUI + TCA(The Composable Architecture)**를 기반으로 개발되었습니다.
+아래 구조는 현재 저장소의 `Project.swift` 기준 실제 활성 모듈을 반영합니다.
 
-### 모듈 구조
-
-```
+```text
 GoForAWalk
-├── App
-│   └── GoForAWalk (메인 앱)
-├── Feature
-│   ├── SplashFeature (스플래시)
-│   ├── SignIn (로그인)
-│   ├── MainFeature (메인 탭)
-│   ├── FeedFeature (피드)
-│   ├── HistoryFeature (히스토리)
-│   ├── ProfileFeature (프로필)
-│   ├── RecordFeature (기록)
-│   └── SettingsFeature (설정)
-├── Domain
-│   ├── AuthService (인증)
-│   ├── CameraService (카메라)
-│   ├── FeedService (피드)
-│   └── UserService (사용자)
-├── Core
-│   ├── Networking (네트워크)
-│   ├── KeyChainStore (키체인)
-│   └── Camera (카메라)
-├── UserInterface
-│   └── DesignSystem (디자인 시스템)
-└── Shared
-    ├── DependencyInjection (의존성 주입)
-    ├── GlobalThirdPartyLibrary (외부 라이브러리)
-    └── Util (유틸리티)
+├── Projects
+│   ├── App
+│   ├── Feature
+│   │   ├── SplashFeature
+│   │   ├── SignIn
+│   │   ├── MainFeature
+│   │   ├── FeedFeature
+│   │   ├── HistoryFeature
+│   │   ├── ProfileFeature
+│   │   ├── RecordFeature
+│   │   └── SettingsFeature
+│   ├── Domain
+│   │   ├── AuthService
+│   │   ├── CameraService
+│   │   ├── FeedService
+│   │   └── UserService
+│   ├── Core
+│   │   ├── Networking
+│   │   ├── KeyChainStore
+│   │   └── Camera
+│   ├── Shared
+│   │   ├── DependencyInjection
+│   │   ├── GlobalThirdPartyLibrary
+│   │   └── Util
+│   └── UserInterface
+│       └── DesignSystem
+├── Plugin
+├── Tuist
+├── Scripts
+├── XCConfig
+├── Package.swift
+├── Tuist.swift
+└── Workspace.swift
 ```
 
-### 모듈 의존성 다이어그램
+## 레이어 구성
+
+| Layer | 모듈 | 역할 |
+|---|---|---|
+| App | GoForAWalk | 앱 진입점, RootFeature 실행 |
+| Feature | Splash, SignIn, Main, Feed, History, Profile, Record, Settings | 화면/상태/유저 액션 처리 (TCA) |
+| Domain | AuthService, CameraService, FeedService, UserService | 비즈니스 API 클라이언트 |
+| Core | Networking, KeyChainStore, Camera | 인프라/저수준 기능 |
+| UserInterface | DesignSystem | 공통 UI 컴포넌트/리소스 |
+| Shared | DependencyInjection, GlobalThirdPartyLibrary, Util | 의존성 조립, 외부 라이브러리 집약, 공통 유틸 |
+
+## UML
+
+### 1) 레이어 의존성 UML
 
 ```mermaid
-graph TB
-    subgraph App
-        A[GoForAWalk]
-    end
+classDiagram
+direction LR
 
-    subgraph Feature
-        F1[SplashFeature]
-        F2[SignIn]
-        F3[MainFeature]
-        F4[FeedFeature]
-        F5[HistoryFeature]
-        F6[ProfileFeature]
-        F7[RecordFeature]
-        F8[SettingsFeature]
-    end
+class App
+class Feature
+class Domain
+class Core
+class UserInterface
+class Shared
 
-    subgraph Domain
-        D1[AuthService]
-        D2[CameraService]
-        D3[FeedService]
-        D4[UserService]
-    end
-
-    subgraph Core
-        C1[Networking]
-        C2[KeyChainStore]
-        C3[Camera]
-    end
-
-    subgraph Shared
-        S1[DependencyInjection]
-        S2[GlobalThirdPartyLibrary]
-        S3[Util]
-    end
-
-    subgraph UserInterface
-        U1[DesignSystem]
-    end
-
-    %% App Dependencies
-    A --> S1
-    A --> F1
-    A --> F2
-    A --> F3
-
-    %% Feature Dependencies
-    F1 --> D1
-    F2 --> D1
-    F3 --> F4
-    F3 --> F5
-    F3 --> F6
-    F3 --> F7
-    F3 --> F8
-    F3 --> D3
-    F4 --> D3
-    F6 --> D4
-    F7 --> D2
-    F7 --> D3
-
-    %% Domain Dependencies
-    D1 --> C1
-    D1 --> C2
-    D2 --> C3
-    D3 --> C1
-    D4 --> C1
-
-    %% Core Dependencies
-    C1 --> C2
-
-    %% Shared Dependencies
-    Feature --> U1
-    Feature --> S2
-    Domain --> S2
-    Domain --> S3
-    Core --> S2
-    Core --> S3
+App --> Feature
+App --> Shared
+Feature --> Domain
+Feature --> UserInterface
+Feature --> Shared
+Domain --> Core
+Domain --> Shared
+Core --> Shared
 ```
 
-### 레이어 의존성 규칙
+### 2) 모듈 의존성 UML
 
 ```mermaid
-graph LR
-    subgraph Layers
-        A[App] --> B[Feature]
-        B --> C[Domain]
-        C --> D[Core]
-        B --> E[UserInterface]
-        C --> F[Shared]
-        D --> F
-    end
+classDiagram
+direction LR
 
-    style A fill:#e1f5fe
-    style B fill:#fff3e0
-    style C fill:#f3e5f5
-    style D fill:#e8f5e9
-    style E fill:#fce4ec
-    style F fill:#f5f5f5
+class GoForAWalkApp
+class DependencyInjection
+
+class SplashFeature
+class SignInFeature
+class MainFeature
+class FeedFeature
+class HistoryFeature
+class ProfileFeature
+class RecordFeature
+class SettingsFeature
+
+class AuthService
+class FeedService
+class UserService
+class CameraService
+
+class Networking
+class KeyChainStore
+class Camera
+class DesignSystem
+
+GoForAWalkApp --> DependencyInjection
+GoForAWalkApp --> SplashFeature
+GoForAWalkApp --> SignInFeature
+GoForAWalkApp --> MainFeature
+
+MainFeature --> FeedFeature
+MainFeature --> HistoryFeature
+MainFeature --> ProfileFeature
+MainFeature --> RecordFeature
+MainFeature --> SettingsFeature
+
+SplashFeature --> AuthService
+SignInFeature --> AuthService
+FeedFeature --> FeedService
+HistoryFeature --> FeedService
+ProfileFeature --> UserService
+RecordFeature --> CameraService
+RecordFeature --> FeedService
+SettingsFeature --> AuthService
+SettingsFeature --> UserService
+
+AuthService --> Networking
+AuthService --> KeyChainStore
+FeedService --> Networking
+UserService --> Networking
+CameraService --> Camera
+Networking --> KeyChainStore
+
+SplashFeature ..> DesignSystem
+SignInFeature ..> DesignSystem
+MainFeature ..> DesignSystem
+FeedFeature ..> DesignSystem
+HistoryFeature ..> DesignSystem
+ProfileFeature ..> DesignSystem
+RecordFeature ..> DesignSystem
+SettingsFeature ..> DesignSystem
 ```
 
-### 레이어 설명
+### 3) 앱 시작 플로우 UML (Sequence)
 
-| 레이어 | 설명 | 모듈 |
-|--------|------|------|
-| **App** | 앱 진입점, 의존성 조립 | GoForAWalk |
-| **Feature** | 사용자 인터페이스, TCA Reducer | Splash, SignIn, Main, Feed, History, Profile, Record, Settings |
-| **Domain** | 비즈니스 로직, 서비스 | Auth, Camera, Feed, User |
-| **Core** | 순수 기능성 모듈 | Networking, KeyChain, Camera |
-| **UserInterface** | 공통 UI 컴포넌트 | DesignSystem |
-| **Shared** | 공용 유틸리티 | DependencyInjection, GlobalThirdPartyLibrary, Util |
+```mermaid
+sequenceDiagram
+autonumber
+participant App as GoForAWalkApp
+participant Root as RootFeature
+participant Splash as SplashFeature
+participant Auth as AuthClient
+participant Main as MainTabFeature
+participant SignIn as SignInFeature
 
-### TCA Feature 모듈 구조
+App->>Root: onAppear
+Root->>Splash: splash.onAppear
+Splash->>Auth: loadToken()
+Auth-->>Splash: Token? 반환
 
-각 Feature 모듈은 Interface/Sources 분리 패턴을 따릅니다:
-
+alt 토큰 존재
+  Splash-->>Root: delegate.authenticated
+  Root->>Main: destination = .mainTab
+else 토큰 없음
+  Splash-->>Root: delegate.unauthenticated
+  Root->>SignIn: destination = .signIn
+end
 ```
-Feature/[Name]/
-├── Interface/
-│   ├── [Name].swift          # Reducer 프로토콜/인터페이스
-│   └── [Name]View.swift      # SwiftUI View
-├── Sources/
-│   └── [Name].swift          # Live 구현체
-├── Testing/
-│   └── [Name]+Testing.swift  # 테스트용 Mock
-└── Tests/
-    └── [Name]Tests.swift     # 단위 테스트
+
+## 타깃 구성 패턴
+
+모듈은 `Interface` / `Sources` 분리를 기본으로 사용합니다.
+
+- Feature/Core/Domain: `Interface`, `Sources`, `Testing`, `Tests` (모듈별로 `Demo`, `UITests` 선택)
+- Shared/UserInterface: 목적에 맞게 단일 `Sources` 또는 `Demo` 포함
+
+예시:
+
+```text
+Projects/Feature/FeedFeature
+├── Interface
+├── Sources
+├── Testing
+├── Tests
+├── Demo
+└── UITests
 ```
 
 ## 기술 스택
 
-| 분류 | 기술 |
-|------|------|
-| **Language** | Swift 6 |
-| **UI Framework** | SwiftUI |
-| **Architecture** | TCA (The Composable Architecture) |
-| **Modularization** | Tuist |
-| **Networking** | Alamofire |
-| **Authentication** | Kakao SDK, Sign in with Apple |
-| **Analytics** | Firebase Analytics |
-| **Crash Reporting** | Firebase Crashlytics |
+| 분류 | 내용 |
+|---|---|
+| Language | Swift 6 |
+| UI | SwiftUI |
+| Architecture | TCA (The Composable Architecture) |
+| Build/Modularization | Tuist (`.tuist-version`: 4.88.0) |
+| Networking | Alamofire |
+| Auth | Kakao SDK, Sign in with Apple |
+| Analytics/Crash | Firebase Analytics, Crashlytics |
 
 ## 시작하기
 
 ### 요구사항
 
-- **Xcode**: 16.0+
-- **iOS**: 18.0+
-- **Tuist**: 4.x
+- Xcode 16+
+- iOS Deployment Target 18.0+
+- Tuist 4.88+
 
 ### 설치 및 실행
 
 ```bash
-# 1. Tuist 설치 (mise 사용)
+# 1) Tuist 설치 (mise 사용 시)
 mise install tuist
 
-# 2. 의존성 설치 및 프로젝트 생성
+# 2) 의존성 설치 + 프로젝트 생성
 make generate
 
-# 3. Xcode에서 열기
+# 3) 워크스페이스 열기
 open GoForAWalk.xcworkspace
 ```
 
-## 사용 가능한 명령어
-
-### 기본 명령어
+## Make 명령어
 
 | 명령어 | 설명 |
-|--------|------|
-| `make init` | 프로젝트 이름과 organization을 입력하여 프로젝트 기본 세팅 |
-| `make signing` | 프로젝트 Team Signing |
-| `make generate` | 외부 디펜던시 fetch 및 프로젝트 generate |
-| `make clean` | 전체 xcodeproj, xcworkspace 파일 삭제 |
-| `make reset` | tuist clean 후, 전체 xcodeproj, xcworkspace 파일 삭제 |
-
-### 개발 도구
-
-| 명령어 | 설명 |
-|--------|------|
-| `make module` | 새로운 모듈 생성 |
+|---|---|
+| `make init` | 프로젝트 기본 환경 초기화 |
+| `make signing` | 코드 서명 설정 |
+| `make generate` | 의존성 설치 + 프로젝트 생성 |
+| `make ci_generate` | CI 환경용 generate |
+| `make cd_generate` | CD 환경용 generate |
+| `make module` | 신규 모듈 생성 |
 | `make dependency` | 디펜던시 추가 |
+| `make clean` | 생성된 `.xcodeproj`, `.xcworkspace` 정리 |
+| `make reset` | `tuist clean` + 생성 파일 정리 |
 
-### CI/CD 명령어
-
-| 명령어 | 설명 |
-|--------|------|
-| `make ci_generate` | CI용 프로젝트 generate (SwiftLint 제외) |
-| `make cd_generate` | CD용 프로젝트 generate (SwiftLint 제외) |
-
-## 개발 가이드라인
-
-### TCA 패턴
-
-모든 Feature 모듈은 TCA 패턴을 따릅니다:
-
-```swift
-// In Interface/
-@Reducer
-public struct SomeFeature: @unchecked Sendable {
-    // ...
-    // 이 패턴은 Interface와 Implementation을 분리할 수 있게 합니다.
-    let reduce: (inout State, Action) -> Effect<Action>
-    
-    public init(reduce: @escaping (inout State, Action) -> Effect<Action>) {
-        self.reduce = reduce
-    }
-
-    public var body: some ReducerOf<Self> {
-        Reduce(reduce)
-    }
-}
-
-// In Sources/
-extension SomeFeature {
-    // live 팩토리 메서드를 통해 의존성을 주입합니다.
-    static func live(client: SomeClient) -> Self {
-        Self { state, action in
-            // Reducer 로직 구현
-            return .none
-        }
-    }
-}
-```
-
-### 모듈 간 의존성 규칙
-
-1. **상위 → 하위만 허용**: App → Feature → Domain → Core
-2. **같은 레이어 최소화**: Feature 간 직접 의존 지양
-3. **Interface 분리**: 모듈 간 통신은 Interface를 통해
-4. **Core는 비즈니스 로직 없음**: 순수 기능성 모듈만
-
-## 문의
-
-프로젝트에 대한 질문이나 제안사항이 있으시면 Issues를 통해 연락해주세요.

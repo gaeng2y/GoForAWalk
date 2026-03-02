@@ -16,11 +16,23 @@ public struct FeedFeature: @unchecked Sendable {
 
     @ObservableState
     public struct State: Equatable {
-        public var footsteps: [Footstep] = []
-        public var isLoading: Bool = false
+        public enum ViewState: Equatable {
+            case loading
+            case empty
+            case loaded([Footstep])
+        }
+
+        public var viewState: ViewState = .loading
         public var deleteTargetId: Int? = nil
 
         public init() {}
+
+        public var footsteps: [Footstep] {
+            if case .loaded(let items) = viewState {
+                return items
+            }
+            return []
+        }
     }
 
     // MARK: - Action
@@ -58,7 +70,7 @@ extension FeedFeature {
                 return .none
 
             case .fetchFootstepsResponse(let footsteps):
-                state.footsteps = footsteps
+                state.viewState = footsteps.isEmpty ? .empty : .loaded(footsteps)
                 return .none
 
             case .footstepCellMenuTapped(let id):

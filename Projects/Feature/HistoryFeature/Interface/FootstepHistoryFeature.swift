@@ -43,7 +43,7 @@ public struct FootstepHistoryFeature: @unchecked Sendable {
         case deleteMenuTapped(Int)
         case deleteConfirmed
         case cancelDelete
-        case deleteResponse
+        case deleteResponse(Int)
     }
 
     // MARK: - Dependencies
@@ -102,18 +102,18 @@ extension FootstepHistoryFeature {
                 return .none
 
             case .deleteConfirmed:
-                return .send(.deleteResponse)
+                guard let targetId = state.deleteTargetId else { return .none }
+                state.deleteTargetId = nil
+                return .send(.deleteResponse(targetId))
 
             case .cancelDelete:
                 state.deleteTargetId = nil
                 return .none
 
-            case .deleteResponse:
-                if let targetId = state.deleteTargetId {
-                    state.footsteps.removeAll { $0.id == targetId }
-                    if state.selectedFootstep?.id == targetId {
-                        state.selectedFootstep = nil
-                    }
+            case .deleteResponse(let targetId):
+                state.footsteps.removeAll { $0.id == targetId }
+                if state.selectedFootstep?.id == targetId {
+                    state.selectedFootstep = nil
                 }
                 state.deleteTargetId = nil
                 return .none

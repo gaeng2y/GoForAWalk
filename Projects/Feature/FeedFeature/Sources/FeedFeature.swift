@@ -22,7 +22,7 @@ public extension FeedFeature {
                 }
 
             case .fetchFootstepsResponse(let footsteps):
-                state.footsteps = footsteps
+                state.viewState = footsteps.isEmpty ? .empty : .loaded(footsteps)
                 return .none
 
             case .footstepCellMenuTapped(let id):

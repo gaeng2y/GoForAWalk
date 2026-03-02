@@ -16,23 +16,26 @@ public struct FeedListView: View {
     public init(store: StoreOf<FeedFeature>) {
         self.store = store
     }
-
+    
     public var body: some View {
-        ScrollView {
-            if store.footsteps.isEmpty {
-                Text("아직 발자취가 없어요.\n첫 발자취를 남겨볼까요?")
-                    .multilineTextAlignment(.center)
-                    .padding(.top, 40)
-            } else {
-                LazyVStack(spacing: 12) {
-                    ForEach(store.footsteps) { footstep in
-                        FeedCell(item: footstep) {
-                            store.send(.footstepCellMenuTapped(footstep.id))
+        Group {
+            switch store.viewState {
+            case .loading:
+                ProgressView()
+            case .empty:
+                FeedEmptyView()
+            case .loaded(let footsteps):
+                ScrollView {
+                    LazyVStack(spacing: 12) {
+                        ForEach(footsteps) { footstep in
+                            FeedCell(item: footstep) {
+                                store.send(.footstepCellMenuTapped(footstep.id))
+                            }
+                            .padding(.horizontal, 16)
                         }
-                        .padding(.horizontal, 16)
                     }
+                    .padding(.vertical, 8)
                 }
-                .padding(.vertical, 8)
             }
         }
         .frame(maxWidth: .infinity, maxHeight: .infinity)
