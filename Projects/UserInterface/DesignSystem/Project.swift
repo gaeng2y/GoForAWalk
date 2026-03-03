@@ -8,7 +8,10 @@ let project = Project.module(
         .implements(
             module: .userInterface(.DesignSystem),
             product: .framework,
-            spec: .init(resources: ["Resources/**"])
+            spec: .init(
+                resources: ["Resources/**"],
+                dependencies: [.SPM.lottie]
+            )
         ),
         .demo(module: .userInterface(.DesignSystem), dependencies: [
             .userInterface(target: .DesignSystem)
