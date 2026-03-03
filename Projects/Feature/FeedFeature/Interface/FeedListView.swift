@@ -21,7 +21,7 @@ public struct FeedListView: View {
         Group {
             switch store.viewState {
             case .loading:
-                ProgressView()
+                LottieLoadingView()
             case .empty:
                 FeedEmptyView()
             case .loaded(let footsteps):
